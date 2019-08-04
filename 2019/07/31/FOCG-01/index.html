@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Fundamentals of Computer Graphics,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Data Structures for Graphics1 Triangle Meshes(三角网格) Triangle meshes are generally used to represent surfaces, so a mesh is not just a collection of unrelated triangles, but rather a network of trian">
+<meta name="keywords" content="Fundamentals of Computer Graphics">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Data Structure for Graphics">
+<meta property="og:url" content="http://yoursite.com/2019/07/31/FOCG-01/index.html">
+<meta property="og:site_name" content="Icegrave">
+<meta property="og:description" content="Data Structures for Graphics1 Triangle Meshes(三角网格) Triangle meshes are generally used to represent surfaces, so a mesh is not just a collection of unrelated triangles, but rather a network of trian">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564538894/blog/figure1.1_ut9yft.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564538894/blog/figure1.2_iv5flz.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564539441/blog/5ADF80BC-E440-48B1-AEFC-C3C2B4F3D249_ojbeph.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564540141/blog/111aa_yth3n1.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564540496/blog/WX20190731-103442_2x_wg6qe0.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564540922/blog/WX20190731-104150_2x_p7gn1m.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564541079/blog/WX20190731-104415_2x_uvquoc.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564541240/blog/WX20190731-104708_2x_q4ic3t.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564542561/blog/WX20190731-110903_2x_jajbdd.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564544627/blog/WX20190731-114329_2x_kguihc.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564556779/blog/54B0707E-9E44-44BB-BD3E-7E3377A12021_vhougd.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564558625/blog/WX20190731-153648_2x_lixjc4.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564558839/blog/WX20190731-154026_2x_pgzvwd.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564561356/blog/WX20190731-162207_2x_hillvh.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564562754/blog/WX20190731-164539_2x_fqvkyt.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564564422/blog/WX20190731-171329_2x_b7emcm.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564565510/blog/WX20190731-173136_2x_tdkvuo.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564623288/blog/WX20190801-093429_2x_kopleh.png">
+<meta property="og:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564623700/blog/WX20190801-094129_2x_om2f8r.png">
+<meta property="og:updated_time" content="2019-08-02T03:15:35.312Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Data Structure for Graphics">
+<meta name="twitter:description" content="Data Structures for Graphics1 Triangle Meshes(三角网格) Triangle meshes are generally used to represent surfaces, so a mesh is not just a collection of unrelated triangles, but rather a network of trian">
+<meta name="twitter:image" content="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564538894/blog/figure1.1_ut9yft.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/31/FOCG-01/">
+
+
+
+
+
+  <title>Data Structure for Graphics | Icegrave</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Icegrave</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">nil</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/31/FOCG-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Heart-Shaped Box">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avator.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Icegrave">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Data Structure for Graphics</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-31T15:49:19+08:00">
+                2019-07-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/图形学基础/" itemprop="url" rel="index">
+                    <span itemprop="name">图形学基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script></p>
+<h1 id="Data-Structures-for-Graphics"><a href="#Data-Structures-for-Graphics" class="headerlink" title="Data Structures for Graphics"></a>Data Structures for Graphics</h1><h2 id="1-Triangle-Meshes-三角网格"><a href="#1-Triangle-Meshes-三角网格" class="headerlink" title="1 Triangle Meshes(三角网格)"></a>1 Triangle Meshes(三角网格)</h2><hr>
+<p><em>Triangle meshes are generally used to represent surfaces, so a mesh is not just a collection of unrelated triangles, but rather a network of triangles that connect to one another through shared vertices and edges to form a single continuous surface.</em></p>
+<hr>
+<h3 id="1-1-Mesh-Topology"><a href="#1-1-Mesh-Topology" class="headerlink" title="1.1 Mesh Topology"></a>1.1 Mesh Topology</h3><p><strong>manifold</strong>: a surface in which a small neighborhood around any point could be smoothed out into a bit of ﬂat surface.</p>
+<blockquote>
+<p>表面上的任意一点的周围领域都可以平滑进入该表面</p>
+</blockquote>
+<p><strong>figures</strong>    </p>
+<ul>
+<li>Every edge is shared by exactly two triangles.    </li>
+</ul>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564538894/blog/figure1.1_ut9yft.jpg" alt="figure1.1"></p>
+<blockquote>
+<p>Non-manifold (left) and manifold (right) interior edges.</p>
+</blockquote>
+<ul>
+<li>Every vertex has a single, complete loop of triangles around it.</li>
+</ul>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564538894/blog/figure1.2_iv5flz.jpg" alt="figure1.2"></p>
+<blockquote>
+<p>Non-manifold (left) and manifold (right) interior vertices.</p>
+</blockquote>
+<p><strong>direction</strong>    </p>
+<ul>
+<li>For a single triangle, we deﬁne orientation based on the order in which the vertices are listed: the front is the side from which the triangle’s three vertices are arranged in counterclockwise order.</li>
+</ul>
+<blockquote>
+<p>顶点顺序按照逆时针排列的三角形视为前面</p>
+</blockquote>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564539441/blog/5ADF80BC-E440-48B1-AEFC-C3C2B4F3D249_ojbeph.jpg" alt="orient"></p>
+<blockquote>
+<p>Triangles (B,A,C) and (D,C,A) are consistently oriented, whereas (B,A,C) and (A,C,D) are inconsistently oriented.    </p>
+</blockquote>
+<h3 id="1-2-Indexed-Mesh-Storage"><a href="#1-2-Indexed-Mesh-Storage" class="headerlink" title="1.2 Indexed Mesh Storage"></a>1.2 Indexed Mesh Storage</h3><p><em>The minimum information required for a triangle mesh is a set of triangles (triples of vertices) and the positions (in 3D space) of their vertices.</em></p>
+<p><strong>Triangle-to-vertax</strong> data structure</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Triangle &#123;</span><br><span class="line">	Vertex v[3]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Vertex &#123;</span><br><span class="line">	vector3 position </span><br><span class="line">	// or other vertex data</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564540141/blog/111aa_yth3n1.png" alt="Triangle-to-vertax data structure"></p>
+<p><strong>Triangle-to-vertax shared vertex mesh</strong> data structure</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IndexedMesh &#123;</span><br><span class="line">	int tInd[nt][3]</span><br><span class="line">	vector3 verts[nv] </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>tInd[i][k]</code>: the index of <em>k</em>th vertice of <em>i</em>th triangle.<br><code>verts[nv]</code>: the position of <code>vertex[nv]</code>(sharing vertex)</p>
+</blockquote>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564540496/blog/WX20190731-103442_2x_wg6qe0.png" alt></p>
+<h3 id="1-3-fans-and-strips"><a href="#1-3-fans-and-strips" class="headerlink" title="1.3 fans and strips"></a>1.3 fans and strips</h3><p><strong>Triangle fan</strong></p>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564540922/blog/WX20190731-104150_2x_p7gn1m.png" alt></p>
+<blockquote>
+<p>In an indexed mesh, the triangles array would contain [(0, 1, 2), (0, 2, 3), (0, 3, 4), (0, 4, 5)].    </p>
+</blockquote>
+<p>The fan in the ﬁgure could be speciﬁed with the sequence <code>[0, 1, 2, 3, 4, 5]</code>: <strong>the ﬁrst vertex establishes the center</strong>, and subsequently each pair of adjacent vertices (1-2, 2-3, etc.).</p>
+<p><strong>Triangle strip</strong></p>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564541079/blog/WX20190731-104415_2x_uvquoc.png" alt></p>
+<p>The triangle strip in the ﬁgure could be speciﬁed by the sequence <code>[0 1 2 3 4 5 6 7]</code>, and every subsequence of three adjacent vertices (0-1-2, 1-2-3, etc.).    </p>
+<p><strong>For consistent orientation, every other triangle needs to have its order reversed</strong>. In the example, this results in the triangles (0, 1, 2), (2, 1, 3), (2, 3, 4), (4, 3, 5), etc.</p>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564541240/blog/WX20190731-104708_2x_q4ic3t.png" alt></p>
+<h3 id="1-4-Mesh-connectivity-data-structure"><a href="#1-4-Mesh-connectivity-data-structure" class="headerlink" title="1.4 Mesh connectivity data structure"></a>1.4 Mesh connectivity data structure</h3><p><em>more complicated data structures are needed to efﬁciently answer queries such as:</em>   </p>
+<ul>
+<li>Given a triangle, what are the three adjacent triangles?</li>
+<li>Given an edge, which two triangles share it?</li>
+<li>Given a vertex, which faces share it?</li>
+<li>Given a vertex, which edges share it?</li>
+</ul>
+<p>implementation like following:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Triangle &#123;</span><br><span class="line">	Vertex v[3] </span><br><span class="line">	Edge e[3] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Edge &#123;</span><br><span class="line">	Vertex v[2] </span><br><span class="line">	Triangle t[2]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Vertex &#123;</span><br><span class="line">	Triangle t[]</span><br><span class="line">	Edge e[]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>1.4.1 The Triangle-Neighbor Structure:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Triangle &#123;</span><br><span class="line">	Triangle nbr[3]; </span><br><span class="line">	Vertex v[3]; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Vertex &#123;</span><br><span class="line">	// ... per-vertex data ... </span><br><span class="line">	Triangle t; // any adjacent tri </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>notice that in the array Triangle.nbr, the <strong>k</strong>th entry points to the <strong>neighboring triangle</strong> that <strong>shares vertices k and k + 1</strong></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Mesh &#123; </span><br><span class="line">	// ... per-vertex data ...</span><br><span class="line">	int tInd[nt][3]; // vertex indices    </span><br><span class="line">	int tNbr[nt][3]; // indices of neighbor triangles    </span><br><span class="line">	int vTri[nv]; // index of any adjacent triangle</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564542561/blog/WX20190731-110903_2x_jajbdd.png" alt></p>
+<ul>
+<li>feature:<br><strong>If triangle t has vertex v as its kth vertex, then the triangle t.nbr[k] is the next triangle around v in the clockwise direction.</strong>(用于计算三角形t对于某一个顶点v的最近邻接三角形t.nbr[k]，如图中绿色箭头)</li>
+</ul>
+<p>traverse all the triangles adjacent to a given vertex(对于一个给定顶点，遍历该点所有邻接三角形)：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">TrianglesOfVertex(v) &#123;</span><br><span class="line">	t = v.t</span><br><span class="line">	do &#123;</span><br><span class="line">		find i such that (t.v[i] == v)</span><br><span class="line">		t = t.nbr[i]</span><br><span class="line">	&#125; while (t != v.t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>1.4.2 winged-edge data structure</strong></p>
+<p>makes edges the ﬁrst-class citizen of the data structure.    </p>
+<p>each edge stores pointers to the <strong>two vertices it connects (the head and tail vertices)</strong>, the <strong>two faces it is part of (the left and right faces)</strong>, and, most importantly, <strong>the next and previous edges in the counterclockwise traversal of its left and right faces</strong>. Each vertex and face also stores a pointer to a single, arbitrary edge that connects to it.</p>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564544627/blog/WX20190731-114329_2x_kguihc.png" alt></p>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564556779/blog/54B0707E-9E44-44BB-BD3E-7E3377A12021_vhougd.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Edge &#123; </span><br><span class="line">	Edge lprev, lnext, rprev, rnext;</span><br><span class="line">	Vertex head, tail;</span><br><span class="line">	Face left, right;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Face &#123;</span><br><span class="line">	// ... per-face data ...</span><br><span class="line">	Edge e; // any adjacent edge</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Vertex &#123; </span><br><span class="line">	// ... per-vertex data ... </span><br><span class="line">	Edge e; // any incident edge </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>The winged-edge data structure supports constant-time access to the edges of a face or of a vertex:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">EdgesOfVertex(v) &#123;</span><br><span class="line">	e = v.e;</span><br><span class="line">	do &#123; </span><br><span class="line">		if (e.tail == v) </span><br><span class="line">			e = e.lprev; </span><br><span class="line">		else </span><br><span class="line">			e = e.rprev; </span><br><span class="line">	&#125; while (e != v.e);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">EdgesOfFace(f) &#123;</span><br><span class="line">	e = f.e;</span><br><span class="line">	do &#123; </span><br><span class="line">		if (e.left == f) </span><br><span class="line">			e = e.lnext; </span><br><span class="line">		else </span><br><span class="line">			e = e.rnext; </span><br><span class="line">	&#125; while (e != f.e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>应注意的是，使用winged-edge进行搜索时，我们每次在移动到下一条边之前需要检查边的方向。</p>
+</blockquote>
+<p><strong>1.4.3 The Half-Edge Structure</strong></p>
+<p>Each half-edge <strong>points to the face on its side of the edge</strong> and to <strong>the vertex at its head</strong>, and each contains <strong>the edge pointers for its face</strong>. It also points to **its neighbor on the other side of the edge.</p>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564558625/blog/WX20190731-153648_2x_lixjc4.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">HEdge &#123;</span><br><span class="line">	HEdge pair, next; </span><br><span class="line">	Vertex v; </span><br><span class="line">	Face f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Face &#123; </span><br><span class="line">	// ... per-face data ...</span><br><span class="line">	HEdge h; // any h-edge of this face </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Vertex &#123; </span><br><span class="line">	// ... per-vertex data ...</span><br><span class="line">	HEdge h; // any h-edge pointing toward this vertex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>We no longer need to check orientation, and we follow the pair pointer to access the edges in the opposite face.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">EdgesOfVertex(v) &#123; </span><br><span class="line">	h = v.h; </span><br><span class="line">	do &#123; </span><br><span class="line">		h = h.pair.next; </span><br><span class="line">	&#125; while (h != v.h); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">EdgesOfFace(f) &#123; </span><br><span class="line">	h = f.h; </span><br><span class="line">	do &#123;</span><br><span class="line">		h = h.next; </span><br><span class="line">	&#125; while (h != f.h); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564558839/blog/WX20190731-154026_2x_pgzvwd.png" alt></p>
+<h2 id="2-Scene-Graphs"><a href="#2-Scene-Graphs" class="headerlink" title="2 Scene Graphs"></a>2 Scene Graphs</h2><hr>
+<p>Most scenes admit to a hierarchical organization, and the transformations can be managed according to this hierarchy using a scene graph.</p>
+<hr>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564561356/blog/WX20190731-162207_2x_hillvh.png" alt></p>
+<blockquote>
+<p>On the left are the two pieces in their “local” coordinate systems. The hinge of the bottom piece is at point b and the attachment for the bottom piece is at its local origin. The degrees of freedom for the assembled object are the angles (θ,φ) and the location p of the top hinge.</p>
+</blockquote>
+<ul>
+<li>draw the top part of the pendulum</li>
+</ul>
+<script type="math/tex; mode=display">M_1 = rotate(\theta)</script><script type="math/tex; mode=display">M_2 = translate(\mathsf{p})</script><script type="math/tex; mode=display">M_3 = M_1M_2</script><ul>
+<li>draw the bottom part of the pendulum</li>
+</ul>
+<script type="math/tex; mode=display">M_a = rotate(\phi)</script><script type="math/tex; mode=display">M_b = translate(\mathsf{b})</script><script type="math/tex; mode=display">M_c = M_bM_a</script><script type="math/tex; mode=display">M_d = M_3M_c</script><p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564562754/blog/WX20190731-164539_2x_fqvkyt.png" alt></p>
+<blockquote>
+<p>The scene graph for the hinged pendulum</p>
+</blockquote>
+<h2 id="3-Spatial-Data-Structures"><a href="#3-Spatial-Data-Structures" class="headerlink" title="3 Spatial Data Structures"></a>3 Spatial Data Structures</h2><hr>
+<p><em>We will use ray tracing as the primary motivation while discussing these structures, though they can all also be used for view culling or collision detection.</em></p>
+<blockquote>
+<p>主要用于光照检测 </p>
+</blockquote>
+<hr>
+<h3 id="3-1-Bounding-Boxes"><a href="#3-1-Bounding-Boxes" class="headerlink" title="3.1 Bounding Boxes"></a>3.1 Bounding Boxes</h3><p>This differs from conventional intersection tests in that <strong>we do not need to know where the ray hits the box; we only need to know whether it hits the box.</strong></p>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564564422/blog/WX20190731-171329_2x_b7emcm.png" alt></p>
+<blockquote>
+<p>The ray is <strong>only tested for intersection with the surfaces if it hits the bounding box</strong>.</p>
+</blockquote>
+<h4 id="3-1-1-Bounding-Boxes"><a href="#3-1-1-Bounding-Boxes" class="headerlink" title="3.1.1 Bounding Boxes"></a>3.1.1 Bounding Boxes</h4><script type="math/tex; mode=display">x = x_{min}</script><script type="math/tex; mode=display">x = x_{max}</script><script type="math/tex; mode=display">y = y_{min}</script><script type="math/tex; mode=display">y = y_{max}</script><p>The points bounded by these lines can be described in interval notation:</p>
+<script type="math/tex; mode=display">(x,y) \in [x_{min},x_{max}] \times[y_{min},y_{max}]</script><p>For intersection test:</p>
+<ul>
+<li>assume that the light source position $e(x_e, y_e)$</li>
+<li>assume that the light source direction $d(x_d, y_d)$</li>
+</ul>
+<p>light source: </p>
+<script type="math/tex; mode=display">\vec P = \vec e + t\vec d</script><p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564565510/blog/WX20190731-173136_2x_tdkvuo.png" alt></p>
+<blockquote>
+<p>The ray will be inside the interval $x \in [x_{min} , x_{max} ]$ for some interval in its parameter space $t \in [t_ {xmin} , t_{xmax} ]$ . A similar interval exists for the y interval. <strong>The ray intersects the box if it is in both the x interval and y interval at the same time</strong>, i.e., the intersection of the two one-dimensional intervals is not empty.</p>
+</blockquote>
+<p><strong>Three possibilities for hitting test:</strong></p>
+<ul>
+<li>$x_e \leq x_{min}$ (no hit)</li>
+<li>$x_{min} &lt; x_e &lt; x_{max}$ (hit)</li>
+<li>$x_{max} &lt; x_e$ (no hit)</li>
+</ul>
+<p><strong>Final code of hitting test:</strong></p>
+<p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564623288/blog/WX20190801-093429_2x_kopleh.png" alt></p>
+<h3 id="3-1-2-Hierarchical-Bounding-Boxes"><a href="#3-1-2-Hierarchical-Bounding-Boxes" class="headerlink" title="3.1.2 Hierarchical Bounding Boxes"></a>3.1.2 Hierarchical Bounding Boxes</h3><p><img src="https://res.cloudinary.com/dg6z7pidk/image/upload/v1564623700/blog/WX20190801-094129_2x_om2f8r.png" alt></p>
+<blockquote>
+<p>The bounding boxes can be nested by creating boxes around subsets of the model.</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Fundamentals-of-Computer-Graphics/" rel="tag"># Fundamentals of Computer Graphics</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/19/MAC-MASM/" rel="next" title="MAC_MASM">
+                <i class="fa fa-chevron-left"></i> MAC_MASM
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/02/sfm/" rel="prev" title="Structure from Motion (notes)">
+                Structure from Motion (notes) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avator.JPG" alt="Heart-Shaped Box">
+            
+              <p class="site-author-name" itemprop="name">Heart-Shaped Box</p>
+              <p class="site-description motion-element" itemprop="description">Hello From The Other Side#</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Data-Structures-for-Graphics"><span class="nav-number">1.</span> <span class="nav-text">Data Structures for Graphics</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Triangle-Meshes-三角网格"><span class="nav-number">1.1.</span> <span class="nav-text">1 Triangle Meshes(三角网格)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Mesh-Topology"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 Mesh Topology</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Indexed-Mesh-Storage"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 Indexed Mesh Storage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-fans-and-strips"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 fans and strips</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-Mesh-connectivity-data-structure"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 Mesh connectivity data structure</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Scene-Graphs"><span class="nav-number">1.2.</span> <span class="nav-text">2 Scene Graphs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Spatial-Data-Structures"><span class="nav-number">1.3.</span> <span class="nav-text">3 Spatial Data Structures</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Bounding-Boxes"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 Bounding Boxes</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-1-Bounding-Boxes"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">3.1.1 Bounding Boxes</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-2-Hierarchical-Bounding-Boxes"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.1.2 Hierarchical Bounding Boxes</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Heart-Shaped Box</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>
