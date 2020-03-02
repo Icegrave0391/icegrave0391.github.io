@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+
+
+
+
+
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="preconnect" href="//www.googletagmanager.com">
+	<link rel="preconnect" href="//zz.bdstatic.com">
+	<link rel="preconnect" href="//sp0.baidu.com">
+	<link rel="preconnect" href="//www.google-analytics.com">
+	<link rel="preconnect" href="//cdn1.lncld.net">
+	<link rel="preconnect" href="//unpkg.com">
+	<link rel="preconnect" href="//app-router.leancloud.cn">
+	<link rel="preconnect" href="//9qpuwspm.api.lncld.net">
+	<link rel="preconnect" href="//gravatar.loli.net">
+
+	<title>MIT6.828 - Lab1 | Icegrave</title>
+
+	<meta name="HandheldFriendly" content="True">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+	<meta name="generator" content="hexo">
+	<meta name="author" content="Heart-Shaped Box">
+	<meta name="description" content="This lab is split into three parts. The first part concentrates on getting familiarized with x86 assembly language, the QEMU x86 emulator, and the PC's power-on bootstrap procedure. The second part examines the boot loader for our 6.828 kernel, which resides in the boot directory of the lab tree. Finally, the third part delves into the initial template for our 6.828 kernel itself, named JOS, which resides in the kernel directory.">
+
+	
+	<meta name="keywords" content="os, jos, notes">
+	
+
+	
+	<link rel="shortcut icon" href="https://mubai.oss-cn-hangzhou.aliyuncs.com/icon.png">
+	<link rel="apple-touch-icon" href="https://mubai.oss-cn-hangzhou.aliyuncs.com/icon.png">
+	
+
+	
+	<meta name="theme-color" content="#3c484e">
+	<meta name="msapplication-TileColor" content="#3c484e">
+	
+
+	
+
+	
+
+	<meta property="og:site_name" content="Icegrave">
+	<meta property="og:type" content="article">
+	<meta property="og:title" content="MIT6.828 - Lab1 | Icegrave">
+	<meta property="og:description" content="This lab is split into three parts. The first part concentrates on getting familiarized with x86 assembly language, the QEMU x86 emulator, and the PC's power-on bootstrap procedure. The second part examines the boot loader for our 6.828 kernel, which resides in the boot directory of the lab tree. Finally, the third part delves into the initial template for our 6.828 kernel itself, named JOS, which resides in the kernel directory.">
+	<meta property="og:url" content="http://yoursite.com/2020/03/02/os/">
+
+	
+	<meta property="article:published_time" content="2020-03-02T21:03:00+08:00"> 
+	<meta property="article:author" content="Heart-Shaped Box">
+	<meta property="article:published_first" content="Icegrave, /2020/03/02/os/">
+	
+
+	
+	
+	<link rel="stylesheet" href="/css/allinonecss.min.css">
+
+	
+	
+	
+</head>
+<body class="post-template">
+	<div class="site-wrapper">
+		
+
+
+
+
+<header class="site-header post-site-header outer">
+    <div class="inner">
+        
+<nav class="site-nav"> 
+    <div class="site-nav-left">
+        <ul class="nav">
+            <li>
+                
+                <a href="/" title="Home">HOME</a>
+                
+            </li>
+            
+            
+            <li>
+                <a href="/about" title="ABOUT">ABOUT</a>
+            </li>
+            
+            <li>
+                <a href="/archives" title="ARCHIVES">ARCHIVES</a>
+            </li>
+            
+            
+        </ul> 
+    </div>
+    
+    <div class="search-button-area">
+        <a href="#search" class="search-button">Search ...</a>
+    </div>
+     
+    <div class="site-nav-right">
+        
+        <a href="#search" class="search-button">Search ...</a>
+         
+        
+<div class="social-links">
+    
+    <a class="social-link" title="weibo" href="https://weibo.com/" target="_blank" rel="noopener">
+        <svg viewbox="0 0 1141 1024" xmlns="http://www.w3.org/2000/svg"><path d="M916.48 518.144q27.648 21.504 38.912 51.712t9.216 62.976-14.336 65.536-31.744 59.392q-34.816 48.128-78.848 81.92t-91.136 56.32-94.72 35.328-89.6 18.944-75.264 7.68-51.712 1.536-49.152-2.56-68.096-10.24-78.336-21.504-79.872-36.352-74.24-55.296-59.904-78.848q-16.384-29.696-22.016-63.488t-5.632-86.016q0-22.528 7.68-51.2t27.136-63.488 53.248-75.776 86.016-90.112q51.2-48.128 105.984-85.504t117.248-57.856q28.672-10.24 63.488-11.264t57.344 11.264q10.24 11.264 19.456 23.04t12.288 29.184q3.072 14.336 0.512 27.648t-5.632 26.624-5.12 25.6 2.048 22.528q17.408 2.048 33.792-1.536t31.744-9.216 31.232-11.776 33.28-9.216q27.648-5.12 54.784-4.608t49.152 7.68 36.352 22.016 17.408 38.4q2.048 14.336-2.048 26.624t-8.704 23.04-7.168 22.016 1.536 23.552q3.072 7.168 14.848 13.312t27.136 12.288 32.256 13.312 29.184 16.384zM658.432 836.608q26.624-16.384 53.76-45.056t44.032-64 18.944-75.776-20.48-81.408q-19.456-33.792-47.616-57.344t-62.976-37.376-74.24-19.968-80.384-6.144q-78.848 0-139.776 16.384t-105.472 43.008-72.192 60.416-38.912 68.608q-11.264 33.792-6.656 67.072t20.992 62.976 42.496 53.248 57.856 37.888q58.368 25.6 119.296 32.256t116.224 0.512 100.864-21.504 74.24-33.792zM524.288 513.024q20.48 8.192 38.912 18.432t32.768 27.648q10.24 12.288 17.92 30.72t10.752 39.424 1.536 42.496-9.728 38.912q-8.192 18.432-19.968 37.376t-28.672 35.328-40.448 29.184-57.344 18.944q-61.44 11.264-117.76-11.264t-88.064-74.752q-12.288-39.936-13.312-70.656t16.384-66.56q13.312-27.648 40.448-51.712t62.464-38.912 75.264-17.408 78.848 12.8zM361.472 764.928q37.888 3.072 57.856-18.432t21.504-48.128-15.36-47.616-52.736-16.896q-27.648 3.072-43.008 23.552t-17.408 43.52 9.728 42.496 39.424 21.504zM780.288 6.144q74.752 0 139.776 19.968t113.664 57.856 76.288 92.16 27.648 122.88q0 33.792-16.384 50.688t-35.328 17.408-35.328-14.336-16.384-45.568q0-40.96-22.528-77.824t-59.392-64.512-84.48-43.52-96.768-15.872q-31.744 0-47.104-15.36t-14.336-34.304 18.944-34.304 51.712-15.36zM780.288 169.984q95.232 0 144.384 48.64t49.152 146.944q0 30.72-10.24 43.52t-22.528 11.264-22.528-14.848-10.24-35.84q0-60.416-34.816-96.256t-93.184-35.84q-19.456 0-28.672-10.752t-9.216-23.04 9.728-23.04 28.16-10.752z"/></svg>
+    </a>
+    
+    
+    <a class="social-link" title="github" href="https://github.com/Icegrave0391" target="_blank" rel="noopener">
+        <svg viewbox="0 0 1049 1024" xmlns="http://www.w3.org/2000/svg"><path d="M524.979332 0C234.676191 0 0 234.676191 0 524.979332c0 232.068678 150.366597 428.501342 358.967656 498.035028 26.075132 5.215026 35.636014-11.299224 35.636014-25.205961 0-12.168395-0.869171-53.888607-0.869171-97.347161-146.020741 31.290159-176.441729-62.580318-176.441729-62.580318-23.467619-60.841976-58.234462-76.487055-58.234463-76.487055-47.804409-32.15933 3.476684-32.15933 3.476685-32.15933 53.019436 3.476684 80.83291 53.888607 80.83291 53.888607 46.935238 79.963739 122.553122 57.365291 152.97411 43.458554 4.345855-33.897672 18.252593-57.365291 33.028501-70.402857-116.468925-12.168395-239.022047-57.365291-239.022047-259.012982 0-57.365291 20.860106-104.300529 53.888607-140.805715-5.215026-13.037566-23.467619-66.926173 5.215027-139.067372 0 0 44.327725-13.906737 144.282399 53.888607 41.720212-11.299224 86.917108-17.383422 131.244833-17.383422s89.524621 6.084198 131.244833 17.383422C756.178839 203.386032 800.506564 217.29277 800.506564 217.29277c28.682646 72.1412 10.430053 126.029806 5.215026 139.067372 33.897672 36.505185 53.888607 83.440424 53.888607 140.805715 0 201.64769-122.553122 245.975415-239.891218 259.012982 19.121764 16.514251 35.636014 47.804409 35.636015 97.347161 0 70.402857-0.869171 126.898978-0.869172 144.282399 0 13.906737 9.560882 30.420988 35.636015 25.205961 208.601059-69.533686 358.967656-265.96635 358.967655-498.035028C1049.958663 234.676191 814.413301 0 524.979332 0z"/></svg>
+    </a>
+    
+    
+    <a class="social-link" title="facebook" href="https://facebook" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+    </a>
+    
+    
+    <a class="social-link" title="twitter" href="https://twitter.com" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+    </a>
+    
+    
+    
+    
+</div>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<div id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+        <header class="post-full-header">
+            <div class="post-full-meta">
+                <time class="post-full-meta-date" datetime="2020-03-02T13:18:49.000Z">
+                    2020-03-02
+                </time>
+                
+                <span class="date-divider">/</span>
+                
+                
+            </div>
+            <h1 class="post-full-title">MIT6.828 - Lab1</h1>
+        </header>
+        <div class="post-full ">
+            
+            <figure class="post-full-image" style="background-image: url(https://tva1.sinaimg.cn/large/00831rSTly1gcfwldfuklj31li0u0hdu.jpg)">
+            </figure>
+            
+            <div class="post-full-content">
+                <article id="photoswipe" class="markdown-body">
+                    <h2 id="Part-1-PC-Bootstrap"><a href="#Part-1-PC-Bootstrap" class="headerlink" title="Part 1: PC Bootstrap"></a>Part 1: PC Bootstrap</h2><p>这个部分是为了熟悉x86汇编语言，以及PC的启动流程。同时在实验的过程中，我们需要使用qemu和gdb进行调试。</p>
+<h3 id="1-1-x86-Assembly"><a href="#1-1-x86-Assembly" class="headerlink" title="1.1 x86 Assembly"></a>1.1 x86 Assembly</h3><p><strong>exercise 1：</strong>熟悉x86汇编。</p>
+<p>很显然，这个步骤不需要再次赘述。</p>
+<p>如果你看这篇文章的时候没学过assembly，那说明你看这篇文章的时候没学过assembly。可能你入门os比较超前。</p>
+<p>请注意哦～本实验的所有assembly都是AT&amp;T格式的，不是INTEL格式的哦～不要把sourse和dest弄反。</p>
+<h3 id="1-2-Simulating-the-x86"><a href="#1-2-Simulating-the-x86" class="headerlink" title="1.2 Simulating the x86"></a>1.2 Simulating the x86</h3><p>在我们的实验中并没有使用真正的PC，而是qemu模拟的PC。我们按照实验要求下载好一切依赖项以及资源后，直接使用<code>make</code>指令。</p>
+<p><code>make</code>之后，我们就bulid完成了一个低配版6.828boot loader以及kernal（在之后的环节中，我们会逐渐完善这个kernal的）。</p>
+<p>同时，我们qemu所需的虚拟硬盘就在<code>/obj/kern/kernal.img</code>下生成完毕，这个硬盘镜像中包括我们的boot loader(<code>obj/boot/boot</code>)以及我们的kernal(<code>/obj/kernal</code>)。</p>
+<p>当我们唤起qemu的虚拟PC时，我们只需要在lab文件夹的terminal中输入<code>make qemu</code>即可。</p>
+<p>这将使用设置硬盘并将串行端口直接输出到终端所需的选项执行qemu，我们可以看到启动时屏幕上显示的一系列字符串：</p>
+<p><img alt="image-20200301165721235" style="zoom:50%;" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcej5omkh1j31400ngwmt.jpg" data-index="0" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcej5omkh1j31400ngwmt.jpg"></p>
+<p>booting from hard disk之后的一切流程都已经呈现在屏幕上。</p>
+<p>实际上，我们可以通过regular shell window和qemu display window同时与kernal进行交互。</p>
+<p>有一点需要注意的是：我们的kernal monitor是直接运行在仿真的虚拟硬盘上的。这就意味着我们是可以将<code>obj/kern/kernal.img</code>的内容拷贝到真实硬盘的前几个扇区的，这样就可以在实际的PC屏幕中看到qemu window中相同的内容。（不建议如此的原因是，将其复制到银盘的开头会破坏主引导记录master boot record，以及第一个分区的开头beginning of the first partition）</p>
+<h3 id="gt-PC物理地址空间"><a href="#gt-PC物理地址空间" class="headerlink" title="&gt; PC物理地址空间"></a>&gt; PC物理地址空间</h3><p>PC的物理空间布局如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">+------------------+  &lt;- 0xFFFFFFFF (4GB)</span><br><span class="line">|      32-bit      |</span><br><span class="line">|  memory mapped   |</span><br><span class="line">|     devices      |</span><br><span class="line">|                  |</span><br><span class="line">/\/\/\/\/\/\/\/\/\/\</span><br><span class="line"></span><br><span class="line">/\/\/\/\/\/\/\/\/\/\</span><br><span class="line">|                  |</span><br><span class="line">|      Unused      |</span><br><span class="line">|                  |</span><br><span class="line">+------------------+  &lt;- depends on amount of RAM</span><br><span class="line">|                  |</span><br><span class="line">|                  |</span><br><span class="line">| Extended Memory  |</span><br><span class="line">|                  |</span><br><span class="line">|                  |</span><br><span class="line">+------------------+  &lt;- 0x00100000 (1MB)</span><br><span class="line">|     BIOS ROM     |</span><br><span class="line">+------------------+  &lt;- 0x000F0000 (960KB)</span><br><span class="line">|  16-bit devices, |</span><br><span class="line">|  expansion ROMs  |</span><br><span class="line">+------------------+  &lt;- 0x000C0000 (768KB)</span><br><span class="line">|   VGA Display    |</span><br><span class="line">+------------------+  &lt;- 0x000A0000 (640KB)</span><br><span class="line">|                  |</span><br><span class="line">|    Low Memory    |</span><br><span class="line">|                  |</span><br><span class="line">+------------------+  &lt;- 0x00000000</span><br></pre></td></tr></table></figure>
+<p>最初的PC基于16位的8088处理器，仅仅能够支持<strong>2^20B = 2^10KB = 1MB</strong> 的寻址。所以早起的地址空间从0x00000开始到0xFFFFF结束（2^20B）。</p>
+<ul>
+<li><p>0x00000 - 0xA0000(640KB)被称为低内存，这就是早期的PC能用的唯一RAM。</p>
+</li>
+<li><p>0xA0000-0xFFFFF(384KB)被硬件保留作特殊用途比如视频缓冲区或者固件。这部分中最重要的区域是从0xF0000-0xFFFFF(64KB)的<strong>基本输入输出系统BIOS</strong>。</p>
+<blockquote>
+<p>BIOS的作用是初始化系统，比如激活显卡(video card)、检查内存等。在该初始化过程完成后，BIOS从合适的位置，如硬盘(hard disk)、软盘(floppy disk)、光碟(CD-ROM)甚至网络中读取操作系统，然后将机器的控制权转移给操作系统。</p>
+</blockquote>
+</li>
+</ul>
+<p>从Intel的80286到80386，处理器能够支持16MB以及4GB的地址空间！但是为了向后兼容(backward compatibility)，PC架构保留了原始的最低的1MB的内存布局。</p>
+<p>现代PC因此在0x000A0000-0x00100000的内存中有一个“洞”。这个洞将内存分为了低内存/保留内存(Low Memory)(低640KB)以及拓展内存(Extended Memory)(其他范围)。除此之外，32位的PC的地址空间的最上方，常常被BIOS保留用于32位的PCI设备。</p>
+<p>最新的x86处理器可以支持超过4GB的物理内存，也就是说内存可以超过0xFFFFFFFF。因此BIOS需要预留出第二个“洞”以保证那些32位的PCI设备的地址可以被正确的映射。</p>
+<h3 id="1-3-ROM-BIOS"><a href="#1-3-ROM-BIOS" class="headerlink" title="1.3 ROM BIOS"></a>1.3 ROM BIOS</h3><p>根据实验的指导，我们使用qemu和gdb的联合调试。输入指令<code>make qemu-gdb</code>。此时qemu将在第一条指令执行之前暂停，并且等待gdb的debugging connection。</p>
+<p>然后我们新开一个terminal，输入指令<code>make gdb</code>我们可以看到如图所示的输出：</p>
+<p><img alt="image-20200301173547006" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcek9o3f62j31h80bzte3.jpg" data-index="1" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcek9o3f62j31h80bzte3.jpg"></p>
+<p>因为提供了<code>.gdbinit</code>文件，所以我们的gdb能够一下子链接进来，自动attach到需要调试的程序上。（前提当然是需要debug的程序已经运行起来了）</p>
+<p>我们看到需要执行的第一条指令<code>ljmp</code>如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[f000:fff0] 0xffff0:    ljmp   $0xf000,$0xe05b</span><br></pre></td></tr></table></figure>
+<ul>
+<li>从这个指令可以看出，从上电开始，IBM PC从0x000ffff0开始执行指令。该处地址位于BIOS的64位空间的顶层。</li>
+<li>此时，CS = 0xf000, IP = 0xfff0</li>
+<li>第一条指令是一个<code>jmp</code>指令，跳转至CS = 0xf000, IP = 0xe05b</li>
+</ul>
+<p>这些其实都是早期的8088处理器设计的。这样的设计能够保证BIOS在刚刚上电之后总是能够控制机器。因为在刚上电的时候，内存中并不存在可以执行的代码。</p>
+<blockquote>
+<p>在这里我们需要理解CS:IP是如何表示一个实地址空间的：</p>
+<p>8086是分段式寻址，也就是通过两个16位的寄存器值构造一个20位的地址。实际地址是CS <em> 16 + IP = 0xf000 </em> 16 + 0xfff0 = 0xffff0</p>
+</blockquote>
+<p><strong>exercise 2:</strong></p>
+<p>使用gdb的<code>si</code>（单步调试）命令进入ROM BIOS并且追踪几条指令，猜测这些指令的作用。我们在这里不需要指出指令的细节，只需要了解BIOS开始运行的核心思想即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">[f000:fff0]    0xffff0: ljmp   $0xf000,$0xe05b # 跳到一个较早的位置</span><br><span class="line">[f000:e05b]    0xfe05b: cmpl   $0x0,%cs:0x6ac8 # 测试cs段的0x6ac8字是否为0</span><br><span class="line">[f000:e062]    0xfe062: jne    0xfd2e1         </span><br><span class="line">[f000:e066]    0xfe066: xor    %dx,%dx         # 测试为0</span><br><span class="line">[f000:e068]    0xfe068: mov    %dx,%ss         # 设置栈段-ss段寄存器</span><br><span class="line">[f000:e06a]    0xfe06a: mov    $0x7000,%esp    # 设置栈指针寄存器</span><br><span class="line">                                               # 栈的延伸方向和代码段延伸方向相反</span><br><span class="line">[f000:e070]    0xfe070: mov    $0xf34c2,%edx   # 设置edx寄存器值</span><br><span class="line">[f000:e076]    0xfe076: jmp    0xfd15c         # 跳转</span><br><span class="line">[f000:d15c]    0xfd15c: mov    %eax,%ecx       </span><br><span class="line">[f000:d15f]    0xfd15f: cli                    # 关闭硬件中断</span><br><span class="line">																							 # 为啥要关中断不用爷多说了吧？启动的时候</span><br><span class="line">																							 # 你害敢被中断？</span><br><span class="line">[f000:d160]    0xfd160: cld                    # 设置串传送指令方向</span><br><span class="line">[f000:d161]    0xfd161: mov    $0x8f,%eax      </span><br><span class="line">[f000:d167]    0xfd167: out    %al,$0x70       # IO端口指令，8086的端口和内存编址分开</span><br><span class="line">																							 # 端口0x70的寄存器是控制寄存器</span><br><span class="line">																							 # 将要访问的CMOS中的数据偏移传入0x70端口</span><br><span class="line">																							 # 就可以在0x71号端口下读取相应数据</span><br><span class="line">[f000:d169]    0xfd169: in     $0x71,%al       # 从CMOS读取选择的寄存器</span><br><span class="line">[f000:d16b]    0xfd16b: in     $0x92,%al       # 读取系统控制端口A</span><br><span class="line">/*我们知道了，0x70端口和0x71端口是用于控制系统中一个叫做CMOS的设备，这个设备是一个低功耗的存储设备，它可以用于在计算机关闭时存储一些信息，它是由独立的电池供电的。*/</span><br><span class="line">/*这个CMOS中可以控制跟PC相关的多个功能，其中最重要的就是时钟设备（Real Time Clock）的 ，它还可以控制是否响应不可屏蔽中断NMI(Non-Maskable Interrupt)。</span><br><span class="line">操作CMOS存储器中的内容需要两个端口，一个是0x70另一个就是0x71。其中0x70可以叫做索引寄存器，这个8位寄存器的最高位是不可屏蔽中断(NMI)使能位。如果你把这个位置1，则NMI不会被响应。低7位用于指定CMOS存储器中的存储单元地址，所以如果你想访问第1号存储单元，并且在访问时，我要使能NMI，那么你就应该向端口0x70里面送入0b10000001 = 0x81。 mov $0x8f, %eax实际做到了这一点*/</span><br><span class="line">/*</span><br><span class="line">mov $0x81, %al</span><br><span class="line">out %al, 0x70</span><br><span class="line">然后对于这个地址单元的操作，比如读或者写就可以由0x71端口完成，比如你现在想从1号存储单元里面读出它的值，在完成上面的两条指令后，就可以输入这条指令</span><br><span class="line">in $0x71, %al </span><br><span class="line">再回到我们的系统，这三条指令可以看出，它首先关闭了NMI中断，并且要访问存储单元0xF的值，并且把值读到al中，但是在后面我们发现这个值并没有被利用，所以可以认为这三条指令是用来关闭NMI中断的。*/</span><br><span class="line">[f000:d16d]    0xfd16d: or     $0x2,%al        </span><br><span class="line">[f000:d16f]    0xfd16f: out    %al,$0x92       # 通过快速A20以启动A20</span><br><span class="line">																							 # A20是个历史遗留的问题，爷不想了解这根线</span><br><span class="line">/*这三步操作又是在控制端口，此时被控制的端口号为0x92。我们可以查看到，它控制的是 PS/2系统控制端口A，而这两步的操作明显是在把这个端口的1号bit置为1。这个端口的bit1的功能是：</span><br><span class="line">bit 1= 1 indicates A20 active</span><br><span class="line">即A20位，即第21个地址线被使能，了解实模式和保护模式的同学肯定清楚，如果A20地址线被激活，那么系统工作在保护模式下。但是在之后的boot loader程序中，计算机首先要工作在实模式下啊。所以这里的这个操作，根据网上 http://kernelx.weebly.com/a20-address-line.html 所说应该是去测试可用内存空间。在boot loader之前，它肯定还会转换回实模式。*/</span><br><span class="line">[f000:d171]    0xfd171: lidtw  %cs:0x6ab8      # 将cs:0x6ab8加载进入IDT表</span><br><span class="line">																							 # IDT表是中断描述符表</span><br><span class="line">[f000:d177]    0xfd177: lgdtw  %cs:0x6a74      # 将cs:0x6a74加载进入GDT表</span><br><span class="line">																							 # GDT表是全局描述符表</span><br><span class="line">[f000:d17d]    0xfd17d: mov    %cr0,%eax   </span><br><span class="line">[f000:d180]    0xfd180: or     $0x1,%eax       </span><br><span class="line">[f000:d184]    0xfd184: mov    %eax,%cr0       # 将cr0寄存器的保护模式位打开</span><br><span class="line"></span><br><span class="line">/*计算机中包含CR0~CR3四个控制寄存器，用来控制和确定处理器的操作模式。其中这三个语句的操作明显是要把CR0寄存器的最低位(0bit)置1。CR0寄存器的0bit是PE位，启动保护位，当该位被置1，代表开启了保护模式。但是这里出现了问题，我们刚刚说过BIOS是工作在实模式之下，后面的boot loader开始的时候也是工作在实模式下，所以这里把它切换为保护模式，显然是自相矛盾。所以只能推测它在检测是否机器能工作在保护模式下。*/</span><br><span class="line"></span><br><span class="line">[f000:d187]    0xfd187: ljmpl  $0x8,$0xfd18f   # 通过ljmp指令进入保护模式</span><br><span class="line">=&gt; 0xfd18f:     mov    $0x10,%eax              # 设置段寄存器</span><br><span class="line">=&gt; 0xfd194:     mov    %eax,%ds</span><br><span class="line">=&gt; 0xfd196:     mov    %eax,%es  </span><br><span class="line">=&gt; 0xfd198:     mov    %eax,%ss</span><br><span class="line">=&gt; 0xfd19a:     mov    %eax,%fs</span><br><span class="line">=&gt; 0xfd19c:     mov    %eax,%gs</span><br><span class="line">=&gt; 0xfd19e:     mov    %ecx,%eax  </span><br><span class="line">=&gt; 0xfd1a0:     jmp    *%edx                   # 跳转</span><br></pre></td></tr></table></figure>
+<p>在这里必须附上一个牛逼的链接：<a href="http://bochs.sourceforge.net/techspec/PORTS.LST" target="_blank" rel="noopener">I/O Func</a>。你可以看到各种I/O设备的端口号清单。</p>
+<p>关于CMOS的介绍，请看：<a href="http://wiki.osdev.org/CMOS" target="_blank" rel="noopener">CMOS</a>。</p>
+<p>中断向量表，请看：<a href="http://wiki.osdev.org/Interrupt_Descriptor_Table" target="_blank" rel="noopener">IDT</a>。</p>
+<p>GDT表实现了保护方式下非常重要的一部分，但是具体介绍将在boot loader过程中。</p>
+<h2 id="Part2-BootLoader"><a href="#Part2-BootLoader" class="headerlink" title="Part2: BootLoader"></a>Part2: BootLoader</h2><p>软盘和硬盘都被分为了512 Bytes的扇区(sector)。一个扇区是磁盘传输的最小粒度：每一个读操作和每一个写操作都必须是一个或者多个扇区，而且必须要扇区边界对齐。</p>
+<p>如果说一个磁盘是可引导的，那么该磁盘的第一个扇区就叫做<strong>引导扇区(boot sector)</strong>，也就是引导程序的代码储存的扇区。（意思就是引导盘的引导内容都在磁盘的第一个扇区）当BIOS发现一个可引导的硬件（软盘或者硬盘等），它将把引导扇区从磁盘中读取至内存的0x7c00-0x7dff位置，同时使用一个<code>jmp</code>指令设置CS:IP = 0000:7000，然后将控制权交给boot loader(引导程序)。与BIOS加载地址相同，这个地址对于PC来说是固定的且是标准化的(说实话原文还说是fairly arbitrary，我没读懂是什么意思)。</p>
+<blockquote>
+<p>从光盘中引导的情形更加复杂而且更加powerful，因为光盘的一个扇区大小是2048Bytes，也就是说BIOS可以从光盘中读取一个更大的引导镜像加载到内存中。</p>
+</blockquote>
+<p>在6.828中，我们使用传统的硬盘引导机制，这意味着我们的boot loader必须满足512Bytes的限制。</p>
+<p>引导由一个汇编源文件<code>boot/boot.s</code>，以及一个C源文件<code>boot/main.c</code>组成。</p>
+<p>如果我们想要完全理解这些文件，我们需要一些前置知识：下面可能…painful。</p>
+<h3 id="gt-实模式和保护模式"><a href="#gt-实模式和保护模式" class="headerlink" title="&gt; 实模式和保护模式"></a>&gt; 实模式和保护模式</h3><p>关于这些的简单介绍，请参考<a href="https://pdos.csail.mit.edu/6.828/2018/readings/pcasm-book.pdf" target="_blank" rel="noopener">PC Assembly Language</a>该书的1.2.7和1.2.8节。内容不多。</p>
+<p>实模式是为了与8086兼容而设置的。在实模式下，处理器相当于一个快速8086处理器。</p>
+<p>实际上，在<strong>处理器被加电或者复位的时候，实模式就会启动</strong>。</p>
+<ul>
+<li>实模式下，各寄存器以实模式的初始化值进行工作；</li>
+<li>实模式的地址空间一共有20位(1MB)；</li>
+<li>实模式下不支持内存分页机制（显然内存分页是为了给保护模式设置的）；</li>
+<li>实模式下，各内存段都是可读、可写、可执行的，不支持指令优先级，所有的指令均运行在特权级；</li>
+<li>实模式不支持任务切换；</li>
+<li>实模式的中断处理与8086相同，使用中断矢量表来定位中断服务程序。</li>
+</ul>
+<p>在保护模式下，处理器的所有功能都是可用的，具体来说：</p>
+<ul>
+<li>保护模式提供了完全的32位空间，寻址空间为4GB；</li>
+<li>保护模式支持内存分页机制，提供了对虚拟内存的硬件支持；</li>
+<li>保护模式的处理器支持多任务（上下文切换）；</li>
+<li>保护模式的处理器支持指令和数据的特权级，配合边界检查等机制，既可以共享数据也可以隔离各个任务。</li>
+</ul>
+<h3 id="gt-A20地址线"><a href="#gt-A20地址线" class="headerlink" title="&gt; A20地址线"></a>&gt; A20地址线</h3><p>不要意思，爷本来以为不用了解这个。。。</p>
+<p>早期的PC上，处理器只支持20位的地址空间，任何超过20位的地址都会被卷回。</p>
+<p>也就是说 0xffff + 0xffff = 0x1fffe -&gt; 0xfffe。</p>
+<p>然而从80286开始，Intel支持了24位的地址空间，上例的地址相加不会发生卷回。</p>
+<p>为了保证与早期的PC完全兼容，Intel采用“黑魔法”，将A20(第21根)地址线与键盘控制器的一个输出进行了与运算。进而控制了A20地址线的值。</p>
+<p>默认情况下，A20是置0的，PC将智能访问1M、3M、5M……这样的奇数段，进入保护模式之前我们必须先打开A20以获得完全寻址能力。</p>
+<p>JOS的内核可以通过端口的方式与键盘控制器进行通信而且打开A20。</p>
+<ul>
+<li>8042有一个1 Byte的输入缓冲区，一个1 Byte的输出缓冲区、一个1 Byte的状态寄存器、以及一个1 Byte的控制寄存器。前三个寄存器可以直接从0x60和0x64端口进行访问。最后一个寄存器通过“Read Command Byte”命令进行读，通过“Write Command Byte”命令进行写。</li>
+<li>对0x60端口读会读输入缓冲区；对0x60端口写会写输出缓冲区；对0x64端口读会读状态寄存器；对0x64端口写会发送命令。</li>
+<li>状态寄存器的Bit1为IBF - Input Buffer Full，当该Bit为1时，输入缓冲区满，不能对0x60端口或0x64端口写。</li>
+<li>对0x64端口写0xd1发送的命令是“Write Output Port”写输出端口，表明将参数写入输出端口（0x60端口写）。</li>
+<li>A20使用的是键盘控制器输出的Bit 1，向输出端口写入0xdf可以打开A20；向输出端口写入0xdd则会关闭A20。</li>
+</ul>
+<h3 id="gt-分段机制和全局描述符表GDT"><a href="#gt-分段机制和全局描述符表GDT" class="headerlink" title="&gt; 分段机制和全局描述符表GDT"></a>&gt; 分段机制和全局描述符表GDT</h3><p>x86处理器提供了分段机制和分页机制两种内存管理模式。如果要进入保护模式，就必须要启动分段机制（分页机制不是必须的）。</p>
+<p>分段机制将内存划分为若干个段，每一个段都由段基址、段界限和段属性构成。<strong>由一个段描述符表（可以理解为一个数组）描述所有段的信息</strong>。段描述符表可以是全局的也可以是局部的。</p>
+<p>简化来说，程序首先将对应的<strong>段选择子（数组索引）加载到段寄存器</strong>中。然后在执行程序时，根据指令的内容确定应该使用的段寄存器，然后<strong>根据段寄存器的段选择子再确定最终要使用的段描述符</strong>。结合段描述符中包含的信息加上指令自身的地址构造出实际的物理地址。最终将物理地址送到地址总线上，在物理内存中进行寻址，取回相应的数据。</p>
+<p>关于特权级、边界检查等相关内容再自行搜索。总之分段机制将虚拟地址转换成了线性地址。</p>
+<h4 id="gt-gt-全局描述符表寄存器"><a href="#gt-gt-全局描述符表寄存器" class="headerlink" title="&gt;&gt; 全局描述符表寄存器"></a>&gt;&gt; 全局描述符表寄存器</h4><p>x86处理器提供了专门的全局描述符表寄存器GDTR(Global Description Table Register)用于保存全局描述符表的表基址和表限长。GDTR由两个字节的表限长(limit)和4个字节的表基址(base)构成。表基址制定了全局描述符表的起始地址，表限长确定了全局描述符表的大小，结构体描述如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">gdtr</span> &#123;</span></span><br><span class="line">	u16 limite;</span><br><span class="line">	u32 base;</span><br><span class="line">&#125; __attribute__ ((packed));</span><br></pre></td></tr></table></figure>
+<p>机器刚刚加电，或者处理器复位后，表基址被默认设置为0，而表限长默认设置为0xffff。在保护模式初始化的过程中，必须给GDTR加载新的值。可以使用lgdt指令为GDTR加载新的值。</p>
+<h4 id="gt-gt-段选择子"><a href="#gt-gt-段选择子" class="headerlink" title="&gt;&gt; 段选择子"></a>&gt;&gt; 段选择子</h4><p>段选择子（2Bytes）用于<strong>选择特定的描述符表以及表中特定的描述符</strong>。段选择子一般都是被放置于段寄存器中，段选择子由<strong>13位的索引</strong>、<strong>1位的表指示位</strong>以及<strong>2位的请求特权级</strong>三部分组成。其中<strong>索引指定了描述符</strong>；<strong>表指示位选择应该访问的描述符表</strong>-0代表全局描述符表，1代表局部描述符表；<strong>请求特权级用于段级的保护机制</strong>，自0到4分别代表ring 0 到ring 3。结构体如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">selector</span> &#123;</span></span><br><span class="line">    u16 index:<span class="number">13</span>;</span><br><span class="line">    u16 ti:<span class="number">1</span>;</span><br><span class="line">    u16 rpl:<span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="gt-gt-段描述符"><a href="#gt-gt-段描述符" class="headerlink" title="&gt;&gt; 段描述符"></a>&gt;&gt; 段描述符</h4><p>段描述符（8Bytes）是段描述符表这个“数组”的“元素”。结构体描述如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">gdtdesc</span> &#123;</span></span><br><span class="line">	u16 lim0_15;</span><br><span class="line">	u16 base0_15;</span><br><span class="line">	u8 base16_23;</span><br><span class="line">	u8 acces;</span><br><span class="line">	u8 lim16_19:<span class="number">4</span>;</span><br><span class="line">	u8 other:<span class="number">4</span>;</span><br><span class="line">	u8 base24_31;</span><br><span class="line">&#125; __attribute__ ((packed));</span><br></pre></td></tr></table></figure>
+<p>总共包含32位的段基址、20位的段界限、12位的类型。</p>
+<p>段基址确定了段的起始地址。段界限规定了段的大小。类型用于<strong>区别不同类型的描述符（包括描述符特权级、段存在位、已访问位等）</strong></p>
+<h3 id="gt-GDT与LDT"><a href="#gt-GDT与LDT" class="headerlink" title="&gt; GDT与LDT"></a>&gt; GDT与LDT</h3><p>看了这些我们再来了解一下保护模式的地址。也就是计算机中实际存在两个表GDT、LDT，前者是全局描述符表，后者是本地段描述符表。他们都用来存放某个运行在内存中的程序的分段信息的。只不过全局描述符表是全局可见的，<strong>即每一个运行在内存中的程序都能访问这个表</strong>。<strong>操作系统的内核程序的段信息就存在GDT表里面。</strong>而LDT表是每一个在内存中的程序都包含的，这里面指明了每一个程序的段信息。</p>
+<p><img alt="image-20200302155554248" style="zoom: 67%;" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcfn2gz5knj30f506paar.jpg" data-index="2" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcfn2gz5knj30f506paar.jpg"></p>
+<p>这就是刚才的段描述符的结构了哈。</p>
+<p>gkd好了好了，我们现在回到BootLoader。BootLoader引导程序通过x86特殊的I/O指令直接访问IDE磁盘设备寄存器，从而从硬盘读取内核。如果需要对这个过程进行更加详细的了解，请阅读<a href="https://pdos.csail.mit.edu/6.828/2018/reference.html" target="_blank" rel="noopener">the 6.828 reference page</a>中的”IDE hard drive controller”部分。</p>
+<p>现在我们就来看一看我们的引导，boot.s和main.c：</p>
+<h3 id="2-1-boot-s-代码"><a href="#2-1-boot-s-代码" class="headerlink" title="2.1 boot.s 代码"></a>2.1 boot.s 代码</h3><p>boot.s代码在源文件中打开如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;inc/mmu.h&gt;</span><br><span class="line"></span><br><span class="line"># Start the CPU: switch to 32-bit protected mode, jump into C.</span><br><span class="line"># The BIOS loads this code from the first sector of the hard disk into</span><br><span class="line"># memory at physical address 0x7c00 and starts executing in real mode</span><br><span class="line"># with %cs=0 %ip=7c00.</span><br><span class="line"># boot.S 主要将CPU切换至32位保护模式，并且跳转进入C代码</span><br><span class="line"></span><br><span class="line">.set PROT_MODE_CSEG, 0x8         # kernel code segment selector</span><br><span class="line">.set PROT_MODE_DSEG, 0x10        # kernel data segment selector</span><br><span class="line">.set CR0_PE_ON,      0x1         # protected mode enable flag</span><br><span class="line"></span><br><span class="line">.globl start</span><br><span class="line">start:                        # 程序入口</span><br><span class="line">  .code16                     # Assemble for 16-bit mode 指导生成16位汇编代码</span><br><span class="line">  cli                         # Disable interrupts 关中断</span><br><span class="line">  cld                         # String operations increment 设置串传递顺序递增</span><br><span class="line"></span><br><span class="line">  # Set up the important data segment registers (DS, ES, SS). 设置重要的段寄存器为0</span><br><span class="line">  xorw    %ax,%ax             # Segment number zero</span><br><span class="line">  movw    %ax,%ds             # -&gt; Data Segment</span><br><span class="line">  movw    %ax,%es             # -&gt; Extra Segment</span><br><span class="line">  movw    %ax,%ss             # -&gt; Stack Segment</span><br><span class="line"></span><br><span class="line">  # Enable A20:</span><br><span class="line">  #   For backwards compatibility with the earliest PCs, physical</span><br><span class="line">  #   address line 20 is tied low, so that addresses higher than</span><br><span class="line">  #   1MB wrap around to zero by default.  This code undoes this.</span><br><span class="line">  # 开启A20：</span><br><span class="line">  #   A20的介绍已经给出，不再赘述。</span><br><span class="line">seta20.1:</span><br><span class="line">  inb     $0x64,%al               # Wait for not busy 等待缓冲区可用</span><br><span class="line">  testb   $0x2,%al                # Test for bit1</span><br><span class="line">                                  # if bit1 = 1 then buffer is full</span><br><span class="line">  jnz     seta20.1</span><br><span class="line"></span><br><span class="line">  movb    $0xd1,%al               # 0xd1 -&gt; port 0x64</span><br><span class="line">  outb    %al,$0x64               # Prepare to write output port 准备写入输出端口</span><br><span class="line"></span><br><span class="line">seta20.2:</span><br><span class="line">  inb     $0x64,%al               # Wait for not busy 等待缓冲区可用</span><br><span class="line">  testb   $0x2,%al</span><br><span class="line">  jnz     seta20.2                # The same as above 同上</span><br><span class="line"></span><br><span class="line">  movb    $0xdf,%al               # 0xdf -&gt; port 0x60</span><br><span class="line">  outb    %al,$0x60               # 0xdf -&gt; A20 gate enable command 打开A20</span><br><span class="line"></span><br><span class="line">  # Switch from real to protected mode, using a bootstrap GDT</span><br><span class="line">  # and segment translation that makes virtual addresses</span><br><span class="line">  # identical to their physical addresses, so that the</span><br><span class="line">  # effective memory map does not change during the switch.</span><br><span class="line">  lgdt    gdtdesc                # Load gdt size/base to gdtr 设置全局描述符表</span><br><span class="line">  movl    %cr0, %eax             # Control register 0</span><br><span class="line">                                 # bit0 is protected enable bit</span><br><span class="line">                                 # 读取控制寄存器0的值，其Bit0为允许保护模式位</span><br><span class="line">  orl     $CR0_PE_ON, %eax       # Set PE 将允许保护模式位置1</span><br><span class="line">  movl    %eax, %cr0             # Update Control register 0 设置控制寄存器0</span><br><span class="line"></span><br><span class="line">  # Jump to next instruction, but in 32-bit code segment.</span><br><span class="line">  # Switches processor into 32-bit mode.</span><br><span class="line">  ljmp    $PROT_MODE_CSEG, $protcseg # 通过ljmp指令（跳转至下一条指令）进入保护模式</span><br><span class="line"></span><br><span class="line">  .code32                     # Assemble for 32-bit mode 指导生成32位汇编代码</span><br><span class="line">protcseg:</span><br><span class="line">  # Set up the protected-mode data segment registers 设置保护模式的数据段寄存器</span><br><span class="line">  movw    $PROT_MODE_DSEG, %ax    # Our data segment selector</span><br><span class="line">  movw    %ax, %ds                # -&gt; DS: Data Segment</span><br><span class="line">  movw    %ax, %es                # -&gt; ES: Extra Segment</span><br><span class="line">  movw    %ax, %fs                # -&gt; FS</span><br><span class="line">  movw    %ax, %gs                # -&gt; GS</span><br><span class="line">  movw    %ax, %ss                # -&gt; SS: Stack Segment</span><br><span class="line"></span><br><span class="line">  # Set up the stack pointer and call into C. 设置栈指针并且调用C</span><br><span class="line">  movl    $start, %esp  # Stack has the opposite extension direction than Code</span><br><span class="line">                        # 注意栈的延伸方向和代码段相反</span><br><span class="line">  call bootmain #调用main.c中的bootmain函数</span><br><span class="line"></span><br><span class="line">  # If bootmain returns (it shouldn&apos;t), loop.</span><br><span class="line">spin:</span><br><span class="line">  jmp spin</span><br><span class="line"></span><br><span class="line"># Bootstrap GDT 引导GDT</span><br><span class="line">.p2align 2                                # force 4 byte alignment</span><br><span class="line">gdt:</span><br><span class="line">  SEG_NULL				# null seg 默认第一个段描述符为空</span><br><span class="line">  SEG(STA_X|STA_R, 0x0, 0xffffffff)	# code seg 设置代码段描述符</span><br><span class="line">  SEG(STA_W, 0x0, 0xffffffff)	        # data seg 设置数据段描述符</span><br><span class="line">  # 关于SEG宏可以参考mmu.h</span><br><span class="line"></span><br><span class="line">gdtdesc:                                  # 用于设置全局段描述符寄存器</span><br><span class="line">  .word   0x17                            # sizeof(gdt) - 1 # Size of gdt</span><br><span class="line">  .long   gdt                             # address gdt # Base address of gdt</span><br></pre></td></tr></table></figure>
+<hr>
+<p>看完了boot.s，我们还需要去理解main.c，同时我们需要了解以下内容。</p>
+<h3 id="gt-ELF文件格式"><a href="#gt-ELF文件格式" class="headerlink" title="&gt; ELF文件格式"></a>&gt; ELF文件格式</h3><p>可执行和可链接格式(Executable and Linkable Format)，相信学过计算机系统基础课程的朋友都不陌生（这一部分的详细内容可以参见CSAPP图书关于链接的详细章节）。简单来说ELF格式就是一种用于二进制文件、可执行文件、目标代码、共享库、核心转储格式文件。</p>
+<p>ELF文件可以分为两种视图：链接视图（Linking View）和执行视图（Execution View）。在这里我们只描述执行视图：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">+--------------------+</span><br><span class="line">|     ELF Header     |</span><br><span class="line">+--------------------+</span><br><span class="line">|Program Header Table|</span><br><span class="line">+--------------------+</span><br><span class="line">|      Segment 1     |</span><br><span class="line">+--------------------+</span><br><span class="line">|      Segment 2     |</span><br><span class="line">+--------------------+</span><br><span class="line">|         ...        |</span><br><span class="line">+--------------------+</span><br><span class="line">|Section Header Table|</span><br><span class="line">|       optinal      |</span><br><span class="line">+--------------------+</span><br></pre></td></tr></table></figure>
+<p>ELF文件格式主要由ELF头（ELF Header）、程序头部表（Program Header Table）个节头表（Section Header Table），执行视图中，节头表是可选的。</p>
+<p><img alt="image-20200302160913062" style="zoom:67%;" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcfndwkks1j30go0g9gna.jpg" data-index="3" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcfndwkks1j30go0g9gna.jpg"></p>
+<p><strong>注意：段（<code>Segment</code>）与节（<code>Section</code>）的区别。很多地方对两者有所混淆。段是程序执行的必要组成，当多个目标文件链接成一个可执行文件时，会将相同权限的节合并到一个段中。相比而言，节的粒度更小。</strong></p>
+<p>有关于这些数据结构的C语言定义可以参考头文件<inc elf.h>。</inc></p>
+<ul>
+<li>ELF头主要包含了ELF魔数、文件类型、程序头部表偏移和大小、程序入口等信息；</li>
+<li>程序头部表可以看做一个数据结构的数组，<strong>每一个元素都描述了一个段。主要包含了段的偏移、段的虚拟地址、段的物理地址、段的大小等信息</strong>。</li>
+</ul>
+<h3 id="gt-磁盘控制器"><a href="#gt-磁盘控制器" class="headerlink" title="&gt; 磁盘控制器"></a>&gt; 磁盘控制器</h3><p><img alt="image-20200302161557953" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcfnmnm2m6j305m09pjsc.jpg" data-index="4" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcfnmnm2m6j305m09pjsc.jpg"></p>
+<p><img alt="image-20200302161758369" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcfnn0xdabj305m08o0tk.jpg" data-index="5" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcfnn0xdabj305m08o0tk.jpg"></p>
+<p>磁盘是电脑的主要媒介。磁盘是由盘面构成的。每个盘面有两面或者称为表面，表面覆盖着磁性记录材料。盘面中央有一个可以旋转的主轴，使得盘面能够以固定的旋转速率旋转，通常为5400-15000转每分钟（Revolution Per Minute）。磁盘通常包含一个或多个这样的盘面，并且封装在一个密封的容器内。</p>
+<p>每一个表面是<strong>由一组称为磁道的同心圆组成</strong>。<strong>每个磁道被划分为一组扇区</strong>，<strong>每个扇区的数据位是等大的（通常为512字节）</strong>，这些数据编码在扇区上的磁性材料中。扇区之间由一些间隔分开，这些间隔中不存储数据位。间隔用来标识扇区的格式化位。</p>
+<p>磁盘的<strong>柱面是所有盘片上到主轴中心距离相等的磁道的集合</strong>。</p>
+<p><img alt="image-20200302162737033" style="zoom:50%;" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcfnx1wkbbj30hq0fwwqb.jpg" data-index="6" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcfnx1wkbbj30hq0fwwqb.jpg"></p>
+<p>对于磁盘的寻址通常分为CHS和LBA两种。</p>
+<ol>
+<li>CHS即柱面（cylinder）-磁头（head）-扇区（sector）寻址。每个盘片都对应着一个磁头，每一个盘片都被划分成柱面，每一个柱面都被划分成多个段。磁盘的最小存储单元是段。早期的IBM PC架构上采用CHS进行磁盘寻址。CHS是一个三元组，包括10bit的柱面号，8bit的磁头号以及6bit的扇区号。这样CHS的最大寻址范围为2^10 × 2^8 × 2^6 × 512 = 8GB。</li>
+<li>随着磁盘容量的不断扩大，CHS的8GB寻址范围已经不能满足需要，现在的磁盘普遍采用逻辑区块地址（Logical Block Adress）的方式进行寻址来进行抽象。LBA是一个整数，代表磁盘上的一个逻辑区块编号，通过将这个整数转换成CHS格式来完成磁盘的具体寻址。LBA为48个bit，最大寻址范围为128PB。在本实验中，LBA按照旧的规范采用28个bit。</li>
+</ol>
+<p>IDE硬盘控制器（IDE Hard Drive Controller）的0x1F7端口读为磁盘0状态寄存器。<br>其Bit6为RDY Bit，当其置1表明磁盘上电完成。在对于磁盘做任何操作（除了复位）之前务必要保证该Bit为1。<br>其Bit7为BSY Bit，当其置1表明磁盘忙。在你向磁盘发送任何指令前务必保证该Bit为0。</p>
+<p>通过IDE硬盘控制器读取扇区需要如下的步骤：</p>
+<ol>
+<li>向0x1F2端口写入待操作的扇区数目；</li>
+<li>向0x1F3-0x1F5端口依次写入LBA的低24位；</li>
+<li>向0x1F6端口的低4位写入LBA的高4位，向0x1F6端口的高4位写入驱动器地址；</li>
+<li>向0x1F7端口写入读命令0x20。</li>
+</ol>
+<p>0x1F6寄存器又称Drive/Head寄存器。其低4位是LBA的高4位。其Bit5和Bit7一般是1。其Bit6为LBA位，当置1时表示启用LBA寻址。其Bit4为DRV位。用来选择驱动器，Master驱动器为0，Slave驱动器为1。这里将高4位置为0x1110</p>
+<p>在使用读命令0x20之前需要完整的设置柱面/磁头/扇区。当这个命令完成，你可以从磁盘的数据寄存器（0x1F0端口）读取256个字（16Bits）。</p>
+<hr>
+<p>好了下面我们就开始看main.c。</p>
+<h3 id="2-2-main-c-代码"><a href="#2-2-main-c-代码" class="headerlink" title="2.2 main.c 代码"></a>2.2 main.c 代码</h3><p>官方的注释中已经详细的介绍了代码作用以及BOOT UP的总体流程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;inc/elf.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;inc/x86.h&gt;</span></span></span><br><span class="line"><span class="comment">/**********************************************************************</span></span><br><span class="line"><span class="comment"> * This a dirt simple boot loader, whose sole job is to boot</span></span><br><span class="line"><span class="comment"> * an ELF kernel image from the first IDE hard disk.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * DISK LAYOUT</span></span><br><span class="line"><span class="comment"> *  * This program(boot.S and main.c) is the bootloader.  It should</span></span><br><span class="line"><span class="comment"> *    be stored in the first sector of the disk.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *  * The 2nd sector onward holds the kernel image.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *  * The kernel image must be in ELF format.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * BOOT UP STEPS</span></span><br><span class="line"><span class="comment"> *  * when the CPU boots it loads the BIOS into memory and executes it</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *  * the BIOS intializes devices, sets of the interrupt routines, and</span></span><br><span class="line"><span class="comment"> *    reads the first sector of the boot device(e.g., hard-drive)</span></span><br><span class="line"><span class="comment"> *    into memory and jumps to it.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *  * Assuming this boot loader is stored in the first sector of the</span></span><br><span class="line"><span class="comment"> *    hard-drive, this code takes over...</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *  * control starts in boot.S -- which sets up protected mode,</span></span><br><span class="line"><span class="comment"> *    and a stack so C code then run, then calls bootmain()</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *  * bootmain() in this file takes over, reads in the kernel and jumps to it.</span></span><br><span class="line"><span class="comment"> **********************************************************************/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SECTSIZE 512</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELFHDR ((struct Elf *)0x10000)    <span class="comment">// scratch space  暂存空间</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">readsect</span><span class="params">(<span class="keyword">void</span> *, <span class="keyword">uint32_t</span>)</span></span>; <span class="comment">//读磁盘扇区</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">readseg</span><span class="params">(<span class="keyword">uint32_t</span>, <span class="keyword">uint32_t</span>, <span class="keyword">uint32_t</span>)</span></span>;<span class="comment">//从内核的offset处读取count个字节到物理地址pa处</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">bootmain</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Proghdr</span> *<span class="title">ph</span>, *<span class="title">eph</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// read 1st page off disk 从磁盘上读取第一页</span></span><br><span class="line">    readseg((<span class="keyword">uint32_t</span>)ELFHDR, SECTSIZE * <span class="number">8</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// is this a valid ELF? 通过ELF魔数确认ELF有效</span></span><br><span class="line">    <span class="keyword">if</span> (ELFHDR-&gt;e_magic != ELF_MAGIC) <span class="keyword">goto</span> bad;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// load each program segment (ignores ph flags) 读取各个段</span></span><br><span class="line">  	<span class="comment">// ELF header里面指明了第一个program section header的位置。</span></span><br><span class="line">    <span class="comment">// 也指明了最后一个位置在哪里</span></span><br><span class="line">    <span class="comment">// [ph, end_of_program_header)这个区间</span></span><br><span class="line">    <span class="comment">// 这里面表明了每个程序段的大小以及位置。</span></span><br><span class="line">    ph = (struct Proghdr *)((<span class="keyword">uint8_t</span> *)ELFHDR + ELFHDR-&gt;e_phoff);</span><br><span class="line">    <span class="comment">// 程序头部表的起始地址</span></span><br><span class="line">    eph = ph + ELFHDR-&gt;e_phnum;    <span class="comment">// 程序头部表的结束地址</span></span><br><span class="line">    <span class="keyword">for</span> (; ph &lt; eph; ph++)</span><br><span class="line">        <span class="comment">// p_pa is the load address of this segment (as well</span></span><br><span class="line">        <span class="comment">// as the physical address)</span></span><br><span class="line">        <span class="comment">// p_pa是加载地址也是物理地址</span></span><br><span class="line">        readseg(ph-&gt;p_pa, ph-&gt;p_memsz, ph-&gt;p_offset);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// call the entry point from the ELF header 从ELF头调用程序入口</span></span><br><span class="line">    <span class="comment">// note: does not return!</span></span><br><span class="line">    ((<span class="keyword">void</span> (*)(<span class="keyword">void</span>))(ELFHDR-&gt;e_entry))();</span><br><span class="line"></span><br><span class="line">bad:</span><br><span class="line">    <span class="comment">// stops simulation and breaks into the debug console</span></span><br><span class="line">    outw(<span class="number">0x8A00</span>, <span class="number">0x8A00</span>);</span><br><span class="line">    outw(<span class="number">0x8A00</span>, <span class="number">0x8E00</span>);</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) <span class="comment">/* do nothing */</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Read 'count' bytes at 'offset' from kernel into physical address 'pa'.</span></span><br><span class="line"><span class="comment">// 从内核的offset处读取count个字节到物理地址pa处</span></span><br><span class="line"><span class="comment">// Might copy more than asked 可能会读取超过count个（扇区对齐）</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">readseg</span><span class="params">(<span class="keyword">uint32_t</span> pa, <span class="keyword">uint32_t</span> count, <span class="keyword">uint32_t</span> offset)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">uint32_t</span> end_pa;</span><br><span class="line"></span><br><span class="line">    end_pa = pa + count;    <span class="comment">// 结束物理地址</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// round down to sector boundary 对齐到扇区</span></span><br><span class="line">    pa &amp;= ~(SECTSIZE - <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// translate from bytes to sectors, and kernel starts at sector 1</span></span><br><span class="line">    offset =</span><br><span class="line">        (offset / SECTSIZE) + <span class="number">1</span>;    <span class="comment">// 算出扇区数 注意扇区从1开始（0为引导扇区）</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// If this is too slow, we could read lots of sectors at a time.</span></span><br><span class="line">    <span class="comment">// We'd write more to memory than asked, but it doesn't matter --</span></span><br><span class="line">    <span class="comment">// we load in increasing order.</span></span><br><span class="line">    <span class="comment">// 在实际中往往将多个扇区一起读出以提高效率。</span></span><br><span class="line">    <span class="keyword">while</span> (pa &lt; end_pa) &#123;</span><br><span class="line">        <span class="comment">// Since we haven't enabled paging yet and we're using</span></span><br><span class="line">        <span class="comment">// an identity segment mapping (see boot.S), we can</span></span><br><span class="line">        <span class="comment">// use physical addresses directly.  This won't be the</span></span><br><span class="line">        <span class="comment">// case once JOS enables the MMU.</span></span><br><span class="line">        <span class="comment">// 考虑到没有开启分页以及boot.S中使用了一一对应的映射规则，</span></span><br><span class="line">        <span class="comment">// 加载地址和物理地址是一致的。</span></span><br><span class="line">        readsect((<span class="keyword">uint8_t</span> *)pa, offset);</span><br><span class="line">        pa += SECTSIZE;</span><br><span class="line">        offset++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">waitdisk</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// wait for disk reaady 等待磁盘准备完毕。</span></span><br><span class="line">    <span class="keyword">while</span> ((inb(<span class="number">0x1F7</span>) &amp; <span class="number">0xC0</span>) != <span class="number">0x40</span>) <span class="comment">/* do nothing */</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">readsect</span><span class="params">(<span class="keyword">void</span> *dst, <span class="keyword">uint32_t</span> offset)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// wait for disk to be ready</span></span><br><span class="line">    waitdisk();</span><br><span class="line"></span><br><span class="line">    outb(<span class="number">0x1F2</span>, <span class="number">1</span>);    <span class="comment">// count = 1 0x1F2 Disk 0 sector count</span></span><br><span class="line">    <span class="comment">// Read one sector each time</span></span><br><span class="line">    outb(<span class="number">0x1F3</span>, offset);    <span class="comment">// Disk 0 sector number (CHS Mode)</span></span><br><span class="line">    <span class="comment">// First sector's number</span></span><br><span class="line">    outb(<span class="number">0x1F4</span>, offset &gt;&gt; <span class="number">8</span>);     <span class="comment">// Cylinder low (CHS Mode)</span></span><br><span class="line">    outb(<span class="number">0x1F5</span>, offset &gt;&gt; <span class="number">16</span>);    <span class="comment">// Cylinder high (CHS Mode)</span></span><br><span class="line">    <span class="comment">// Cylinder number</span></span><br><span class="line">    outb(<span class="number">0x1F6</span>, (offset &gt;&gt; <span class="number">24</span>) | <span class="number">0xE0</span>);    <span class="comment">// Disk 0 drive/head</span></span><br><span class="line">    <span class="comment">// MASK 11100000</span></span><br><span class="line">    <span class="comment">// Drive/Head Register: bit 7 and bit 5 should be set to 1</span></span><br><span class="line">    <span class="comment">// Bit6: 1 LBA mode, 0 CHS mode</span></span><br><span class="line">    outb(<span class="number">0x1F7</span>, <span class="number">0x20</span>);    <span class="comment">// cmd 0x20 - read sectors</span></span><br><span class="line">    <span class="comment">/*20H       Read sector with retry. NB: 21H = read sector</span></span><br><span class="line"><span class="comment">                without retry. For this command you have to load</span></span><br><span class="line"><span class="comment">                the complete circus of cylinder/head/sector</span></span><br><span class="line"><span class="comment">                first. When the command completes (DRQ goes</span></span><br><span class="line"><span class="comment">                active) you can read 256 words (16-bits) from the</span></span><br><span class="line"><span class="comment">                disk's data register. */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// wait for disk to be ready</span></span><br><span class="line">    waitdisk();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// read a sector</span></span><br><span class="line">    insl(<span class="number">0x1F0</span>, dst, SECTSIZE / <span class="number">4</span>);</span><br><span class="line">    <span class="comment">// Data register: data exchange with 8/16 bits</span></span><br><span class="line">    <span class="comment">// insl port addr cnt: read cnt dwords from the input port</span></span><br><span class="line">    <span class="comment">// specified by port into the supplied output array addr.</span></span><br><span class="line">    <span class="comment">// dword: 4 bytes = 16 bits</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>我们看完了boot.s和main.c就大概知道了BootLoader的流程，下面让我们用gdb实际调试跟踪一下哈。在此之前我们先打开<code>/obj/boot/boot.asm</code>，这个汇编文件是我们的GNUmakefile在编译boot loader之后实际生成的机器码经过反汇编得到的。我们之前已经分析了boot.s和main.c，之所以要在这里看boot.asm是为了能够得到代码实际运行时的物理地址，也就是说为我们gdb调试进行服务的哈。</p>
+<p>同时，我们经过BootLoader加载的jos kernal实际上在<code>/obj/kernal/kernal.asm</code>文件中。</p>
+<p><strong>exercise 3:</strong></p>
+<p>现在我们仍然在qemu启动时，使用gdb在地址0x7c00的地方打一个断点<code>b *0x7c00</code>，这是boot sector被加载过程的起始代码地址。我们从这个断点开始，根据boot.asm中的地址继续跟踪。</p>
+<p><img alt="image-20200302172636927" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcfpmfrg2tj309o04e0sw.jpg" data-index="7" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcfpmfrg2tj309o04e0sw.jpg"></p>
+<p>果然我们现在来到了程序起始的关中断指令。然后我们跟着流程走一遍很快就会走完boot.s。</p>
+<p>紧接着我们需要执行0x7c45处的代码，也就是将程序交给main.c接管，也就是下图的call指令。</p>
+<p><img alt="image-20200302173124668" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcfprf7b3hj30a802a3yj.jpg" data-index="8" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcfprf7b3hj30a802a3yj.jpg"></p>
+<p>我们继续跟踪到bootmain函数中，根据之前的分析bootmain需要调用readseg()，从磁盘中读操作系统内核，而readseg()实际上是调用了一系列的readsect()函数读取磁盘扇区。我们把这一系列指令都执行一遍之后，来回答下面的四个问题。</p>
+<ol>
+<li>At what point does the processor start executing 32-bit code? What exactly causes the switch from 16- to 32-bit mode? 处理器是什么时候开始执行32位的代码？什么原因导致了16位模式切换到32位模式？</li>
+</ol>
+<p>这一步实际上就在地址0x7c2d的ljmp指令，从这句汇编指令执行完之后可见gdb调试界面输出 The target architecture is assumed to be i386。原因就是ljmp指令。</p>
+<p><img alt="image-20200302173526768" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcfpvmih7hj30a502caa4.jpg" data-index="9" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcfpvmih7hj30a502caa4.jpg"></p>
+<ol>
+<li>What is the <em>last</em> instruction of the boot loader executed, and what is the <em>first</em> instruction of the kernel it just loaded?boot loader执行的最后一条指令和kernal加载的第一条指令分别是什么？</li>
+</ol>
+<p><img alt="image-20200302174416401" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcfq4tg0i4j30a302g0ss.jpg" data-index="10" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcfq4tg0i4j30a302g0ss.jpg"></p>
+<p>一图解决，boot loader最后一条指令显然就是call指令，也就是说将控制权交给加载好的kernal接管。而kernal执行的第一条指令是<code>movw $0x1234, 0x472</code>。</p>
+<ol>
+<li><em>Where</em> is the first instruction of the kernel?内核的第一条指令在哪？</li>
+</ol>
+<p>上面那张图其实就说明了，就在0x10000c。</p>
+<ol>
+<li>How does the boot loader decide how many sectors it must read in order to fetch the entire kernel from disk? Where does it find this information?引导加载程序如何确定必须读多少个扇区才能从磁盘获取整个内核？它从哪里读取到这个信息？</li>
+</ol>
+<p>有意思的来了哈，这就需要对main.c中的bootmain函数进行理解了，上文已经解释过了。这里实际上就是引导从程序头部表中得到了段的数目以及每个段的大小，然后决定了要从磁盘上读多少个扇区。</p>
+<h3 id="2-3-Load-Kernal"><a href="#2-3-Load-Kernal" class="headerlink" title="2.3 Load Kernal"></a>2.3 Load Kernal</h3>
+                </article>
+                <ul class="tags-postTags">
+                    
+                    <li>
+                        <a href="/tags/operating-system/" rel="tag"># operating system</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    
+    <nav id="gobottom" class="pagination">
+        
+        <span class="prev-next-post">·</span>
+        
+        <a class="next-post" title="Data Structure for Graphics" href="/2019/07/31/FOCG-01/">
+            Data Structure for Graphics →
+        </a>
+        
+    </nav>
+
+    
+    <div class="inner">
+        <div id="comment"></div>
+    </div>
+    
+</div>
+
+<div class="toc-bar">
+    <div class="toc-btn-bar">
+        <a href="#site-main" class="toc-btn">
+            <svg viewbox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M793.024 710.272a32 32 0 1 0 45.952-44.544l-310.304-320a32 32 0 0 0-46.4 0.48l-297.696 320a32 32 0 0 0 46.848 43.584l274.752-295.328 286.848 295.808z"/></svg>
+        </a>
+        <div class="toc-btn toc-switch">
+            <svg class="toc-open" viewbox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M779.776 480h-387.2a32 32 0 0 0 0 64h387.2a32 32 0 0 0 0-64M779.776 672h-387.2a32 32 0 0 0 0 64h387.2a32 32 0 0 0 0-64M256 288a32 32 0 1 0 0 64 32 32 0 0 0 0-64M392.576 352h387.2a32 32 0 0 0 0-64h-387.2a32 32 0 0 0 0 64M256 480a32 32 0 1 0 0 64 32 32 0 0 0 0-64M256 672a32 32 0 1 0 0 64 32 32 0 0 0 0-64"/></svg>
+            <svg class="toc-close hide" viewbox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M512 960c-247.039484 0-448-200.960516-448-448S264.960516 64 512 64 960 264.960516 960 512 759.039484 960 512 960zM512 128.287273c-211.584464 0-383.712727 172.128262-383.712727 383.712727 0 211.551781 172.128262 383.712727 383.712727 383.712727 211.551781 0 383.712727-172.159226 383.712727-383.712727C895.712727 300.415536 723.551781 128.287273 512 128.287273z"/><path d="M557.05545 513.376159l138.367639-136.864185c12.576374-12.416396 12.672705-32.671738 0.25631-45.248112s-32.704421-12.672705-45.248112-0.25631l-138.560301 137.024163-136.447897-136.864185c-12.512727-12.512727-32.735385-12.576374-45.248112-0.063647-12.512727 12.480043-12.54369 32.735385-0.063647 45.248112l136.255235 136.671523-137.376804 135.904314c-12.576374 12.447359-12.672705 32.671738-0.25631 45.248112 6.271845 6.335493 14.496116 9.504099 22.751351 9.504099 8.12794 0 16.25588-3.103239 22.496761-9.247789l137.567746-136.064292 138.687596 139.136568c6.240882 6.271845 14.432469 9.407768 22.65674 9.407768 8.191587 0 16.352211-3.135923 22.591372-9.34412 12.512727-12.480043 12.54369-32.704421 0.063647-45.248112L557.05545 513.376159z"/></svg>
+        </div>
+        <a href="#gobottom" class="toc-btn">
+            <svg viewbox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M231.424 346.208a32 32 0 0 0-46.848 43.584l297.696 320a32 32 0 0 0 46.4 0.48l310.304-320a32 32 0 1 0-45.952-44.544l-286.848 295.808-274.752-295.36z"/></svg>
+        </a>
+    </div>
+    <div class="toc-main">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-1-PC-Bootstrap"><span class="toc-text">Part 1: PC Bootstrap</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-x86-Assembly"><span class="toc-text">1.1 x86 Assembly</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-Simulating-the-x86"><span class="toc-text">1.2 Simulating the x86</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-PC物理地址空间"><span class="toc-text">&gt; PC物理地址空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-ROM-BIOS"><span class="toc-text">1.3 ROM BIOS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part2-BootLoader"><span class="toc-text">Part2: BootLoader</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-实模式和保护模式"><span class="toc-text">&gt; 实模式和保护模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-A20地址线"><span class="toc-text">&gt; A20地址线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-分段机制和全局描述符表GDT"><span class="toc-text">&gt; 分段机制和全局描述符表GDT</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-全局描述符表寄存器"><span class="toc-text">&gt;&gt; 全局描述符表寄存器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-段选择子"><span class="toc-text">&gt;&gt; 段选择子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-段描述符"><span class="toc-text">&gt;&gt; 段描述符</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-GDT与LDT"><span class="toc-text">&gt; GDT与LDT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-boot-s-代码"><span class="toc-text">2.1 boot.s 代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-ELF文件格式"><span class="toc-text">&gt; ELF文件格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-磁盘控制器"><span class="toc-text">&gt; 磁盘控制器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-main-c-代码"><span class="toc-text">2.2 main.c 代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Load-Kernal"><span class="toc-text">2.3 Load Kernal</span></a></li></ol></li></ol>
+    </div>
+</div>
+
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+	</div>
+	
+
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+            
+
+<article class="read-next-card" style="background-image: url(https://tva1.sinaimg.cn/large/00831rSTly1gcfvz62ikmj30u0140kjl.jpg)">
+  <header class="read-next-card-header">
+    <small class="read-next-card-header-sitetitle">&mdash; Icegrave &mdash;</small>
+    <h3 class="read-next-card-header-title">Recent Posts</h3>
+  </header>
+  <div class="read-next-divider">
+    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+      <path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/>
+    </svg>
+  </div>
+  <div class="read-next-card-content">
+    <ul>
+      
+      
+      
+      <li>
+        <a href="/2020/03/02/os/">MIT6.828 - Lab1</a>
+      </li>
+      
+      
+      
+      <li>
+        <a href="/2019/07/31/FOCG-01/">Data Structure for Graphics</a>
+      </li>
+      
+      
+      
+      <li>
+        <a href="/2019/03/19/MAC-MASM/">MAC_MASM</a>
+      </li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    </ul>
+  </div>
+  <footer class="read-next-card-footer">
+    <a href="/archives">  MORE  → </a>
+  </footer>
+</article>
+
+            
+            
+            
+
+<article class="read-next-card" style="background-image: url(https://tva1.sinaimg.cn/large/00831rSTly1gcfvz62ikmj30u0140kjl.jpg)">
+    <header class="read-next-card-header tagcloud-card">
+        <h3 class="read-next-card-header-title">Categories</h3>
+    </header>
+    <div class="read-next-card-content">
+        <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/图形学基础/">图形学基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a></li></ul>
+    </div>
+</article>
+
+
+            
+            
+            
+
+<article class="read-next-card" style="background-image: url(https://tva1.sinaimg.cn/large/00831rSTly1gcfvz62ikmj30u0140kjl.jpg)">
+	<header class="read-next-card-header tagcloud-card">
+		<h3 class="read-next-card-header-title">Tag Cloud</h3>
+	</header>
+	<div class="read-next-card-content-ext">
+		<a href="/tags/Fundamentals-of-Computer-Graphics/" style="font-size: 14px;">Fundamentals of Computer Graphics</a> <a href="/tags/iOS/" style="font-size: 14px;">iOS</a> <a href="/tags/iosre/" style="font-size: 14px;">iosre</a> <a href="/tags/operating-system/" style="font-size: 14px;">operating system</a> <a href="/tags/工具/" style="font-size: 24px;">工具</a> <a href="/tags/随笔/" style="font-size: 14px;">随笔</a>
+	</div>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+	
+
+
+
+
+<div id="search" class="search-overlay">
+    <div class="search-form">
+        
+        <div class="search-overlay-logo">
+        	<img src="https://mubai.oss-cn-hangzhou.aliyuncs.com/icon.png" alt="Icegrave">
+        </div>
+        
+        <input id="local-search-input" class="search-input" type="text" name="search" placeholder="Search ...">
+        <a class="search-overlay-close" href="#"></a>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+
+<footer class="site-footer outer">
+	<div class="site-footer-content inner">
+		<div class="copyright">
+			<a href="/" title="Icegrave">Icegrave &copy; 2020</a>
+			
+				
+			        <span hidden="true" id="/2020/03/02/os/" class="leancloud-visitors" data-flag-title="MIT6.828 - Lab1">
+			            <span>阅读量 </span>
+			            <span class="leancloud-visitors-count">0</span>
+			        </span>
+	    		
+    		
+		</div>
+		<nav class="site-footer-nav">
+			
+			<a href="https://hexo.io" title="Hexo" target="_blank" rel="noopener">Hexo</a>
+			<a href="https://github.com/xzhih/hexo-theme-casper" title="Casper" target="_blank" rel="noopener">Casper</a>
+		</nav>
+	</div>
+</footer>
+	
+
+
+<script>
+    if(window.navigator && navigator.serviceWorker) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) {
+                registration.unregister()
+            }
+        })
+    }
+</script>
+
+
+<script id="scriptLoad" src="/js/allinone.min.js" async></script>
+
+
+<script>
+    document.getElementById('scriptLoad').addEventListener('load', function () {
+        
+        
+            var bLazy = new Blazy();
+        
+
+        
+        
+
+        
+        
+        
+            searchFunc("/");
+        
+        
+    })
+</script>
+
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+
+
+<script id="valineScript" src="//unpkg.com/valine/dist/Valine.min.js" async></script>
+<script>
+    document.getElementById('valineScript').addEventListener("load", function() {
+        new Valine({
+            el: '#comment' ,
+            verify: false,
+            notify: false,
+            appId: 'PlliSVE5ISCj7XAYOowLuJDX-gzGzoHsz',
+            appKey: 'CoE3u0Y1coO3kv6nHDpSuj4L',
+            placeholder: 'nil',
+            pageSize: 10,
+            avatar: 'mm',
+            visitor: true
+        })
+    });
+</script>
+
+
+
+
+
+</body>
+</html>
