@@ -254,11 +254,11 @@
 <li>对0x64端口写0xd1发送的命令是“Write Output Port”写输出端口，表明将参数写入输出端口（0x60端口写）。</li>
 <li>A20使用的是键盘控制器输出的Bit 1，向输出端口写入0xdf可以打开A20；向输出端口写入0xdd则会关闭A20。</li>
 </ul>
-<h3 id="gt-分段机制和全局描述符表GDT"><a href="#gt-分段机制和全局描述符表GDT" class="headerlink" title="&gt; 分段机制和全局描述符表GDT"></a>&gt; 分段机制和全局描述符表GDT</h3><p>分段机制可以看看：<a href="http://www.kerneltravel.net/chenlj/lecture4.pdf" target="_blank" rel="noopener">分段机制</a></p>
+<h3 id="gt-分段机制和全局描述符表GDT"><a href="#gt-分段机制和全局描述符表GDT" class="headerlink" title="&gt; 分段机制和全局描述符表GDT"></a>&gt; 分段机制和全局描述符表GDT</h3><p>注⚠️：<strong>更具体的段管理方式将在lab2中进行介绍。在不具备这些知识的前提下，可以暂时忽略下文关于分段机制的内容和介绍，直接跳到boot.S。</strong></p>
+<p>分段机制可以看看：<a href="http://www.kerneltravel.net/chenlj/lecture4.pdf" target="_blank" rel="noopener">分段机制</a></p>
 <p>x86处理器提供了分段机制和分页机制两种内存管理模式。如果要进入保护模式，就必须要启动分段机制（分页机制不是必须的）。</p>
 <p>分段机制将内存划分为若干个段，每一个段都由段基址、段界限和段属性构成。<strong>由一个段描述符表（可以理解为一个数组）描述所有段的信息</strong>。段描述符表可以是全局的也可以是局部的。</p>
-<p>简化来说，程序首先将对应的<strong>段选择子（数组索引）加载到段寄存器</strong>中。然后在执行程序时，根据指令的内容确定应该使用的段寄存器，然后<strong>根据段寄存器的段选择子再确定最终要使用的段描述符</strong>。结合段描述符中包含的信息加上指令自身的地址构造出实际的物理地址。最终将物理地址送到地址总线上，在物理内存中进行寻址，取回相应的数据。</p>
-<p>关于特权级、边界检查等相关内容再自行搜索。总之分段机制将虚拟地址转换成了线性地址。</p>
+<p>简化来说，程序首先将对应的<strong>段选择子（数组索引）加载到段寄存器</strong>中。然后在执行程序时，根据指令的内容确定应该使用的段寄存器，然后<strong>根据段寄存器的段选择子再确定最终要使用的段描述符</strong>。结合段描述符中包含的信息加上指令自身的地址构造出实际的线性地址（什么是线性地址呢？这个在lab2中会介绍）。最终将物理地址送到地址总线上，在物理内存中进行寻址，取回相应的数据。</p>
 <h4 id="gt-gt-全局描述符表寄存器"><a href="#gt-gt-全局描述符表寄存器" class="headerlink" title="&gt;&gt; 全局描述符表寄存器"></a>&gt;&gt; 全局描述符表寄存器</h4><p>x86处理器提供了专门的全局描述符表寄存器GDTR(Global Description Table Register)用于保存全局描述符表的表基址和表限长。GDTR由两个字节的表限长(limit)和4个字节的表基址(base)构成。表基址制定了全局描述符表的起始地址，表限长确定了全局描述符表的大小，结构体描述如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">gdtr</span> &#123;</span></span><br><span class="line">	u16 limite;</span><br><span class="line">	u32 base;</span><br><span class="line">&#125; __attribute__ ((packed));</span><br></pre></td></tr></table></figure>
 <p>机器刚刚加电，或者处理器复位后，表基址被默认设置为0，而表限长默认设置为0xffff。在保护模式初始化的过程中，必须给GDTR加载新的值。可以使用lgdt指令为GDTR加载新的值。</p>
