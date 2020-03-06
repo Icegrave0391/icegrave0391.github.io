@@ -5,8 +5,6 @@
 
 
 
-
-
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,7 +18,7 @@
 	<link rel="preconnect" href="//9qpuwspm.api.lncld.net">
 	<link rel="preconnect" href="//gravatar.loli.net">
 
-	<title>Tag: 工具 | Icegrave</title>
+	<title>shelly | Icegrave</title>
 
 	<meta name="HandheldFriendly" content="True">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -48,9 +46,9 @@
 
 	<meta property="og:site_name" content="Icegrave">
 	<meta property="og:type" content="blog">
-	<meta property="og:title" content="Tag: 工具 | Icegrave">
+	<meta property="og:title" content="shelly | Icegrave">
 	<meta property="og:description" content="Hello From The Other Side#">
-	<meta property="og:url" content="http://yoursite.com/tags/工具/index.html">
+	<meta property="og:url" content="http://yoursite.com/shelly.html">
 
 	
 
@@ -64,7 +62,7 @@
 </head>
 <body class="tag-template">
 	<div class="site-wrapper">
-		 
+		
 
 
 
@@ -138,9 +136,9 @@
         <div class="site-header-content">
             
             <h1 class="site-title">
-                Tag: 工具
+                shelly
             </h1>
-            <h2 class="site-description">Tags</h2>
+            <h2 class="site-description"></h2>
         </div>
         
         
@@ -148,128 +146,100 @@
 </header>
 
 
+
 <div id="site-main" class="site-main outer" role="main">
 	<div class="inner">
 		<div class="post-feed">
-			
-			<article class="post-card post  no-image ">
-				
-				<div class="post-card-content">
-					<a class="post-card-content-link" title="LLDB简易指南" href="/2019/03/14/lldb/">
-						<header class="post-card-header">
-							<span class="post-card-tags">
-								
-								
-								工具
-								| 
-								
-								<time datetime="2019-03-14T14:02:11.000Z">
-									2019-03-14
-								</time>
-							</span>
-							<h2 class="post-card-title">LLDB简易指南</h2>
-						</header>
-						<div class="post-card-excerpt">
-							<p>
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								关于LLDBLLDB is a next generation, high-performance debugger. It is built as a set
-								...
-							</p>
-						</div>
-					</a>
-					<footer class="post-card-meta">
-						<div class="author-list">
-							<div class="author-list-item">
-								<div class="author-name-tooltip">Heart-Shaped Box</div>
-								
-								<a href="/about" class="static-avatar">
-									<img class="author-profile-image" src="https://tva1.sinaimg.cn/large/00831rSTly1gcftzl9glaj30np0zktfu.jpg" alt="Heart-Shaped Box">
-								</a>
-								
-							</div>
-						</div>
-						<span class="reading-time">
-							14
-							min read
-						</span>
-					</footer>
-				</div>
-			</article>
-			
-			<article class="post-card post  no-image ">
-				
-				<div class="post-card-content">
-					<a class="post-card-content-link" title="Electra越狱下的iOS11配置debugserver+lldb" href="/2019/03/14/debugserver-1/">
-						<header class="post-card-header">
-							<span class="post-card-tags">
-								
-								
-								工具
-								| 
-								
-								<time datetime="2019-03-14T08:45:40.000Z">
-									2019-03-14
-								</time>
-							</span>
-							<h2 class="post-card-title">Electra越狱下的iOS11配置debugserver+lldb</h2>
-						</header>
-						<div class="post-card-excerpt">
-							<p>
-								
-								
-								
-								
-								
-								
-								
-								Electra越狱下的iOS11配置debugserver+lldbdebugserver实际执行lldb（作为客户端）传过来的命令，再将执行结果反馈给lldb最终显示给用户。（来自小黄书第二版）
-配置debugserver1.帮debugserver减肥    
-将未经处理的debugserver从iOS拷贝到OSX中。首先通过ssh连接设备，查看/Developer/usr/bin/debugserver是否存在。如果不存在：    
+			<article class="post-card post no-image custom-page">
+				<article class="post-full no-image">
+					<section class="post-full-content page-full-content">
+						<div id="photoswipe" class="markdown-body">
+							<h2 id="Process-Memory-Hunting-Shelly"><a href="#Process-Memory-Hunting-Shelly" class="headerlink" title="Process Memory Hunting - Shelly"></a>Process Memory Hunting - Shelly</h2><p>Execute shelly.exe in a virtual machine. Dump memory while it’s running.<br>  A) What port does shelly.exe listen on?<br>  B) Connect to shelly.exe using telnet or netcat. What do you see?<br>  C) Analyze the standard handles on the memory dump. What process(es) have redirected handles?</p>
+<h3 id="1-Dump-memory"><a href="#1-Dump-memory" class="headerlink" title="1. Dump memory"></a>1. Dump memory</h3><ul>
+<li>Firstly, open shelly.exe</li>
+</ul>
+<p><img alt="image-20200306214522535" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckjkwxx09j30ng0f6aao.jpg" data-index="0" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckjkwxx09j30ng0f6aao.jpg"></p>
+<ul>
+<li>open Task Manager and create dump file on process</li>
+</ul>
+<p><img alt="image-20200306214709633" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckjmrg7g5j30gu0hmmzl.jpg" data-index="1" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckjmrg7g5j30gu0hmmzl.jpg"></p>
 
-在OSX设备上运行Xcode
-为i
-								...
-							</p>
 						</div>
-					</a>
-					<footer class="post-card-meta">
-						<div class="author-list">
-							<div class="author-list-item">
-								<div class="author-name-tooltip">Heart-Shaped Box</div>
-								
-								<a href="/about" class="static-avatar">
-									<img class="author-profile-image" src="https://tva1.sinaimg.cn/large/00831rSTly1gcftzl9glaj30np0zktfu.jpg" alt="Heart-Shaped Box">
-								</a>
-								
-							</div>
-						</div>
-						<span class="reading-time">
-							2
-							min read
-						</span>
-					</footer>
-				</div>
+					</section>
+				</article>
 			</article>
-			
 		</div>
 	</div>
 </div>
 
 
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
 
-<div class="outer">
-	<nav class="pagination">
-		
-	</nav>
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
 
 
 
@@ -436,6 +406,11 @@
 </script>
 
 
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
 
 
 

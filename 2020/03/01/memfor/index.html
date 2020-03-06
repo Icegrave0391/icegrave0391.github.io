@@ -20,7 +20,7 @@
 	<link rel="preconnect" href="//9qpuwspm.api.lncld.net">
 	<link rel="preconnect" href="//gravatar.loli.net">
 
-	<title>Electra越狱下的iOS11配置debugserver+lldb | Icegrave</title>
+	<title>Memory Forensics | Icegrave</title>
 
 	<meta name="HandheldFriendly" content="True">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -48,14 +48,14 @@
 
 	<meta property="og:site_name" content="Icegrave">
 	<meta property="og:type" content="article">
-	<meta property="og:title" content="Electra越狱下的iOS11配置debugserver+lldb | Icegrave">
+	<meta property="og:title" content="Memory Forensics | Icegrave">
 	<meta property="og:description" content>
-	<meta property="og:url" content="http://yoursite.com/2019/03/14/debugserver-1/">
+	<meta property="og:url" content="http://yoursite.com/2020/03/01/memfor/">
 
 	
-	<meta property="article:published_time" content="2019-03-14T16:03:00+08:00"> 
+	<meta property="article:published_time" content="2020-03-01T17:03:00+08:00"> 
 	<meta property="article:author" content="Heart-Shaped Box">
-	<meta property="article:published_first" content="Icegrave, /2019/03/14/debugserver-1/">
+	<meta property="article:published_first" content="Icegrave, /2020/03/01/memfor/">
 	
 
 	
@@ -144,59 +144,97 @@
     <div class="inner">
         <header class="post-full-header">
             <div class="post-full-meta">
-                <time class="post-full-meta-date" datetime="2019-03-14T08:45:40.000Z">
-                    2019-03-14
+                <time class="post-full-meta-date" datetime="2020-03-01T09:18:10.000Z">
+                    2020-03-01
                 </time>
                 
                 <span class="date-divider">/</span>
                 
-                <a href="/categories/工具/">工具</a>&nbsp;&nbsp;
-                
                 
             </div>
-            <h1 class="post-full-title">Electra越狱下的iOS11配置debugserver+lldb</h1>
+            <h1 class="post-full-title">Memory Forensics</h1>
         </header>
         <div class="post-full no-image">
             
             <div class="post-full-content">
                 <article id="photoswipe" class="markdown-body">
-                    <h1 id="Electra越狱下的iOS11配置debugserver-lldb"><a href="#Electra越狱下的iOS11配置debugserver-lldb" class="headerlink" title="Electra越狱下的iOS11配置debugserver+lldb"></a>Electra越狱下的iOS11配置debugserver+lldb</h1><p>debugserver实际执行lldb（作为客户端）传过来的命令，再将执行结果反馈给lldb最终显示给用户。（来自小黄书第二版）</p>
-<h3 id="配置debugserver"><a href="#配置debugserver" class="headerlink" title="配置debugserver"></a>配置debugserver</h3><p><strong><em>1.帮debugserver减肥</em></strong>    </p>
-<p>将未经处理的debugserver从iOS拷贝到OSX中。<br>首先通过ssh连接设备，查看<code>/Developer/usr/bin/debugserver</code>是否存在。<strong>如果不存在：</strong>    </p>
-<ul>
-<li>在OSX设备上运行Xcode</li>
-<li>为iOS打开一个objc项目</li>
-<li>将iOS设备通过usb连接并且加载项目</li>
+                    <h1 id="Memory-Forensics"><a href="#Memory-Forensics" class="headerlink" title="Memory Forensics"></a>Memory Forensics</h1><h2 id="Basic-Knowledge"><a href="#Basic-Knowledge" class="headerlink" title="Basic Knowledge"></a>Basic Knowledge</h2><ul>
+<li>PAE: physical adress extension</li>
+<li>AS: Address spaces is an interface that provides flexible and consistent accsee to data in RAM.</li>
+<li>_KDDEBUGGER_DATA64: characteristics of the kernel debugger data block .</li>
 </ul>
-<p>再次检查<code>/Developer/usr/bin/debugserver</code>，此时该二进制文件应该存在。</p>
-<p>iOS11不需要减肥，因为只支持64位架构的程序。</p>
-<p><strong><em>2.添加task_for_pid权限</em></strong>    </p>
-<p>下载<a href="http://iosre.com/ent.xml" target="_blank" rel="noopener">ent.xml</a>到保存debugserver的目录下，cd到该目录，执行命令<br><code>/opt/theos/bin/ldid -Sent.xml debugserver</code></p>
-<p><strong><em>3.将处理的debugserver拷贝回iOS</em></strong></p>
-<p>使用ssh连接设备。<br><code>scp debugserver root@localhost:/usr/bin/debugserver</code><br><code>ssh root@localhost</code><br><code>iceGrave:~ root# chmod +x /usr/bin/debugserver</code></p>
-<p><strong>如果运行debugserver报错killed 9：</strong><br>编辑之前的xml，添加key<code>platform-application</code>为true</p>
-<h3 id="使用debugserver启动或者附加进程"><a href="#使用debugserver启动或者附加进程" class="headerlink" title="使用debugserver启动或者附加进程"></a>使用debugserver启动或者附加进程</h3><ul>
-<li>启动进程：<br><code>debugserver -x backboard IP:port /path/to/executable</code></li>
-</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DBGKD_DEBUG_DATA_HEADER64</span> &#123;</span> </span><br><span class="line">		LIST_ENTRY64 List; </span><br><span class="line">		ULONG OwnerTag; </span><br><span class="line">		ULONG Size; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Windows keeps a store of some useful global variables in a structure called <strong>_KDDEBUGGER_DATA64</strong>. This information is used by the microsoft kernel debugger in order to bootstap the analysis of a crash dump.</p>
+<h2 id="Volatility"><a href="#Volatility" class="headerlink" title="Volatility"></a>Volatility</h2><h3 id="selecting-a-profile"><a href="#selecting-a-profile" class="headerlink" title="selecting a profile"></a>selecting a profile</h3><p>In some cases that you don’t know the profile ahead of time, volatility includes two plugins that can help you determine the proper profile.(Windows only)</p>
+<ol>
+<li><code>imageinfo</code></li>
+</ol>
+<p>instruction: <code>python vol.py -f [filename] imageinfo</code></p>
+<p><img alt="image-20200306172125272" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckby9o9q2j30ng0c23z7.jpg" data-index="0" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckby9o9q2j30ng0c23z7.jpg"></p>
 <blockquote>
-<p>debugserver会启动executable，并且开启port端口，等待来自IP的lldb接入</p>
+<p>it also shows you the date and time when the memory sample was collected, the number of CPUS, some characteristics of the AS, such as whether PAE is enabled; and the directory table base (DTB) value used for address translation.</p>
 </blockquote>
-<ul>
-<li>附加进程：<br><code>debugserver IP:port -a &quot;ProcessName&quot;</code></li>
+<ol>
+<li>kdbgscan</li>
+</ol>
+<p>instruction: <code>python vol.py -f [filename] kdbgscan</code></p>
+<p>The name of the plugin gives you an idea of how the potential profiles are guessed: It finds and analyzes characteristics of the kernel debugger data block (_KDDEBUGGER_DATA64).</p>
+<p><img alt="image-20200306173632863" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckcdzzmjhj30mc0j0myc.jpg" data-index="1" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckcdzzmjhj30mc0j0myc.jpg"></p>
+<hr>
+<p>Now, you may supply <code>--profile=WinXPSP3x86</code> when running other plugins.</p>
+<h2 id="Memory-Dump-Formats"><a href="#Memory-Dump-Formats" class="headerlink" title="Memory Dump Formats"></a>Memory Dump Formats</h2><p>The volatility franeworks also provides several plugins, for exploring the metadara associated with many of the common file formats:</p>
+<p><img alt="image-20200306195815213" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckghgcb5rj30q509q75x.jpg" data-index="2" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckghgcb5rj30q509q75x.jpg"></p>
+<h3 id="gt-Raw-Memory-Dump"><a href="#gt-Raw-Memory-Dump" class="headerlink" title="&gt; Raw Memory Dump"></a>&gt; Raw Memory Dump</h3><ul>
+<li>The most widely supported format among analysis tools. </li>
+<li>Does not contain any headers, metadata, or magic values for file type identification.</li>
+<li>typically includes padding for any memory ranges that were intentionally skipped (i.e., device memory) or that could not be read by the acquisition tool, which helps maintain spatial integrity (relative offsets among data).</li>
 </ul>
+<h3 id="gt-Windows-Crash-Dump"><a href="#gt-Windows-Crash-Dump" class="headerlink" title="&gt; Windows Crash Dump"></a>&gt; Windows Crash Dump</h3><p>This file format was designed for debugging purposes. It begins with a <code>_DMP_HEADER</code> structure. 》 </p>
 <blockquote>
-<p>debugserver会附加ProcessName，并开启port端口，等待来自IP的lldb接入</p>
+<p>The header identifies the major and minor OS version, the kernel DTB(Directory  Table Base), the address of the active process and loaded kernel module list heads, and information on the physical memory runs.</p>
 </blockquote>
+<p><img alt="image-20200306200642283" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckgq8q2mkj30o90d3goe.jpg" data-index="3" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckgq8q2mkj30o90d3goe.jpg"></p>
+<h3 id="gt-Windows-Hibernation-File"><a href="#gt-Windows-Hibernation-File" class="headerlink" title="&gt; Windows Hibernation File"></a>&gt; Windows Hibernation File</h3><p>A hibernation file (hiberfil.sys) contains a compressed copy of memory that the system dumps to disk during the hibernation process.</p>
+<blockquote>
+<p>Hibernation files consist of a standard header (PO_MEMORY_IMAGE), a set of kernel contexts and registers such as CR3, and several arrays of compressed data blocks.</p>
+</blockquote>
+<p>An example of the hibernation file header:</p>
+<p><img alt="image-20200306202051606" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckh508ml5j30lg08mdh7.jpg" data-index="4" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckh508ml5j30lg08mdh7.jpg"></p>
+<h3 id="gt-Virtual-Machine-Memory"><a href="#gt-Virtual-Machine-Memory" class="headerlink" title="&gt; Virtual Machine Memory"></a>&gt; Virtual Machine Memory</h3><p>To acquire memory from a VM, you can run one of the aforementioned software tools within the guest OS (VM) or you can perform the acquisition from the hypervisor. </p>
+<h2 id="Windows-Objects-and-Pool-Allocations"><a href="#Windows-Objects-and-Pool-Allocations" class="headerlink" title="Windows Objects and Pool Allocations"></a>Windows Objects and Pool Allocations</h2><h3 id="gt-Windows-Executive-Objects"><a href="#gt-Windows-Executive-Objects" class="headerlink" title="&gt; Windows Executive Objects"></a>&gt; Windows Executive Objects</h3><p>Windows is written in C and makes heavy use of C structures to organize related data and attributes. Several of these structures are called executive objects because they are managed (created, protected, deleted, etc.) by the Windows Object Manager—a component of the kernel implemented by the NT module.</p>
+<blockquote>
+<p>All executive objects are structures, but not all structures are executive objects.</p>
+</blockquote>
+<p>The most forensically relevant executive objects types are described below:</p>
+<p><img alt="image-20200306205927113" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcki94tb52j30mr0mbdji.jpg" data-index="5" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcki94tb52j30mr0mbdji.jpg"></p>
+<p><img alt="image-20200306205941411" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcki9dg2blj30mr0700ts.jpg" data-index="6" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcki9dg2blj30mr0700ts.jpg"></p>
+<h3 id="gt-Object-Headers"><a href="#gt-Object-Headers" class="headerlink" title="&gt; Object Headers"></a>&gt; Object Headers</h3><ul>
+<li>One of the common traits shared between all executive object types is the presence of an object header (<code>_OBJECT_HEADER</code>)</li>
+<li>The object header immediately precedes the executive object structure in memory.</li>
+</ul>
+<p>Finding the structure (i.e.,<code>_FILE_OBJECT</code> in the figure) given the address of its <code>_OBJECT_HEADER</code>, or vice versa, is simple because the two are always directly adjacent; and the size of <code>_OBJECT_HEADER</code> is consistent per operating system.</p>
+<p><img alt="image-20200306210659152" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckigz0i1sj30lr0ggjte.jpg" data-index="7" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckigz0i1sj30lr0ggjte.jpg"></p>
+<p><img alt="image-20200306210737514" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckihmt5gnj30j40bhgmy.jpg" data-index="8" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckihmt5gnj30j40bhgmy.jpg"></p>
+<ul>
+<li><p><code>PointerCount</code>: Contains the total number of pointers to the object, including kernelmode references.</p>
+</li>
+<li><p><code>HandleCount</code>: Contains the number of open handles to the object.</p>
+</li>
+<li><p><code>TypeIndex</code>: This value tells you what type of object you’re dealing with (e.g., process, thread, file).</p>
+</li>
+<li><p><code>InfoMask</code>: This value tells you which of the optional headers, if any, are present. SecurityDescriptor: Stores information on the security restrictions for the object, such as which users can access it for reading, writing, deleting, and so on.</p>
+</li>
+<li><p><code>Body</code>: This member is just a placeholder that represents the start of the structure contained within the object.</p>
+</li>
+</ul>
+<h3 id="gt-Optional-Headers"><a href="#gt-Optional-Headers" class="headerlink" title="&gt; Optional Headers"></a>&gt; Optional Headers</h3><p>An object’s optional headers contain various types of metadata that help describe the object.</p>
+<p><img alt="image-20200306211042526" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckiktybbxj30n50a3tac.jpg" data-index="9" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckiktybbxj30n50a3tac.jpg"></p>
 
                 </article>
                 <ul class="tags-postTags">
                     
                     <li>
-                        <a href="/tags/iosre/" rel="tag"># iosre</a>
-                    </li>
-                    
-                    <li>
-                        <a href="/tags/工具/" rel="tag"># 工具</a>
+                        <a href="/tags/工具-memory-forensics/" rel="tag"># 工具, memory forensics</a>
                     </li>
                     
                 </ul>
@@ -207,14 +245,14 @@
     
     <nav id="gobottom" class="pagination">
         
-        <a class="prev-post" title="LLDB简易指南" href="/2019/03/14/lldb/">
-            ← LLDB简易指南
+        <a class="prev-post" title="手把手带你MIT6.828 - Lab1" href="/2020/03/02/os/">
+            ← 手把手带你MIT6.828 - Lab1
         </a>
         
         <span class="prev-next-post">·</span>
         
-        <a class="next-post" title="CNCC2018随笔" href="/2018/10/26/DO/">
-            CNCC2018随笔 →
+        <a class="next-post" title="Data Structure for Graphics" href="/2019/07/31/FOCG-01/">
+            Data Structure for Graphics →
         </a>
         
     </nav>
@@ -240,7 +278,7 @@
         </a>
     </div>
     <div class="toc-main">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Electra越狱下的iOS11配置debugserver-lldb"><span class="toc-text">Electra越狱下的iOS11配置debugserver+lldb</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置debugserver"><span class="toc-text">配置debugserver</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用debugserver启动或者附加进程"><span class="toc-text">使用debugserver启动或者附加进程</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Memory-Forensics"><span class="toc-text">Memory Forensics</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Basic-Knowledge"><span class="toc-text">Basic Knowledge</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Volatility"><span class="toc-text">Volatility</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#selecting-a-profile"><span class="toc-text">selecting a profile</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Memory-Dump-Formats"><span class="toc-text">Memory Dump Formats</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Raw-Memory-Dump"><span class="toc-text">&gt; Raw Memory Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Crash-Dump"><span class="toc-text">&gt; Windows Crash Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Hibernation-File"><span class="toc-text">&gt; Windows Hibernation File</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Virtual-Machine-Memory"><span class="toc-text">&gt; Virtual Machine Memory</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows-Objects-and-Pool-Allocations"><span class="toc-text">Windows Objects and Pool Allocations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Executive-Objects"><span class="toc-text">&gt; Windows Executive Objects</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Object-Headers"><span class="toc-text">&gt; Object Headers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Optional-Headers"><span class="toc-text">&gt; Optional Headers</span></a></li></ol></li></ol></li></ol>
     </div>
 </div>
 
@@ -435,7 +473,7 @@
 			<a href="/" title="Icegrave">Icegrave &copy; 2020</a>
 			
 				
-			        <span hidden="true" id="/2019/03/14/debugserver-1/" class="leancloud-visitors" data-flag-title="Electra越狱下的iOS11配置debugserver+lldb">
+			        <span hidden="true" id="/2020/03/01/memfor/" class="leancloud-visitors" data-flag-title="Memory Forensics">
 			            <span>阅读量 </span>
 			            <span class="leancloud-visitors-count">0</span>
 			        </span>
