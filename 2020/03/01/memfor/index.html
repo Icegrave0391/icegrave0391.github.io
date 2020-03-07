@@ -184,6 +184,7 @@
 <p><img alt="image-20200306173632863" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckcdzzmjhj30mc0j0myc.jpg" data-index="1" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckcdzzmjhj30mc0j0myc.jpg"></p>
 <hr>
 <p>Now, you may supply <code>--profile=WinXPSP3x86</code> when running other plugins.</p>
+<h3 id="shell"><a href="#shell" class="headerlink" title="shell"></a>shell</h3><p><code>python vol.py -f memory.dmp --profile=XXXX volshell</code></p>
 <h2 id="Memory-Dump-Formats"><a href="#Memory-Dump-Formats" class="headerlink" title="Memory Dump Formats"></a>Memory Dump Formats</h2><p>The volatility franeworks also provides several plugins, for exploring the metadara associated with many of the common file formats:</p>
 <p><img alt="image-20200306195815213" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckghgcb5rj30q509q75x.jpg" data-index="2" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckghgcb5rj30q509q75x.jpg"></p>
 <h3 id="gt-Raw-Memory-Dump"><a href="#gt-Raw-Memory-Dump" class="headerlink" title="&gt; Raw Memory Dump"></a>&gt; Raw Memory Dump</h3><ul>
@@ -205,32 +206,52 @@
 <h3 id="gt-Virtual-Machine-Memory"><a href="#gt-Virtual-Machine-Memory" class="headerlink" title="&gt; Virtual Machine Memory"></a>&gt; Virtual Machine Memory</h3><p>To acquire memory from a VM, you can run one of the aforementioned software tools within the guest OS (VM) or you can perform the acquisition from the hypervisor. </p>
 <h2 id="Windows-Objects-and-Pool-Allocations"><a href="#Windows-Objects-and-Pool-Allocations" class="headerlink" title="Windows Objects and Pool Allocations"></a>Windows Objects and Pool Allocations</h2><h3 id="gt-Windows-Executive-Objects"><a href="#gt-Windows-Executive-Objects" class="headerlink" title="&gt; Windows Executive Objects"></a>&gt; Windows Executive Objects</h3><p>Windows is written in C and makes heavy use of C structures to organize related data and attributes. Several of these structures are called executive objects because they are managed (created, protected, deleted, etc.) by the Windows Object Manager—a component of the kernel implemented by the NT module.</p>
 <blockquote>
-<p>All executive objects are structures, but not all structures are executive objects.</p>
+<p><strong>All executive objects are structures</strong>, but not all structures are executive objects.</p>
 </blockquote>
-<p>The most forensically relevant executive objects types are described below:</p>
+<p>The most forensically relevant executive <strong>objects types</strong> are described below:</p>
 <p><img alt="image-20200306205927113" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcki94tb52j30mr0mbdji.jpg" data-index="5" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcki94tb52j30mr0mbdji.jpg"></p>
 <p><img alt="image-20200306205941411" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcki9dg2blj30mr0700ts.jpg" data-index="6" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcki9dg2blj30mr0700ts.jpg"></p>
-<h3 id="gt-Object-Headers"><a href="#gt-Object-Headers" class="headerlink" title="&gt; Object Headers"></a>&gt; Object Headers</h3><ul>
-<li>One of the common traits shared between all executive object types is the presence of an object header (<code>_OBJECT_HEADER</code>)</li>
-<li>The object header immediately precedes the executive object structure in memory.</li>
+<h4 id="gt-gt-Object-Headers"><a href="#gt-gt-Object-Headers" class="headerlink" title="&gt;&gt; Object Headers"></a>&gt;&gt; Object Headers</h4><ul>
+<li>One of the common traits(特性) shared between all executive object types is the presence of an object header (<code>_OBJECT_HEADER</code>)</li>
+<li>The <strong>object header immediately precedes the executive object structure in memory</strong>.</li>
 </ul>
 <p>Finding the structure (i.e.,<code>_FILE_OBJECT</code> in the figure) given the address of its <code>_OBJECT_HEADER</code>, or vice versa, is simple because the two are always directly adjacent; and the size of <code>_OBJECT_HEADER</code> is consistent per operating system.</p>
 <p><img alt="image-20200306210659152" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckigz0i1sj30lr0ggjte.jpg" data-index="7" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckigz0i1sj30lr0ggjte.jpg"></p>
 <p><img alt="image-20200306210737514" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckihmt5gnj30j40bhgmy.jpg" data-index="8" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckihmt5gnj30j40bhgmy.jpg"></p>
 <ul>
-<li><p><code>PointerCount</code>: Contains the total number of pointers to the object, including kernelmode references.</p>
-</li>
-<li><p><code>HandleCount</code>: Contains the number of open handles to the object.</p>
-</li>
-<li><p><code>TypeIndex</code>: This value tells you what type of object you’re dealing with (e.g., process, thread, file).</p>
-</li>
-<li><p><code>InfoMask</code>: This value tells you which of the optional headers, if any, are present. SecurityDescriptor: Stores information on the security restrictions for the object, such as which users can access it for reading, writing, deleting, and so on.</p>
-</li>
-<li><p><code>Body</code>: This member is just a placeholder that represents the start of the structure contained within the object.</p>
-</li>
+<li><code>PointerCount</code>: Contains the <strong>total number of pointers to the object</strong>, including kernelmode references.</li>
+<li><code>HandleCount</code>: Contains the number of <strong>open handles to the object</strong>.</li>
+<li><code>TypeIndex</code>: This value tells you <strong>what type of object you’re dealing with</strong> (e.g., process, thread, file).</li>
+<li><code>InfoMask</code>: This value <strong>tells you which of the optional headers</strong>, if any, are present.</li>
+<li><code>SecurityDescriptor</code>: Stores information on the security restrictions for the object, such as which users can access it for reading, writing, deleting, and so on.</li>
+<li><code>Body</code>: This member is just a placeholder that represents the start of the structure contained within the object.</li>
 </ul>
-<h3 id="gt-Optional-Headers"><a href="#gt-Optional-Headers" class="headerlink" title="&gt; Optional Headers"></a>&gt; Optional Headers</h3><p>An object’s optional headers contain various types of metadata that help describe the object.</p>
+<h4 id="gt-gt-Optional-Headers"><a href="#gt-gt-Optional-Headers" class="headerlink" title="&gt;&gt; Optional Headers"></a>&gt;&gt; Optional Headers</h4><p>An object’s optional headers contain various types of metadata that help describe the object.</p>
 <p><img alt="image-20200306211042526" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gckiktybbxj30n50a3tac.jpg" data-index="9" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gckiktybbxj30n50a3tac.jpg"></p>
+<h4 id="gt-gt-Object-Type-Objects"><a href="#gt-gt-Object-Type-Objects" class="headerlink" title="&gt;&gt; Object Type Objects"></a>&gt;&gt; Object Type Objects</h4><p>Firstly, we take a look at <code>_OBJECT_HEADER</code> and find a member <code>TypeIndex</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x18     : TypeIndex               [&apos;unsigned char&apos;]</span><br></pre></td></tr></table></figure>
+<p>This member is an index into <code>nt!ObTypeIndexTable</code>.</p>
+<ul>
+<li><code>nt!ObTypeIndexTable</code> is an array of type objects(<code>_OBJECT_TYPE</code>), which we have shown above at the begin of this chapter.</li>
+</ul>
+<blockquote>
+<p>This data is critical to memory forensics because you can use it to determine the type of object that follows an _OBJECT_HEADER.</p>
+</blockquote>
+<p><strong>Data Structures:</strong></p>
+<p><img alt="image-20200307170307117" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gclh1j8t7nj30hx09d75y.jpg" data-index="10" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gclh1j8t7nj30hx09d75y.jpg"></p>
+<ul>
+<li><code>Name</code>: This is a <strong>Unicode string name of the object type</strong> (Process, File, Key, etc.). </li>
+<li><p><code>TotalNumberOfObjects</code>: The total number of objects of this particular object type that exist on the system.</p>
+</li>
+<li><p><code>TotalNumberOfHandles</code>: The total number of open handles to objects of this particular type.</p>
+</li>
+<li><p><code>TypeInfo</code>: An _OBJECT_TYPE_INITIALIZER structure that tells you the <strong>type of memory</strong> used to allocate instances of these objects (for example, paged or nonpaged memory).</p>
+</li>
+<li><code>Key</code>: A four-byte tag that is <strong>used to uniquely mark memory allocations</strong> that contain objects of this particular type.</li>
+</ul>
+<blockquote>
+<p>The <code>TypeInfo</code> and <code>Key</code> members provide two clues that will prove to be invaluable to memory forensics—<strong>they essentially tell you where to look (in paged or nonpaged memory) and what to look for</strong> (a specific four-byte tag) to find all instances of a particular object type (for example, all processes or all files).</p>
+</blockquote>
 
                 </article>
                 <ul class="tags-postTags">
@@ -284,7 +305,7 @@
         </a>
     </div>
     <div class="toc-main">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Memory-Forensics"><span class="toc-text">Memory Forensics</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Basic-Knowledge"><span class="toc-text">Basic Knowledge</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Volatility"><span class="toc-text">Volatility</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#selecting-a-profile"><span class="toc-text">selecting a profile</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Memory-Dump-Formats"><span class="toc-text">Memory Dump Formats</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Raw-Memory-Dump"><span class="toc-text">&gt; Raw Memory Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Crash-Dump"><span class="toc-text">&gt; Windows Crash Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Hibernation-File"><span class="toc-text">&gt; Windows Hibernation File</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Virtual-Machine-Memory"><span class="toc-text">&gt; Virtual Machine Memory</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows-Objects-and-Pool-Allocations"><span class="toc-text">Windows Objects and Pool Allocations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Executive-Objects"><span class="toc-text">&gt; Windows Executive Objects</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Object-Headers"><span class="toc-text">&gt; Object Headers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Optional-Headers"><span class="toc-text">&gt; Optional Headers</span></a></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Memory-Forensics"><span class="toc-text">Memory Forensics</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Basic-Knowledge"><span class="toc-text">Basic Knowledge</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Volatility"><span class="toc-text">Volatility</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#selecting-a-profile"><span class="toc-text">selecting a profile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shell"><span class="toc-text">shell</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Memory-Dump-Formats"><span class="toc-text">Memory Dump Formats</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Raw-Memory-Dump"><span class="toc-text">&gt; Raw Memory Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Crash-Dump"><span class="toc-text">&gt; Windows Crash Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Hibernation-File"><span class="toc-text">&gt; Windows Hibernation File</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Virtual-Machine-Memory"><span class="toc-text">&gt; Virtual Machine Memory</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows-Objects-and-Pool-Allocations"><span class="toc-text">Windows Objects and Pool Allocations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Executive-Objects"><span class="toc-text">&gt; Windows Executive Objects</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Object-Headers"><span class="toc-text">&gt;&gt; Object Headers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Optional-Headers"><span class="toc-text">&gt;&gt; Optional Headers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Object-Type-Objects"><span class="toc-text">&gt;&gt; Object Type Objects</span></a></li></ol></li></ol></li></ol></li></ol>
     </div>
 </div>
 
