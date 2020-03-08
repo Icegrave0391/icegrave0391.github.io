@@ -150,13 +150,16 @@
                 
                 <span class="date-divider">/</span>
                 
-                <a href="/categories/notes/">notes</a>&nbsp;&nbsp;
+                <a href="/categories/memory-forensics/">memory forensics</a>&nbsp;&nbsp;
                 
                 
             </div>
             <h1 class="post-full-title">Memory Forensics</h1>
         </header>
-        <div class="post-full no-image">
+        <div class="post-full ">
+            
+            <figure class="post-full-image" style="background-image: url(https://tva1.sinaimg.cn/large/00831rSTly1gclhs2jxcqj319m0n8ncd.jpg)">
+            </figure>
             
             <div class="post-full-content">
                 <article id="photoswipe" class="markdown-body">
@@ -384,6 +387,292 @@
 <p> However, <strong>this symbol can always be found at a predictable location relative to <code>nt!PoolTrackTable</code> (which is copied to the debugger data block).</strong> Thus, if you can find the pool track tables, you can find the big page track tables easily.</p>
 <p><img alt="image-20200307205919311" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gclnvay4ejj30k504pq3l.jpg" data-index="20" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gclnvay4ejj30k504pq3l.jpg"></p>
 <h4 id="gt-gt-Exploring-Big-Page-Pools"><a href="#gt-gt-Exploring-Big-Page-Pools" class="headerlink" title="&gt;&gt; Exploring Big Page Pools"></a>&gt;&gt; Exploring Big Page Pools</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f win7x64cmd.dd --profile=Win7SP0x64 bigpools &gt; bigpools.txt</span><br></pre></td></tr></table></figure>
+<h2 id="6-Processes-Handles-and-Tokens"><a href="#6-Processes-Handles-and-Tokens" class="headerlink" title="6 Processes, Handles, and Tokens"></a>6 Processes, Handles, and Tokens</h2><p>This Chapter combines three of the most common initial steps in an investigation: determining what applications are running, what they’re doing(in terms of access to files, registry keys, and so on), and what security context(or privilege level) they have obtained.</p>
+<h3 id="gt-Processes"><a href="#gt-Processes" class="headerlink" title="&gt; Processes"></a>&gt; Processes</h3><p>There are several of the basic resources that belong to a <strong>process</strong>:</p>
+<p><img alt="image-20200308151829635" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmjn074wej30mj0gstao.jpg" data-index="21" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmjn074wej30mj0gstao.jpg"></p>
+<ul>
+<li><p><code>_EPROCESS</code>: the name of the structure that Windows uses to represent a process.</p>
+<blockquote>
+<p>all operating systems share the same concepts that are described in this high-level diagram.</p>
+</blockquote>
+</li>
+<li><p>each process has its own private memory space that’s isolated from other processes.</p>
+</li>
+</ul>
+<p>Inside this memory space, you can find the process executable; its list of loaded modules (DLLs or shared libraries); and its stacks, heaps, and allocated memory regions containing everything from user input to application-specific data structures.</p>
+<ul>
+<li>SIDs(security identifiers) and privilege data: a <strong>Security Identifier</strong> (commonly abbreviated <strong>SID</strong>) is a unique, immutable identifier of a user, user group, or other security principal.</li>
+</ul>
+<h4 id="gt-gt-Data-Structures"><a href="#gt-gt-Data-Structures" class="headerlink" title="&gt;&gt; Data Structures"></a>&gt;&gt; Data Structures</h4><p>Windows tracks processes by assigning them a unique <code>_EPROCESS</code> structure that resides in a <strong>non-paged pool</strong> of kernel memory.</p>
+<p><img alt="image-20200308153340454" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmk2sm8tjj30lj0prwjk.jpg" data-index="22" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmk2sm8tjj30lj0prwjk.jpg"></p>
+<p>and below:</p>
+<p><img alt="image-20200308153352023" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmk2zufiwj30lq08u75q.jpg" data-index="23" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmk2zufiwj30lq08u75q.jpg"></p>
+<ul>
+<li><p><code>Pcb</code>: The <strong>kernel’s process control block</strong> (<code>_KPROCESS</code>). This structure is found at the base of <code>_EPROCESS</code> and contains several critical fields, including the DirectoryTableBase for address translation and the amount of time the process has spent in kernel mode and user mode.</p>
+</li>
+<li><p><code>CreateTime</code>: A UTC timestamp indicating when the process first started.</p>
+</li>
+<li><p><code>ExitTime</code>: A UTC timestamp indicating the time the process exited. <strong>This value is zero for still-running processes</strong>.</p>
+</li>
+<li><p><code>UniqueProcessId</code>: An integer that uniquely identifies the process (also known as the <strong>PID</strong>).</p>
+</li>
+<li><p><code>ActiveProcessLinks</code>: The <strong>doubly linked list that chains together active processes on the machine</strong>. Most APIs on a running system rely on walking this list. </p>
+<blockquote>
+<p>we can access all the process using <code>ActiveProcessLinks</code></p>
+</blockquote>
+</li>
+<li><p><code>SessionProcessLinks</code>: Another doubly linked list that chains together processes in the same session.</p>
+</li>
+<li><p><code>InheritedFromUniqueProcessId</code>: An integer that specifies the <strong>PID of the parent process</strong>. After a process is running, this member is not modified, even if its parent terminates.</p>
+</li>
+<li><p><code>Session</code>: This member points to the <code>_MM_SESSION_SPACE</code> structure (see Chapter 14) that <strong>stores information on a user’s logon session and graphical user interface (GUI) objects.</strong></p>
+</li>
+<li><p><code>ImageFileName</code>: <strong>The filename portion of the process’ executable</strong>. This field stores the first 16 ASCII characters, so longer filenames will appear truncated. To get the full path to the executable, or to see the Unicode name, you can access the corresponding VAD node or members in the PEB (see Chapter 7).</p>
+</li>
+<li><p><code>ThreadListHead</code>: A doubly linked list that <strong>chains together all the process’ threads</strong> (each list element is an <code>_ETHREAD</code>).</p>
+</li>
+<li><p><code>ActiveThreads</code>: <strong>An integer indicating the number of active threads running in the process context</strong>. Seeing a process with zero active threads is a good sign that the process has exited.</p>
+</li>
+<li><p><code>Peb</code>: A pointer to the <strong>Process Environment Block (PEB)</strong>. Although this member (<code>_EPROCESS.Peb</code>) exists in kernel mode, it points to an address in user mode. <strong>The PEB contains pointers to the process’ DLL lists, current working directory, command line arguments, environment variables, heaps, and standard handles</strong>. </p>
+</li>
+<li><code>VadRoot</code>: The <strong>root node of the VAD tree</strong>. It contains detailed information <strong>about a process’ allocated memory segments, including the original access permissions</strong> (read, write, execute) and whether a file is mapped into the region.</li>
+</ul>
+<h4 id="gt-gt-Process-Organization"><a href="#gt-gt-Process-Organization" class="headerlink" title="&gt;&gt; Process Organization"></a>&gt;&gt; Process Organization</h4><p>The <code>_EPROCESS</code> structure contains a <code>_LIST_ENTRY</code> structure called <code>ActiveProcessLinks</code>.</p>
+<p> The <code>_LIST_ENTRY</code> structure contains two members:</p>
+<ul>
+<li>Flink (forward link) that points to the <code>_LIST_ENTRY</code> of the next <code>_EPROCESS</code> structure</li>
+<li>Blink (backward link) that points to the <code>_LIST_ENTRY</code> of the previous <code>_EPROCESS</code> structure.</li>
+</ul>
+<p><code>_LIST_ENTRY</code> structures:</p>
+<p><img alt="image-20200308154619201" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmkfyh7iwj30nu0crdgn.jpg" data-index="24" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmkfyh7iwj30nu0crdgn.jpg"></p>
+<p>Review:</p>
+<p>To list processes, Volatility first locates the kernel debugger data block ( <code>_KDDEBUGGER_DATA64</code>). From there, it accesses the <code>PsActiveProcessHead</code> member, which points to the head of the doubly linked list of <code>_EPROCESS</code> structures. </p>
+<p>We also discussed the pool-scanning approach in Chapter 5.</p>
+<blockquote>
+<p>In this chapter, we present many other ways to find processes in a memory dump. It is important to implement alternative methods because the debugger data block, the linked-list pointers, and the pool tags are all nonessential to OS stability—which means they can be manipulated (accidentally or intentionally) to defeat forensic tools without disrupting the system or its processes.</p>
+</blockquote>
+<h4 id="gt-gt-Critical-System-Processes"><a href="#gt-gt-Critical-System-Processes" class="headerlink" title="&gt;&gt; Critical System Processes"></a>&gt;&gt; Critical System Processes</h4><blockquote>
+<p>if you know what’s normal, you can detect what’s abnormal more quickly</p>
+</blockquote>
+<p>So for now we’ll just focus on the theoretical concepts of how things should appear on clean systems.</p>
+<ul>
+<li><code>Idle</code> and <code>System</code>: These are not real processes (in the sense that they have no corresponding executable on disk). Idle is just a container that the kernel uses to charge CPU time for idle threads. Similarly, System serves as the default home for threads that run in kernel mode. Thus, the System process (PID 4) appears to own any sockets or handles to files that kernel modules open.</li>
+<li><code>csrss.exe</code>: <strong>The client/server runtime subsystem plays a role in creating and deleting processes and threads</strong>. It maintains a private list of the objects that you can use to cross-reference with other data sources. </li>
+<li><code>services.exe</code>: The Service Control Manager (SCM) in short, <strong>it manages Windows services and maintains a list of such services in its private memory space.</strong> This process should be the parent for any svchost.exe (service host) instances that you see, in addition to processes such as spoolsv.exe and SearchIndexer.exe that implement services. There should be only one copy of services.exe on a system, and it should be running from the system32 directory.</li>
+<li><code>svchost.ex</code>e: A clean system has multiple shared host processes running concurrently, each providing a container for DLLs that implement services. As previously mentioned, their parent should be services.exe, and the path to their executable should point to the system32 directory. In his blog, Patrick identifies a few of the common names (such as scvhost.exe and svch0st.exe) used by malware to blend in with these processes.</li>
+<li><code>lsass.exe</code>: The local security authority subsystem process is responsible for enforcing the security policy, verifying passwords, and creating access tokens. As such, it’s often the target of code injection because the plaintext password hashes can be found in its private memory space. There should be only one instance of lsass.exe running from the system32 directory, and its parent is winlogon.exe on pre-Vista machines, and wininit.exe on Vista and later systems. Stuxnet created two fake copies of lsass.exe, which caused them to stick out like a sore thumb.</li>
+<li><code>winlogon</code>.exe : This process presents the interactive logon prompt, initiates the screen saver when necessary, helps load user profiles, and responds to Secure Attention Sequence (SAS) keyboard operations such as CTRL+ALT+DEL. Also, this process monitors files and directories for changes on systems that implement Windows File Protection (WFP). As with most other critical processes, its executable is located in the system32 directory.</li>
+<li><code>explorer.exe</code>: You’ll see one Windows Explorer process for each logged-on user. It is responsible for handling a variety of user interactions such as GUI-based folder navigation, presenting the start menu, and so on. It also has access to sensitive material such as the documents you open and credentials you use to log in to FTP sites via Windows Explorer.</li>
+<li><code>smss.exe</code>: The session manager is the first real user-mode process that starts during the boot sequence. It is responsible for creating the sessions (see Chapter 14) that isolate OS services from the various users who may log on via the console or Remote Desktop Protocol (RDP).</li>
+</ul>
+<h4 id="gt-gt-Analyzing-Process-Activity"><a href="#gt-gt-Analyzing-Process-Activity" class="headerlink" title="&gt;&gt; Analyzing Process Activity*"></a>&gt;&gt; Analyzing Process Activity*</h4><ul>
+<li><code>pslist</code> <strong>finds and walks the doubly linked list of processes and prints a summary of the data.</strong> This method typically <strong>cannot show you terminated or hidden processes</strong>. </li>
+<li><code>pstree</code> takes the output from pslist and formats it in a tree view, so you can easily see parent and child relationships.</li>
+<li><code>psscan</code> <strong>scans for <code>_EPROCESS</code> objects instead of relying on the linked list</strong>. This plugin <strong>can also find terminated and unlinked (hidden) processes</strong>.</li>
+<li><code>psxview</code> locates processes using alternate process listings, so you can then cross-reference different sources of information and reveal malicious discrepancies.</li>
+</ul>
+<h4 id="gt-gt-Process-Tree-Visualizations"><a href="#gt-gt-Process-Tree-Visualizations" class="headerlink" title="&gt;&gt; Process Tree Visualizations"></a>&gt;&gt; Process Tree Visualizations</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python vol.py psscan –f simple007.mem --profile=Win7SP1x64</span><br><span class="line">																	    --output=dot</span><br><span class="line">																	    --output-file=processes.dot</span><br><span class="line"></span><br><span class="line">⚙ chuqiz@Narny-6 =&gt; ~/Downloads/graphviz-2.40.1 =&gt; dot -Tsvg -o ~/tree.svg ~/Desktop/processes.dot</span><br></pre></td></tr></table></figure>
+<p>Tree likes below：</p>
+<p><img alt="image-20200308170307920" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmmnur1tmj31y60g0tbn.jpg" data-index="25" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmmnur1tmj31y60g0tbn.jpg"></p>
+<h4 id="gt-gt-Detecting-DKOM-Attacks"><a href="#gt-gt-Detecting-DKOM-Attacks" class="headerlink" title="&gt;&gt; Detecting DKOM Attacks"></a>&gt;&gt; Detecting DKOM Attacks</h4><p>Many attacks are possible with Direct Kernel Object Manipulation (DKOM), but one of the most common is hiding a process by <strong>unlinking its entry from the doubly linked list</strong>. To accomplish this, overwrite the Flink and Blink pointers of surrounding objects so that they point around the <code>_EPROCESS</code> structure of the process to hide. Tools that execute on a running system and Volatility’s <code>pslist</code> command are susceptible to this attack, because they rely on the linked list. However, the <code>psscan</code> plugin uses the pool-scanning approach.</p>
+<p><strong>Alternate Process Listing:</strong></p>
+<ul>
+<li><p><strong>Process object scanning</strong>: This is the pool-scanning approach discussed in Chapter 5. Remember that the pool tags it finds are nonessential; thus, they can also be manipulated to evade the scanner.</p>
+</li>
+<li><p><strong>Thread scanning</strong>: Because every process must have at least one active thread, you can scan for _ETHREAD objects and then map them back to their owning process. The member used for mapping is either _ETHREAD.ThreadsProcess (Windows XP and 2003) or _ETHREAD.Tcb.Process (Windows Vista and later). Thus, even if a rootkit manipulated the process’ pool tags to hide from psscan, it would also need to go back and modify the pool tags for all the process’ threads.</p>
+</li>
+<li><p><strong>CSRSS handle table</strong>: As discussed in the critical system process descriptions, csrss.exe is involved in the creation of every process and thread (with the exception of itself and the processes that started before it). Thus, you can walk this process’ handle table, as described later in the chapter, and identify all _EPROCESS objects that way.</p>
+</li>
+<li><p><strong>PspCid table</strong>: This is a special handle table located in kernel memory that stores a reference to all active process and thread objects. The PspCidTable member of the kernel debugger data structure points to the table. Two rootkit detection tools, Blacklight and IceSword, relied on the PspCid table to find hidden processes. However, the author of FUTo (see <a href="http://www.openrce.org/articles/full_view/19" target="_blank" rel="noopener">http://www.openrce.org/articles/full_view/19</a>) proved it was still possible to hide by removing processes from the table.</p>
+</li>
+<li><p><strong>Session processes</strong>: The SessionProcessLinks member of _EPROCESS associates all processes that belong to a particular user’s logon session. It’s not any harder to unlink a process from this list, as opposed to the ActiveProcessLinks list. But because live system APIs don’t depend on it, attackers rarely find value in targeting it.</p>
+</li>
+<li><p><strong>Desktop threads</strong>: One of the structures discussed in Chapter 14 is the Desktop (tagDESKTOP). These structures store a list of all threads attached to each desktop, and you can easily map a thread back to its owning process.</p>
+</li>
+</ul>
+<p><strong>Process Cross-View Plugin</strong></p>
+<p>The <code>psxview</code> plugin enumerates processes in seven different ways: the active process linked list and the six methods previously identified. Thus, it’s unlikely that a rootkit can successfully hide from <code>psxview</code>.</p>
+<p><img alt="image-20200308163252517" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmlsdh8aqj30y40k240f.jpg" data-index="26" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmlsdh8aqj30y40k240f.jpg"></p>
+<h3 id="gt-Process-Tokens"><a href="#gt-Process-Tokens" class="headerlink" title="&gt; Process Tokens"></a>&gt; Process Tokens</h3><p>A process’ token describes its security context. This context includes security identifiers (SIDs) of users or groups that the process is running as and the various privileges (specific tasks) that it is allowed to perform.</p>
+<p>When the kernel needs to decide whether a process can access an object or call a particular API, it consults data in the process’ token.</p>
+<h4 id="gt-gt-Data-Structures-1"><a href="#gt-gt-Data-Structures-1" class="headerlink" title="&gt;&gt; Data Structures"></a>&gt;&gt; Data Structures</h4><p>The <code>_TOKEN</code> structure is large, so we won’t display all the members.</p>
+<p><img alt="image-20200308164700337" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmm72qyj8j30lm0judj3.jpg" data-index="27" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmm72qyj8j30lm0judj3.jpg"></p>
+<p>and below:</p>
+<p><img alt="image-20200308164716818" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmm7czsqbj30n30pi42j.jpg" data-index="28" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmm7czsqbj30n30pi42j.jpg"></p>
+<ul>
+<li><p><code>UserAndGroupCount</code>: This integer stores the size of the <code>UserAndGroups</code> array.</p>
+</li>
+<li><p><code>UserAndGroups</code>: An array of <code>_SID_AND_ATTRIBUTES</code> structures associated with the token. Each element in the array describes a different user or group that the process is a member of. The <code>Sid</code> member of <code>_SID_AND_ATTRIBUTES</code> points to a <code>_SID</code> structure, which has <code>IdentifierAuthority</code> and <code>SubAuthority</code> members that you can combine to form the S-1-5-[snip] SID strings.</p>
+</li>
+<li><p><code>PrivilegeCount</code> (Windows XP and 2003 only): This integer stores the size of the <code>Privileges</code> array.</p>
+</li>
+<li><p><code>Privileges</code> (Windows XP and 2003): An array of <code>_LUID_AND_ATTRIBUTES</code> structures</p>
+<p>that each describe a different privilege and its attributes (that is, present, enabled, enabled by default).</p>
+</li>
+<li><p><code>Privileges</code> (Windows Vista and later): This is an instance of <code>_SEP_TOKEN_PRIVILEGES</code>, which has three parallel 64-bit values (Present, Enabled, EnabledByDefault). The bit positions correspond to particular privileges, and the values of the bit (on or off) describe the privilege’s status.</p>
+</li>
+</ul>
+<h4 id="gt-gt-Accessing-Tokens"><a href="#gt-gt-Accessing-Tokens" class="headerlink" title="&gt;&gt; Accessing Tokens"></a>&gt;&gt; Accessing Tokens</h4><p>On a live machine, a process can access its own token through the <code>OpenProcessToken</code> API. To enumerate the SIDs or privileges, it can then use <code>GetTokenInformation</code> with the desired parameters. </p>
+<p>With administrator access, it can also query (or set) the tokens of other users’ processes, including the system-critical ones. Of course, existing tools already provide this type of functionality for you, such as <strong>Sysinternals Process Explorer</strong>.</p>
+<p><img alt="image-20200308171420415" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmmziqholj30df0g7juz.jpg" data-index="29" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmmziqholj30df0g7juz.jpg"></p>
+<p>This instance of explorer.exe belongs to a user named Jimmy, whose SID string is <code>S-1-5-21-[snip]-1000</code>. By analyzing the other SIDs in this process’ token, you can see it’s also in the <code>Everyone</code>, <code>LOCAL</code>, and <code>NT AUTHORITY\Authenticated Users</code> groups.</p>
+<h4 id="gt-gt-Extracting-and-Translating-SIDs-in-Memory"><a href="#gt-gt-Extracting-and-Translating-SIDs-in-Memory" class="headerlink" title="&gt;&gt; Extracting and Translating SIDs in Memory"></a>&gt;&gt; Extracting and Translating SIDs in Memory</h4><p>there are User SIDs such as S-1-5-21-4010035002-774237572-2085959976-1000. These SIDs break down into the following components:</p>
+<ul>
+<li>S: Prefix indicating that the string is a SID </li>
+<li>1: The revision level (version of the SID specification) from <code>_SID.Revision</code> </li>
+<li>5: The identifier authority value from <code>_SID.IdentifierAuthority.Value</code> </li>
+<li>21-4010035002-774237572-2085959976: The local computer or domain identifier from the <code>_SID.SubAuthority</code> values </li>
+<li>1000: A relative identifier that represents any user or group that doesn’t exist by default</li>
+</ul>
+<p>You can map the SID string to a username by querying the registry:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f memory.img --profile=Win7SP0x86 printkey -K &quot;Microsoft\Windows NT\CurrentVersion\ProfileList\S-1-5-21-4010035002-774237572-2085959976-1000&quot;</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200308173111605" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmnh1ueklj30n80alta3.jpg" data-index="30" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmnh1ueklj30n80alta3.jpg"></p>
+<h4 id="gt-gt-Detecting-Lateral-Movement"><a href="#gt-gt-Detecting-Lateral-Movement" class="headerlink" title="&gt;&gt; Detecting Lateral Movement"></a>&gt;&gt; Detecting Lateral Movement</h4><p>If you need to associate a process with a user account or investigate potential lateral movement attempts, use the getsids plugin.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ python vol.py –f grrcon.img --profile=WinXPSP3x86 getsids –p 1096</span><br><span class="line"></span><br><span class="line">explorer.exe: S-1-5-21-2682149276-1333600406-3352121115-500 (administrator) explorer.exe: S-1-5-21-2682149276-1333600406-3352121115-513 (Domain Users) explorer.exe: S-1-1-0 (Everyone) explorer.exe: S-1-5-32-545 (Users)</span><br><span class="line">explorer.exe: S-1-5-32-544 (Administrators) explorer.exe: S-1-5-4 (Interactive) explorer.exe: S-1-5-11 (Authenticated Users) explorer.exe: S-1-5-5-0-206541 (Logon Session) </span><br><span class="line">explorer.exe: S-1-2-0 (Local (Users with the ability to log in locally)) explorer.exe: S-1-5-21-2682149276-1333600406-3352121115-519 (Enterprise Admins) explorer.exe: S-1-5-21-2682149276-1333600406-3352121115-1115 </span><br><span class="line">explorer.exe: S-1-5-21-2682149276-1333600406-3352121115-518 (Schema Admins) explorer.exe: S-1-5-21-2682149276-1333600406-3352121115-512 (Domain Admins)</span><br></pre></td></tr></table></figure>
+<p>This command shows the SIDs associated with explorer.exe for the current logged-on user.</p>
+<h3 id="gt-Privileges"><a href="#gt-Privileges" class="headerlink" title="&gt; Privileges"></a>&gt; Privileges</h3><p>Privileges are another critical component involved in security and access control. A privilege is the permission to perform a specific task, such as debugging a process, shutting down the computer, changing the time zone, or loading a kernel driver.</p>
+<p>Before a process can enable a privilege, the privilege must be present in the process’ token. Administrators decide which privileges are present by configuring them in the Local Security Policy (LSP),</p>
+<p>You can access the LSP by going to Start ➪ Run and typing SecPol.msc:</p>
+<p><img alt="image-20200308174427394" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmnuuh2ldj30gi0iadg7.jpg" data-index="31" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmnuuh2ldj30gi0iadg7.jpg"></p>
+<p><img alt="image-20200308174509331" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmnvkq70mj30q60gmjva.jpg" data-index="32" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmnvkq70mj30q60gmjva.jpg"></p>
+<p>In English:</p>
+<p><img alt="image-20200308174533487" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmnvzwow0j30k80ak0ye.jpg" data-index="33" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmnvzwow0j30k80ak0ye.jpg"></p>
+<p>From a forensic perspective, you should be most concerned with the following privileges when they’ve been explicitly enabled:</p>
+<ul>
+<li><code>SeBackupPrivilege</code>: This grants read <strong>access to any file on the file system</strong>, regardless of its specified access control list (ACL). Attackers can leverage this privilege to copy locked files.</li>
+<li><p><code>SeDebugPrivilege</code>: This <strong>grants the ability to read from or write to another process’ private memory space</strong>. It <strong>allows malware to bypass the security boundaries that typically isolate processes</strong>. Practically all malware that performs code injection from user mode relies on enabling this privilege.</p>
+</li>
+<li><p><code>SeLoadDriverPrivilege</code>: This <strong>grants the ability to load or unload kernel drivers</strong>.</p>
+</li>
+<li><code>SeChangeNotifyPrivilege</code>: This <strong>allows the caller to register a callback function that gets executed when specific files and directories change.</strong> Attackers can use this to determine immediately when one of their configuration or executable files are removed by antivirus or administrators.</li>
+<li><code>SeShutdownPrivilege</code>: This <strong>allows the caller to reboot or shut down the system</strong>. Some infections, such as those that modify the Master Boot Record (MBR) don’t activate until the next time the system boots. Thus, you’ll often see malware trying to manually speed up the procedure by invoking a reboot.</li>
+</ul>
+<h4 id="gt-gt-Analyzing-Explicit-Privileges"><a href="#gt-gt-Analyzing-Explicit-Privileges" class="headerlink" title="&gt;&gt; Analyzing Explicit Privileges"></a>&gt;&gt; Analyzing Explicit Privileges</h4><p>Here’s the output of the Volatility <code>privs</code> plugin. You’ll see the privilege name along with its attributes (present, enabled, and/or enabled by default):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f grrcon.img privs -p 1096</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200308175020273" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmo0z63yvj30mv07swg1.jpg" data-index="34" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmo0z63yvj30mv07swg1.jpg"></p>
+<p>and below:</p>
+<p><img alt="image-20200308175027708" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmo13rnf6j30mm08qmza.jpg" data-index="35" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmo13rnf6j30mm08qmza.jpg"></p>
+<p>You can see several privileges present in the output. Only six of them are enabled, but three are enabled by default.</p>
+<h3 id="gt-Process-Handles"><a href="#gt-Process-Handles" class="headerlink" title="&gt; Process Handles"></a>&gt; Process Handles</h3><p>A handle is a reference to an open instance of a kernel object, such as a file, registry key, mutex, process, or thread.</p>
+<blockquote>
+<p>By enumerating and analyzing the specific objects a process was accessing at the time of a memory capture, it is possible to arrive at a number of forensically relevant conclusions—such as what process was reading or writing a particular file, what process accessed one of the registry run keys, and which process mapped remote file systems.</p>
+</blockquote>
+<h4 id="gt-gt-Lifetime-of-a-Handle"><a href="#gt-gt-Lifetime-of-a-Handle" class="headerlink" title="&gt;&gt; Lifetime of a Handle"></a>&gt;&gt; Lifetime of a Handle</h4><p>Before a process can access an object, it first opens a handle to the object by calling an API such as <code>CreateFile</code>, <code>RegOpenKeyEx</code>, or <code>CreateMutex</code>. These APIs return a special Windows data type called <code>HANDLE</code>, which is simply an index into a process-specific handle table.</p>
+<p>For example, when you call <code>CreateFile</code>,</p>
+<p> a pointer to the corresponding <code>_FILE_OBJECT</code> in kernel memory is placed in the first available slot in the calling process’ handle table, and the respective index (such as 0x40) is returned. Additionally, <strong>the handle count for the object is incremented</strong>. The calling process then passes the <code>HANDLE</code> value to functions that perform operations on the object, such as reading, writing, waiting, or deleting. Thus, APIs such as ReadFile and WriteFile work in the following manner:</p>
+<ol>
+<li>Find the base address of the calling process’ handle table.</li>
+<li>Seek to index 0x40.</li>
+<li>Retrieve the _FILE_OBJECT pointer.</li>
+<li>Carry out the requested operation.</li>
+</ol>
+<p>When a process is finished using an object, it should close the handle by calling the appropriate function (<code>CloseHandle</code>, <code>RegCloseHandle</code>, and so on). These APIs <strong>decrement the object’s handle count</strong> and <strong>remove the pointer to the object from the process’ handle table</strong>.</p>
+<p><strong>❓WHY USE HANDLE TABLE MODEL❓</strong></p>
+<p>The handle table model was designed for both convenience and security.</p>
+<ul>
+<li>It’s convenient because <a href>you don’t have to pass the full name or path of an objec</a>t each time you perform an operation—only when you initially open or create the object. </li>
+<li>For security purposes, it also helps to <strong>conceal the addresses of objects in kernel memory</strong>. Because processes in user mode should never directly access kernel objects, there’s no reason why they would need the pointers. </li>
+<li>Furthermore, the model <strong>provides a centralized way for the kernel to monitor access to kernel objects</strong>, thus giving it the chance to enforce security based on SIDs and privileges.</li>
+</ul>
+<h4 id="gt-gt-Reference-Counts-and-Kernel-Handles"><a href="#gt-gt-Reference-Counts-and-Kernel-Handles" class="headerlink" title="&gt;&gt; Reference Counts and Kernel Handles"></a>&gt;&gt; Reference Counts and Kernel Handles</h4><p>So far in this section, we’ve been referring to processes as the entities that interact with objects <strong>via handles</strong>.</p>
+<p>However, kernel modules, or threads in kernel mode, can call the equivalent kernel APIs (i.e., <code>NtCreateFile</code>, <code>NtReadFile</code>, <code>NtCreateMutex</code>) in a similar manner. In this case, the handles are <strong>allocated from the System (PID 4) process’ handle table.</strong> </p>
+<blockquote>
+<p>Thus, when you dump the handles of the System process, you’re <strong>actually seeing all the currently open resources requested by kernel modules.</strong></p>
+</blockquote>
+<ul>
+<li><p>Even if handles are closed, and references are released, there’s still a chance that you can find the objects by scanning the physical address space (as described in Chapter 5).</p>
+</li>
+<li><p>Of course, they wouldn’t be associated with a process’ handle table at that point, but their <strong>presence in RAM can still lend clues to your investigations</strong>. </p>
+<blockquote>
+<p>Likewise, after a process terminates, its handle table is destroyed, but that doesn’t mean all objects created by the process are destroyed at the same time.</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="gt-gt-Handle-Table-Internals"><a href="#gt-gt-Handle-Table-Internals" class="headerlink" title="&gt;&gt; Handle Table Internals"></a>&gt;&gt; Handle Table Internals</h4><p>Each process’ <code>_EPROCESS.ObjectTable</code> member <strong>points to a handle table</strong> ( <code>_HANDLE_TABLE</code>). This structure has a <code>TableCode</code> that serves two critical purposes: </p>
+<ul>
+<li>It <strong>specifies the number of levels in the table.</strong></li>
+<li>It <strong>points to the base address of the first level.</strong> </li>
+</ul>
+<p>All processes start out with a single-level table, which is shown in Figure 6-12. The table size is one page (4096 bytes), and this scheme allows for up to 512 handles on a 32-bit system or 256 on a 64-bit system. Indexes in the table contain <code>_HANDLE_TABLE_ENTRY</code> structures if they’re in use; otherwise, they’re zeroed out.</p>
+<p><img alt="image-20200308194859560" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmrgfjz3cj30o20dsabx.jpg" data-index="36" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmrgfjz3cj30o20dsabx.jpg"></p>
+<p>Also, there are two-level even three-level table.</p>
+<blockquote>
+<p>You can image it as Page Directory and Page Table Entry and so on.</p>
+</blockquote>
+<h4 id="gt-gt-Data-Structures-2"><a href="#gt-gt-Data-Structures-2" class="headerlink" title="&gt;&gt; Data Structures"></a>&gt;&gt; Data Structures</h4><p><img alt="image-20200308195404675" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmrlq7r02j30m609bq4r.jpg" data-index="37" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmrlq7r02j30m609bq4r.jpg"></p>
+<p>and below:</p>
+<p><img alt="image-20200308195419291" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmrlytjh8j30mc0bjjtm.jpg" data-index="38" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmrlytjh8j30mc0bjjtm.jpg"></p>
+<p>Some key points for <code>_HANDLE_TABLE</code>:</p>
+<ul>
+<li><code>TableCode</code>: This value <strong>tells you the number of levels in the table and points to the address of the top-level table</strong>. The dual purpose is achieved using a bit mask of seven (7). For example, to obtain the number of tables, you can compute TableCode &amp; 7; and to obtain the address, you can compute TableCode &amp; ~7. </li>
+<li><code>QuotaProcess</code> : <strong>A pointer to the process to which the handle table belongs</strong>. It can come in handy if you find handle tables using the pool-scanning approach described in Chapter 5 rather than enumerating processes and following their ObjectTable pointer.</li>
+<li><code>HandleTableList</code>: <strong>A linked list of process handle tables in kernel memory</strong>. You can use it to locate other handle tables—potentially even those for processes that have been unlinked from the process list.</li>
+<li><code>HandleCount</code>: The <strong>total number of handle table entries</strong> that are currently in use by the process. This field was removed starting in Windows 8 and Server 2012.</li>
+</ul>
+<p>Some key points for <code>_HANDLE_TABLE_ENTRY</code>:</p>
+<ul>
+<li><p><code>Object</code>: This member points to the <code>_OBJECT_HEADER</code> of the corresponding object. The <code>_EX_FAST_REF</code> is a special data type that combines reference count information into the least significant bits of the pointer.</p>
+</li>
+<li><p><code>GrantedAccess</code>: A bit mask that specifies the granted access rights (read, write, delete, synchronize, etc.) that the owning process has obtained for the object.</p>
+</li>
+</ul>
+<h3 id="gt-Enumerating-Handles-in-Memory"><a href="#gt-Enumerating-Handles-in-Memory" class="headerlink" title="&gt; Enumerating Handles in Memory*"></a>&gt; Enumerating Handles in Memory*</h3><p>The Volatility <code>handles</code> plugin generates output by walking the handle table data structures. There are a few filtering options:</p>
+<ul>
+<li><p>Filter by process ID: You can pass one or more (comma-separated) process IDs to the <code>-p/--pid</code> option.</p>
+</li>
+<li><p>Filter by process offset: You can supply the physical offset of an <code>_EPROCESS</code> structure to the <code>-o/--offset</code> option.</p>
+</li>
+<li><p>Filter by object type: If you’re interested in only a particular type of object, such as files or registry keys, you can specify the appropriate name(s) to the <code>-t/--object-type</code> option. See Chapter 5 or enter <code>!object \ObjectTypes</code> into Windbg to see the full list of object types.</p>
+</li>
+<li><p>Filter by name: Not all objects have names. Unnamed objects are obviously useless when searching for indicators by name, so one way to reduce noise is to use the <code>--silent</code> option, which suppresses handles to unnamed objects.</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f zeus.vmem --profile=WinXPSP3x86 -p 632 handles</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200308200304795" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmrv336bfj30o2036gly.jpg" data-index="39" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmrv336bfj30o2036gly.jpg"></p>
+<p>and below:</p>
+<p><img alt="image-20200308200316769" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmrvan7y9j30nw06iq44.jpg" data-index="40" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmrvan7y9j30nw06iq44.jpg"></p>
+<p>As shown in the next example, you can limit your search to files and mutexes opened by PID 632 and ignore unnamed objects:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f zeus.vmem --profile=WinXPSP3x86 -p 632 handles</span><br><span class="line">		-t File,Mutant</span><br><span class="line">		--silent</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200308200423716" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmrwge5e3j30o50df0vi.jpg" data-index="41" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmrwge5e3j30o50df0vi.jpg"></p>
+<p>You see the user.ds and local.ds files, which contain the configuration and stolen data. The sdra64.exe file in the system32 directory is the initial Zeus installer.</p>
+<blockquote>
+<p>ou also may notice several open handles to <code>\Device\Tcp</code> and <code>\Device\Ip</code>. These are obviously different from the handles to files prefixed with <code>\Device\HarddiskVolume1</code>.</p>
+<p>Specifically, Tcp and Ip are not files on the machine’s hard drive. This is described in Chapter 11, but what you’re essentially seeing are artifacts of network sockets that the process creates. Although sockets aren’t files, they support similar operations such as opening, reading, writing, and deleting. As a result, the same handle/descriptor subsystem can service both files and network sockets.</p>
+<p>Along the same lines, <strong>named pipes are also represented as file objects</strong>. Thus, if malware creates a named pipe for interprocess communication or to redirect output of a backdoor command shell into a file, you can determine which processes are involved in that activity, provided that you <strong>know the name of the pipe it creates. In this case, it’s easy to identify because the name of the pipe that Zeus uses is the same as the standard mutex it creates to mark its presence on systems ( _AVIRA_)</strong>.</p>
+</blockquote>
+<h4 id="gt-gt-Detecting-Registry-Persistence"><a href="#gt-gt-Detecting-Registry-Persistence" class="headerlink" title="&gt;&gt; Detecting Registry Persistence"></a>&gt;&gt; Detecting Registry Persistence</h4><p>Malware often leverages the registry for persistence. To write the pertinent values, the malicious process must first open a handle to the desired registry key.</p>
+<blockquote>
+<p>you’ll see how obvious it is when malware chooses a well-known location (such as the Run key) and also suffers from a handle leak. You should not only recognize the registry key name but also the fact that you have numerous open handles to the same key.</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f laqma.mem --profile=WinXPSP3x86 handles</span><br><span class="line">		--object-type=Key</span><br><span class="line">		--pid=1700</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200308202015902" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmsd08hraj30o60j3win.jpg" data-index="42" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmsd08hraj30o60j3win.jpg"></p>
+<blockquote>
+<p>The process has nearly 20 open handles to the RUN key (not all are shown). This is indicative of a bug in the code that fails to close its handles after opening them.</p>
+</blockquote>
+<p>Of course, the artifacts won’t always be this obvious, and just because a handle to a key is open, that doesn’t mean the process added values. </p>
+<p>However, you can always confirm your suspicions by using the <code>printkey</code> plugin (see Chapter 10) to look at the actual data that the key contains:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f laqma.mem printkey -K &quot;MICROSOFT\WINDOWS\CURRENTVERSION\RUN&quot;</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200308202735782" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmsklhwp0j30nw0deac5.jpg" data-index="43" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmsklhwp0j30nw0deac5.jpg"></p>
+<p>Based on their names, the final two entries seem suspicious—they cause <code>lanmanwrk.exe</code> and <code>KernelDrv.exe</code> to start automatically at each boot.</p>
+<h4 id="gt-gt-Identifying-Remote-Mapped-Drives"><a href="#gt-gt-Identifying-Remote-Mapped-Drives" class="headerlink" title="&gt;&gt; Identifying Remote Mapped Drives"></a>&gt;&gt; Identifying Remote Mapped Drives</h4><p>Many adversaries rely on commands such as <code>net view</code> and <code>net use</code> to explore the surrounding network and map remote drives. </p>
+<p>Obtaining read access to a company’s Server Message Block (SMB) file server or write access to various other workstations or servers in an enterprise can lead to successful lateral movement.</p>
+<ul>
+<li>The following example shows <strong>how an attacker navigates the network to mount two remote drives</strong>. The Users directory of a system named WIN-464MMR8O7GF is mounted on P, and the C$ share of a system named LH-7J277PJ9J85I is mounted at Q:</li>
+</ul>
+<p><img alt="image-20200308203556523" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmsta2ujuj30m70ic0v9.jpg" data-index="44" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmsta2ujuj30m70ic0v9.jpg"></p>
+<ul>
+<li><p><strong>The trick to finding evidence of remote mapped drives in memory</strong> is to look for file handles prefixed with <code>\Device\Mup</code> and <code>\Device\LanmanRedirector</code>:</p>
+<blockquote>
+<p>MUP, which stands for Multiple Universal Naming Convention (UNC) Provider, is a kernel-mode component that channels requests to access remote files using UNC names to the appropriate network redirector. In this case, <code>LanmanRedirector</code> handles the SMB protocol.</p>
+</blockquote>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f hop.mem --profile=VistaSP2x64 handles -t File | grep Mup</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200308204050322" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmsydpfuej30o10a9aby.jpg" data-index="45" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmsydpfuej30o10a9aby.jpg"></p>
+<p>You have several plain handles to \Device\Mup (they are normal). The few in bold are the ones you should find interesting because they actually display the local drive letter, the remote NetBIOS name, and the share or file system path name. </p>
+<blockquote>
+<p>There are also two different process IDs shown: 752 and 1544. In this case, 752 is the instance of svchost.exe that runs the LanmanWorkstation service; it creates and maintains client network connections to remote servers using the SMB protocol. PID 1544 is the cmd.exe shell, and it has a handle to <code>C$\Users\Jimmy\Documents</code> as a result of the attacker changing into that directory.</p>
+</blockquote>
 
                 </article>
                 <ul class="tags-postTags">
@@ -433,7 +722,7 @@
         </a>
     </div>
     <div class="toc-main">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Memory-Forensics"><span class="toc-text">Memory Forensics</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Basic-Knowledge"><span class="toc-text">Basic Knowledge</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Volatility"><span class="toc-text">Volatility</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#selecting-a-profile"><span class="toc-text">selecting a profile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shell"><span class="toc-text">shell</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Memory-Dump-Formats"><span class="toc-text">Memory Dump Formats</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Raw-Memory-Dump"><span class="toc-text">&gt; Raw Memory Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Crash-Dump"><span class="toc-text">&gt; Windows Crash Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Hibernation-File"><span class="toc-text">&gt; Windows Hibernation File</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Virtual-Machine-Memory"><span class="toc-text">&gt; Virtual Machine Memory</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Windows-Objects-and-Pool-Allocations"><span class="toc-text">5 Windows Objects and Pool Allocations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Executive-Objects"><span class="toc-text">&gt; Windows Executive Objects</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Object-Headers"><span class="toc-text">&gt;&gt; Object Headers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Optional-Headers"><span class="toc-text">&gt;&gt; Optional Headers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Object-Type-Objects"><span class="toc-text">&gt;&gt; Object Type Objects</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Kernel-Pool-Allocations"><span class="toc-text">&gt; Kernel Pool Allocations</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Allocation-APIs"><span class="toc-text">&gt;&gt; Allocation APIs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-De-allocation-and-Reuse"><span class="toc-text">&gt;&gt; De-allocation and Reuse</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Pool-Tag-Scanning"><span class="toc-text">&gt; Pool-Tag Scanning</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Tag-Sources"><span class="toc-text">&gt;&gt; Pool Tag Sources</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pooltag-file"><span class="toc-text">&gt;&gt; Pooltag file</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-PoolMon-Utility"><span class="toc-text">&gt;&gt; PoolMon Utility</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Tracker-Tables"><span class="toc-text">&gt;&gt; Pool Tracker Tables</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Scanner-Algorighm"><span class="toc-text">&gt;&gt; Pool Scanner Algorighm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Finding-Terminated-Processes"><span class="toc-text">&gt;&gt; Finding Terminated Processes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Limitations-of-Pool-Scanning"><span class="toc-text">&gt;&gt; Limitations of Pool Scanning</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Big-Page-Pool"><span class="toc-text">&gt; Big Page Pool</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Big-Page-Track-Tables"><span class="toc-text">&gt; Big Page Track Tables</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Exploring-Big-Page-Pools"><span class="toc-text">&gt;&gt; Exploring Big Page Pools</span></a></li></ol></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Memory-Forensics"><span class="toc-text">Memory Forensics</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Basic-Knowledge"><span class="toc-text">Basic Knowledge</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Volatility"><span class="toc-text">Volatility</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#selecting-a-profile"><span class="toc-text">selecting a profile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shell"><span class="toc-text">shell</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Memory-Dump-Formats"><span class="toc-text">Memory Dump Formats</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Raw-Memory-Dump"><span class="toc-text">&gt; Raw Memory Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Crash-Dump"><span class="toc-text">&gt; Windows Crash Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Hibernation-File"><span class="toc-text">&gt; Windows Hibernation File</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Virtual-Machine-Memory"><span class="toc-text">&gt; Virtual Machine Memory</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Windows-Objects-and-Pool-Allocations"><span class="toc-text">5 Windows Objects and Pool Allocations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Executive-Objects"><span class="toc-text">&gt; Windows Executive Objects</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Object-Headers"><span class="toc-text">&gt;&gt; Object Headers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Optional-Headers"><span class="toc-text">&gt;&gt; Optional Headers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Object-Type-Objects"><span class="toc-text">&gt;&gt; Object Type Objects</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Kernel-Pool-Allocations"><span class="toc-text">&gt; Kernel Pool Allocations</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Allocation-APIs"><span class="toc-text">&gt;&gt; Allocation APIs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-De-allocation-and-Reuse"><span class="toc-text">&gt;&gt; De-allocation and Reuse</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Pool-Tag-Scanning"><span class="toc-text">&gt; Pool-Tag Scanning</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Tag-Sources"><span class="toc-text">&gt;&gt; Pool Tag Sources</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pooltag-file"><span class="toc-text">&gt;&gt; Pooltag file</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-PoolMon-Utility"><span class="toc-text">&gt;&gt; PoolMon Utility</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Tracker-Tables"><span class="toc-text">&gt;&gt; Pool Tracker Tables</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Scanner-Algorighm"><span class="toc-text">&gt;&gt; Pool Scanner Algorighm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Finding-Terminated-Processes"><span class="toc-text">&gt;&gt; Finding Terminated Processes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Limitations-of-Pool-Scanning"><span class="toc-text">&gt;&gt; Limitations of Pool Scanning</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Big-Page-Pool"><span class="toc-text">&gt; Big Page Pool</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Big-Page-Track-Tables"><span class="toc-text">&gt; Big Page Track Tables</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Exploring-Big-Page-Pools"><span class="toc-text">&gt;&gt; Exploring Big Page Pools</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Processes-Handles-and-Tokens"><span class="toc-text">6 Processes, Handles, and Tokens</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Processes"><span class="toc-text">&gt; Processes</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Data-Structures"><span class="toc-text">&gt;&gt; Data Structures</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Process-Organization"><span class="toc-text">&gt;&gt; Process Organization</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Critical-System-Processes"><span class="toc-text">&gt;&gt; Critical System Processes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Analyzing-Process-Activity"><span class="toc-text">&gt;&gt; Analyzing Process Activity*</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Process-Tree-Visualizations"><span class="toc-text">&gt;&gt; Process Tree Visualizations</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Detecting-DKOM-Attacks"><span class="toc-text">&gt;&gt; Detecting DKOM Attacks</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Process-Tokens"><span class="toc-text">&gt; Process Tokens</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Data-Structures-1"><span class="toc-text">&gt;&gt; Data Structures</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Accessing-Tokens"><span class="toc-text">&gt;&gt; Accessing Tokens</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Extracting-and-Translating-SIDs-in-Memory"><span class="toc-text">&gt;&gt; Extracting and Translating SIDs in Memory</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Detecting-Lateral-Movement"><span class="toc-text">&gt;&gt; Detecting Lateral Movement</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Privileges"><span class="toc-text">&gt; Privileges</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Analyzing-Explicit-Privileges"><span class="toc-text">&gt;&gt; Analyzing Explicit Privileges</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Process-Handles"><span class="toc-text">&gt; Process Handles</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Lifetime-of-a-Handle"><span class="toc-text">&gt;&gt; Lifetime of a Handle</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Reference-Counts-and-Kernel-Handles"><span class="toc-text">&gt;&gt; Reference Counts and Kernel Handles</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Handle-Table-Internals"><span class="toc-text">&gt;&gt; Handle Table Internals</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Data-Structures-2"><span class="toc-text">&gt;&gt; Data Structures</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Enumerating-Handles-in-Memory"><span class="toc-text">&gt; Enumerating Handles in Memory*</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Detecting-Registry-Persistence"><span class="toc-text">&gt;&gt; Detecting Registry Persistence</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Identifying-Remote-Mapped-Drives"><span class="toc-text">&gt;&gt; Identifying Remote Mapped Drives</span></a></li></ol></li></ol></li></ol></li></ol>
     </div>
 </div>
 
@@ -581,7 +870,7 @@
         <h3 class="read-next-card-header-title">Categories</h3>
     </header>
     <div class="read-next-card-content">
-        <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/notes/">notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/operating-system/">operating system</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/图形学基础/">图形学基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a></li></ul>
+        <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/memory-forensics/">memory forensics</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/operating-system/">operating system</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/图形学基础/">图形学基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a></li></ul>
     </div>
 </article>
 
