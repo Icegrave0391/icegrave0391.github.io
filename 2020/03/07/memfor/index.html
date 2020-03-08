@@ -666,7 +666,7 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f hop.mem --profile=VistaSP2x64 handles -t File | grep Mup</span><br></pre></td></tr></table></figure>
 <p><img alt="image-20200308204050322" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmsydpfuej30o10a9aby.jpg" data-index="45" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmsydpfuej30o10a9aby.jpg"></p>
-<p>You have several plain handles to \Device\Mup (they are normal). The few in bold are the ones you should find interesting because they actually display the local drive letter, the remote NetBIOS name, and the share or file system path name. </p>
+<p>You have several plain handles to <code>\Device\Mup</code> (they are normal). The few in bold are the ones you should find interesting because they actually display the local drive letter, the remote NetBIOS name, and the share or file system path name. </p>
 <blockquote>
 <p>There are also two different process IDs shown: 752 and 1544. In this case, 752 is the instance of svchost.exe that runs the LanmanWorkstation service; it creates and maintains client network connections to remote servers using the SMB protocol. PID 1544 is the cmd.exe shell, and it has a handle to <code>C$\Users\Jimmy\Documents</code> as a result of the attacker changing into that directory.</p>
 </blockquote>
