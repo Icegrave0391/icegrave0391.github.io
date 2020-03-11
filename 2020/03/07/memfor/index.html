@@ -20,7 +20,7 @@
 	<link rel="preconnect" href="//9qpuwspm.api.lncld.net">
 	<link rel="preconnect" href="//gravatar.loli.net">
 
-	<title>Memory Forensics | Icegrave</title>
+	<title>Icegrave | Icegrave</title>
 
 	<meta name="HandheldFriendly" content="True">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -48,7 +48,7 @@
 
 	<meta property="og:site_name" content="Icegrave">
 	<meta property="og:type" content="article">
-	<meta property="og:title" content="Memory Forensics | Icegrave">
+	<meta property="og:title" content="Icegrave | Icegrave">
 	<meta property="og:description" content>
 	<meta property="og:url" content="http://yoursite.com/2020/03/07/memfor/">
 
@@ -154,7 +154,7 @@
                 
                 
             </div>
-            <h1 class="post-full-title">Memory Forensics</h1>
+            <h1 class="post-full-title"></h1>
         </header>
         <div class="post-full no-image">
             
@@ -253,7 +253,7 @@
 <p>The <code>TypeInfo</code> and <code>Key</code> members provide two clues that will prove to be invaluable to memory forensics—<strong>they essentially tell you where to look (in paged or nonpaged memory) and what to look for</strong> (a specific four-byte tag) to find all instances of a particular object type (for example, all processes or all files).</p>
 </blockquote>
 <p><strong>demo:</strong></p>
-<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">python vol.py –f memory.dmp --profile=Win7SP1x64 volshell </span><br><span class="line">Volatile Systems Volatility Framework <span class="number">2.4</span> </span><br><span class="line">Current context: <span class="keyword">process</span> System, pid=<span class="number">4</span>, ppid=<span class="number">0</span> DTB=<span class="number">0</span>x187000 </span><br><span class="line">To get help, type <span class="string">'hh()'</span></span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; kernel_space = addrspace()</span><br><span class="line">&gt;&gt;&gt; ObTypeIndexTable = <span class="number">0</span>xFFFFF80002870300</span><br><span class="line">&gt;&gt;&gt; ptrs = obj.Object(<span class="string">"Array"</span>, </span><br><span class="line">... 									targetType = <span class="string">"Pointer"</span>,</span><br><span class="line">... 									offset = ObTypeIndexTable,</span><br><span class="line">... 									count = <span class="number">100</span>,</span><br><span class="line">...					 					vm = kernel_space)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; ptrs[<span class="number">0</span>] </span><br><span class="line">&lt;NoneObject pointer to [<span class="number">0</span>x00000000]&gt;</span><br><span class="line">&gt;&gt;&gt; ptrs[<span class="number">1</span>] </span><br><span class="line">&lt;NoneObject pointer to [<span class="number">0</span>xBAD0B0B0]&gt;</span><br><span class="line">&gt;&gt;&gt; <span class="keyword">for</span> i, ptr <span class="keyword">in</span> enumerate(ptrs):</span><br><span class="line">... 		objtype = ptr.dereference_as(<span class="string">"_OBJECT_TYPE"</span>) </span><br><span class="line">... 		<span class="keyword">if</span> objtype.is_valid():</span><br><span class="line">... 				print i, str(objtype.Name), <span class="string">"in"</span>,</span><br><span class="line">... 								 str(objtype.TypeInfo.PoolType),</span><br><span class="line">... 								 <span class="string">"with key"</span>, </span><br><span class="line">...									 str(objtype.Key)</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="number">2</span> Type <span class="keyword">in</span> NonPagedPool with key ObjT </span><br><span class="line"><span class="number">3</span> Directory <span class="keyword">in</span> PagedPool with key Dire </span><br><span class="line"><span class="number">4</span> SymbolicLink <span class="keyword">in</span> PagedPool with key Symb </span><br><span class="line"><span class="number">5</span> Token <span class="keyword">in</span> PagedPool with key Toke </span><br><span class="line"><span class="number">6</span> Job <span class="keyword">in</span> NonPagedPool with key Job </span><br><span class="line"><span class="number">7</span> <span class="keyword">Process</span> <span class="keyword">in</span> NonPagedPool with key Proc </span><br><span class="line"><span class="number">8</span> Thread <span class="keyword">in</span> NonPagedPool with key Thre </span><br><span class="line"><span class="number">9</span> UserApcReserve <span class="keyword">in</span> NonPagedPool with key User </span><br><span class="line"><span class="number">10</span> IoCompletionReserve <span class="keyword">in</span> NonPagedPool with key IoCo </span><br><span class="line"><span class="number">11</span> DebugObject <span class="keyword">in</span> NonPagedPool with key Debu </span><br><span class="line"><span class="number">12</span> Event <span class="keyword">in</span> NonPagedPool with key Even</span><br></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">python vol.py –f memory.dmp --profile=Win7SP1x64 volshell </span><br><span class="line">Volatile Systems Volatility Framework <span class="number">2.4</span> </span><br><span class="line">Current context: <span class="keyword">process</span> System, pid=<span class="number">4</span>, ppid=<span class="number">0</span> DTB=<span class="number">0</span>x187000 </span><br><span class="line">To get help, type <span class="string">'hh()'</span></span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; kernel_space = addrspace()</span><br><span class="line">&gt;&gt;&gt; ObTypeIndexTable = <span class="number">0</span>xFFFFF80002870300</span><br><span class="line">&gt;&gt;&gt; ptrs = obj.Object(<span class="string">"Array"</span>, </span><br><span class="line">... 									targetType = <span class="string">"Pointer"</span>,</span><br><span class="line">... 									offset = ObTypeIndexTable,</span><br><span class="line">... 									count = <span class="number">100</span>,</span><br><span class="line">...					 					vm = kernel_space)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; ptrs[<span class="number">0</span>] </span><br><span class="line">&lt;NoneObject pointer to [<span class="number">0</span>x00000000]&gt;</span><br><span class="line">&gt;&gt;&gt; ptrs[<span class="number">1</span>] </span><br><span class="line">&lt;NoneObject pointer to [<span class="number">0</span>xBAD0B0B0]&gt;</span><br><span class="line">&gt;&gt;&gt; <span class="keyword">for</span> i, ptr <span class="keyword">in</span> enumerate(ptrs):</span><br><span class="line">... 		objtype = ptr.dereference_as(<span class="string">"_OBJECT_TYPE"</span>) </span><br><span class="line">... 		<span class="keyword">if</span> objtype.is_valid():</span><br><span class="line">... 				print i, str(objtype.Name), <span class="string">"in"</span>,</span><br><span class="line">... 					str(objtype.TypeInfo.PoolType),</span><br><span class="line">... 					<span class="string">"with key"</span>, </span><br><span class="line">...						str(objtype.Key)</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="number">2</span> Type <span class="keyword">in</span> NonPagedPool with key ObjT </span><br><span class="line"><span class="number">3</span> Directory <span class="keyword">in</span> PagedPool with key Dire </span><br><span class="line"><span class="number">4</span> SymbolicLink <span class="keyword">in</span> PagedPool with key Symb </span><br><span class="line"><span class="number">5</span> Token <span class="keyword">in</span> PagedPool with key Toke </span><br><span class="line"><span class="number">6</span> Job <span class="keyword">in</span> NonPagedPool with key Job </span><br><span class="line"><span class="number">7</span> <span class="keyword">Process</span> <span class="keyword">in</span> NonPagedPool with key Proc </span><br><span class="line"><span class="number">8</span> Thread <span class="keyword">in</span> NonPagedPool with key Thre </span><br><span class="line"><span class="number">9</span> UserApcReserve <span class="keyword">in</span> NonPagedPool with key User </span><br><span class="line"><span class="number">10</span> IoCompletionReserve <span class="keyword">in</span> NonPagedPool with key IoCo </span><br><span class="line"><span class="number">11</span> DebugObject <span class="keyword">in</span> NonPagedPool with key Debu </span><br><span class="line"><span class="number">12</span> Event <span class="keyword">in</span> NonPagedPool with key Even</span><br></pre></td></tr></table></figure>
 <p>Note: We treated the data at kernel address 0xFFFFF80002870300 as an array of pointers to <code>_OBJECT_TYPE</code> structures.</p>
 <ul>
 <li><p>To get the address of 0xFFFFF80002870300 for the previous example, we typed</p>
@@ -279,7 +279,7 @@
 </ul>
 <h4 id="gt-gt-Allocation-APIs"><a href="#gt-gt-Allocation-APIs" class="headerlink" title="&gt;&gt; Allocation APIs"></a>&gt;&gt; Allocation APIs</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PVOID <span class="title">ExAllocatePoolWithTag</span><span class="params">( </span></span></span><br><span class="line"><span class="function"><span class="params">	_In_ POOL_TYPE PoolType,</span></span></span><br><span class="line"><span class="function"><span class="params">	_In_ SIZE_T NumberOfBytes, </span></span></span><br><span class="line"><span class="function"><span class="params">	_In_ ULONG Tag</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
 <ul>
-<li><p>The <code>PoolType</code> argument specifies the type of system memory to use for the allocation. NonPagedPool (0) and PagedPool (1) are the enumeration values for nonpageable and pageable memory, respectively. (As previously shown, most, but not all, executive object types are allocated using nonpageable memory)</p>
+<li><p>The <code>PoolType</code> argument specifies the type of system memory to use for the allocation. <code>NonPagedPool (0)</code> and <code>PagedPool (1)</code> are the enumeration values for nonpageable and pageable memory, respectively. (As previously shown, most, but not all, executive object types are allocated using nonpageable memory)</p>
 </li>
 <li><p>The <code>NumberOfBytes</code> argument contains the number of bytes to allocate. Drivers that call <code>ExAllocatePoolWithTag()</code> directly can set this to the size of data they need to store in the memory block. </p>
 <blockquote>
@@ -472,21 +472,6 @@
 <p>Tree likes below：</p>
 <p><img alt="image-20200308170307920" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmmnur1tmj31y60g0tbn.jpg" data-index="25" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmmnur1tmj31y60g0tbn.jpg"></p>
 <h4 id="gt-gt-Detecting-DKOM-Attacks"><a href="#gt-gt-Detecting-DKOM-Attacks" class="headerlink" title="&gt;&gt; Detecting DKOM Attacks"></a>&gt;&gt; Detecting DKOM Attacks</h4><p>Many attacks are possible with Direct Kernel Object Manipulation (DKOM), but one of the most common is hiding a process by <strong>unlinking its entry from the doubly linked list</strong>. To accomplish this, overwrite the Flink and Blink pointers of surrounding objects so that they point around the <code>_EPROCESS</code> structure of the process to hide. Tools that execute on a running system and Volatility’s <code>pslist</code> command are susceptible to this attack, because they rely on the linked list. However, the <code>psscan</code> plugin uses the pool-scanning approach.</p>
-<p><strong>Alternate Process Listing:</strong></p>
-<ul>
-<li><p><strong>Process object scanning</strong>: This is the pool-scanning approach discussed in Chapter 5. Remember that the pool tags it finds are nonessential; thus, they can also be manipulated to evade the scanner.</p>
-</li>
-<li><p><strong>Thread scanning</strong>: Because every process must have at least one active thread, you can scan for _ETHREAD objects and then map them back to their owning process. The member used for mapping is either _ETHREAD.ThreadsProcess (Windows XP and 2003) or _ETHREAD.Tcb.Process (Windows Vista and later). Thus, even if a rootkit manipulated the process’ pool tags to hide from psscan, it would also need to go back and modify the pool tags for all the process’ threads.</p>
-</li>
-<li><p><strong>CSRSS handle table</strong>: As discussed in the critical system process descriptions, csrss.exe is involved in the creation of every process and thread (with the exception of itself and the processes that started before it). Thus, you can walk this process’ handle table, as described later in the chapter, and identify all _EPROCESS objects that way.</p>
-</li>
-<li><p><strong>PspCid table</strong>: This is a special handle table located in kernel memory that stores a reference to all active process and thread objects. The PspCidTable member of the kernel debugger data structure points to the table. Two rootkit detection tools, Blacklight and IceSword, relied on the PspCid table to find hidden processes. However, the author of FUTo (see <a href="http://www.openrce.org/articles/full_view/19" target="_blank" rel="noopener">http://www.openrce.org/articles/full_view/19</a>) proved it was still possible to hide by removing processes from the table.</p>
-</li>
-<li><p><strong>Session processes</strong>: The SessionProcessLinks member of _EPROCESS associates all processes that belong to a particular user’s logon session. It’s not any harder to unlink a process from this list, as opposed to the ActiveProcessLinks list. But because live system APIs don’t depend on it, attackers rarely find value in targeting it.</p>
-</li>
-<li><p><strong>Desktop threads</strong>: One of the structures discussed in Chapter 14 is the Desktop (tagDESKTOP). These structures store a list of all threads attached to each desktop, and you can easily map a thread back to its owning process.</p>
-</li>
-</ul>
 <p><strong>Process Cross-View Plugin</strong></p>
 <p>The <code>psxview</code> plugin enumerates processes in seven different ways: the active process linked list and the six methods previously identified. Thus, it’s unlikely that a rootkit can successfully hide from <code>psxview</code>.</p>
 <p><img alt="image-20200308163252517" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcmlsdh8aqj30y40k240f.jpg" data-index="26" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcmlsdh8aqj30y40k240f.jpg"></p>
@@ -670,6 +655,540 @@
 <blockquote>
 <p>There are also two different process IDs shown: 752 and 1544. In this case, 752 is the instance of svchost.exe that runs the LanmanWorkstation service; it creates and maintains client network connections to remote servers using the SMB protocol. PID 1544 is the cmd.exe shell, and it has a handle to <code>C$\Users\Jimmy\Documents</code> as a result of the attacker changing into that directory.</p>
 </blockquote>
+<h2 id="7-Process-Memory-Internals"><a href="#7-Process-Memory-Internals" class="headerlink" title="7 Process Memory Internals"></a>7 Process Memory Internals</h2><p>This chapter analyzes the various application programming interfaces (APIs) used for allocating the different data types and examines how to enumerate process memory regions via memory forensics.</p>
+<h3 id="gt-What’s-in-Process-Memory"><a href="#gt-What’s-in-Process-Memory" class="headerlink" title="&gt; What’s in Process Memory?"></a>&gt; What’s in Process Memory?</h3><p>As you know, each process has its owen private view of memory in this range(upper bounds of the range can be vary between of operating systems).</p>
+<p>We simply represented the highest value as <code>MmHighestUserAddress</code>.</p>
+<blockquote>
+<p>This is a symbol in the NT module that you can query with a debugger or inside Volatility’s <code>volshell</code> plugin.</p>
+</blockquote>
+<p><img alt="image-20200309151913862" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnpa1y6n7j30e10dgdgk.jpg" data-index="46" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnpa1y6n7j30e10dgdgk.jpg"></p>
+<p>It’s important to know that <strong>the positions of the ranges are not constant, especially on systems that levergae address spase layout randomization(ASLR)</strong>.</p>
+<blockquote>
+<p>the thread stacks can exist below or above the process executable, or the ranges containing mapped files can be interspersed throughout the entire process space, not gathered contiguously as the diagram above shows.</p>
+</blockquote>
+<ul>
+<li><p><code>Dynamic linked libraries (DLLs)</code>: This area represents <strong>shared libraries (DLLs) that were loaded into the address space</strong>, either intentionally by the process or forcefully through library injection.</p>
+</li>
+<li><p><code>Environment variables</code>: This range of memory <strong>stores the process’ environment variables, such as its executable paths, temporary directories, home folders</strong>, and so on.</p>
+</li>
+<li><p><code>Process Environment Block (PEB)</code>: An extremely useful structure that <strong>tells you where to find several of the other items in this list</strong>, including the DLLs, heaps, and environment variables. It also contains the process’ command line arguments, its current working directory, and its standard handles.</p>
+</li>
+<li><p><code>Process heaps</code>: Where you can find a majority of the dynamic input that the process receives. </p>
+<blockquote>
+<p>For example, variable-length text that you type into e-mail or documents is often placed on the heap, as is data sent or received over network sockets.</p>
+</blockquote>
+</li>
+<li><p><code>Thread stacks</code>: <strong>Each thread has a dedicated range of process memory set aside for its runtime stack</strong>. This is where you can find function arguments, return addresses (allowing you to reconstruct call history), and local variables.</p>
+</li>
+<li><p><code>Mapped files and application data</code>: This item is left intentionally vague because the content really depends on the process. <strong>Mapped files represent content from files on disk, which could be configuration data, documents, and so on</strong>. <strong>Application data is anything the process needs to perform its intended duties</strong>.</p>
+</li>
+<li><p><code>Executable</code>: The process executable contains <strong>the primary body of code and read/ write variables for the application</strong>. This data may be compressed or encrypted on disk, <strong>but once loaded into memory, it unpacks, enabling you to dump plain-text code back to disk</strong>.</p>
+</li>
+</ul>
+<h3 id="Memory-Allocation-APIs"><a href="#Memory-Allocation-APIs" class="headerlink" title="Memory Allocation APIs"></a>Memory Allocation APIs</h3><p><img alt="image-20200309152939761" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnpkwg0pvj30ox0f9q5l.jpg" data-index="47" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnpkwg0pvj30ox0f9q5l.jpg"></p>
+<p>QUESTION❓</p>
+<p>These two virtual allocation functions are also the only ones that allow the caller to reserve memory (that is, set it aside) before committing it. This allows applications to “save” a large region of virtually contiguous memory for later use, without tying up the underlying physical pages in the meantime.</p>
+<p>WHY？</p>
+<h3 id="gt-Enumerating-Process-Memory"><a href="#gt-Enumerating-Process-Memory" class="headerlink" title="&gt; Enumerating Process Memory"></a>&gt; Enumerating Process Memory</h3><h4 id="gt-gt-Process-Page-Tables"><a href="#gt-gt-Process-Page-Tables" class="headerlink" title="&gt;&gt; Process Page Tables"></a>&gt;&gt; Process Page Tables</h4><p>We can use <code>memmap</code> and <code>memdump</code> plugins to list and extract all pages accessible to a process.</p>
+<blockquote>
+<p>In this case, accessible includes kernel mode addresses because even threads that start in user memory transition into kernel memory when system APIs are called.</p>
+</blockquote>
+<p><img alt="image-20200309154721770" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnq3brf4gj30fw0e0my0.jpg" data-index="48" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnq3brf4gj30fw0e0my0.jpg"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python vol.py -f memory.dmp --profile=Win7SP0x64 memmap –p 864</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200309154752063" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnq3ugu07j30mb0aidh4.jpg" data-index="49" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnq3ugu07j30mb0aidh4.jpg"></p>
+<p>and below:</p>
+<p><img alt="image-20200309154806825" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnq43wktzj30md08pwfp.jpg" data-index="50" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnq43wktzj30md08pwfp.jpg"></p>
+<p>Although the system’s default page size is 4KB (<code>0x1000</code> bytes hex), you can see a few pages of size <code>0x200000</code>, which is 2MB. These are Page Size Entry (PSE) pages.</p>
+<ul>
+<li><p><code>DumpFileOffset</code>: This value specifies the offset of the corresponding page in the file produced by the <code>memdump</code> plugin. </p>
+<blockquote>
+<p>Because process address spaces are sparse—holes or gaps exist between available pages—the output file is also sparse. For example, the data at virtual address <code>0xff4c1000</code> maps to physical offset <code>0x151b77000</code> (5.2GB), but your output file for this process will be nowhere near that large. Thus, the <code>DumpFileOffset</code> column tells you where to find the contents of <code>0xff4c1000</code> in your output file (<code>0x2a3000</code>). </p>
+</blockquote>
+</li>
+</ul>
+<p><code>memdump</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ python vol.py -f memory.dmp --profile=Win7SP1x64 memdump -p 864 -D OUTDIR</span><br><span class="line">$ ls -alh OUTDIR/864.dmp </span><br><span class="line">---------------------------------------------------------------------</span><br><span class="line">-rw-r--r-- 1 michael staff           434M Mar 14 14:51 864.dmp</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200309160654094" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnqnnldlhj30lo0frgov.jpg" data-index="51" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnqnnldlhj30lo0frgov.jpg"></p>
+<h3 id="gt-Virtual-Address-Descriptors"><a href="#gt-Virtual-Address-Descriptors" class="headerlink" title="&gt; Virtual Address Descriptors"></a>&gt; Virtual Address Descriptors</h3><p>A process’ VAD tree describes the layout of its memory segments at a slightly higher level than the page tables. </p>
+<p><em>The operating system, not the CPU, defines and maintains these data structures.</em></p>
+<blockquote>
+<p>VADs contain the names of memory-mapped files, the total number of pages in the region, the initial protection (read, write, execute), and several other flags that can tell you a lot about what type of data the regions contain.</p>
+</blockquote>
+<p>Each node in the tree <strong>represents one range in process virtual memory</strong>. A node that describes a memory range lower than its parent appears on the left, and a node that describes a higher range appears on the right：</p>
+<p><img alt="image-20200309161110171" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnqs3f7mtj30on0c43zo.jpg" data-index="52" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnqs3f7mtj30on0c43zo.jpg"></p>
+<h4 id="gt-gt-VAD-Structures"><a href="#gt-gt-VAD-Structures" class="headerlink" title="&gt;&gt; VAD Structures"></a>&gt;&gt; VAD Structures</h4><p>For each process, <code>_EPROCESS.VadRoot</code> points to the root of the VAD tree.</p>
+<blockquote>
+<p>the type of the member has frequently changed, as have the names of the VAD nodes. The differences are shown in Table below. For example, on Windows XP and 2003 Server, VadRoot pointed to an<code>_MMVAD_SHORT</code>, <code>_MMVAD</code>, or <code>_MMVAD_LONG</code>.</p>
+</blockquote>
+<p><img alt="image-20200309161744038" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnqyx67iqj30ol08uwft.jpg" data-index="53" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnqyx67iqj30ol08uwft.jpg"></p>
+<p><code>_MM_AVL_TABLE</code>:</p>
+<p><img alt="image-20200309164359492" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnrq8u3rnj30nz08a0uc.jpg" data-index="54" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnrq8u3rnj30nz08a0uc.jpg"></p>
+<ul>
+<li>You can see the <code>_MM_AVL_TABLE</code> has a BalancedRoot member, which is an <code>_MMADDRESS_NODE</code>.</li>
+<li><strong><em>Each node</em> has a set of pointers to its child nodes and a <code>StartingVpn</code> and <code>EndingVpn</code>.</strong> From these <strong>virtual page numbers (VPNs)</strong>, you can derive the addresses of the first and last pages in the target process’ virtual memory.</li>
+<li>VPNs are page numbers, not addresses.(To get the address, you have to multiply the page number by the size of a page.)</li>
+</ul>
+<p><code>_MMADDRESS_NODE(40 bytes)</code>:</p>
+<p>It is an alias and it is really one of the <code>_MMVAD*</code>(short, regular, long)</p>
+<p><img alt="image-20200309164742768" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnru4bhuqj30nu059757.jpg" data-index="55" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnru4bhuqj30nu059757.jpg"></p>
+<p><code>_MMVAD_SHORT</code>:</p>
+<p><img alt="image-20200309165155887" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnryihkurj30o507r0u3.jpg" data-index="56" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnryihkurj30o507r0u3.jpg"></p>
+<p><code>_MMVAD</code>:</p>
+<p><img alt="image-20200309165226422" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnrz1cz78j30ny0cpgo8.jpg" data-index="57" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnrz1cz78j30ny0cpgo8.jpg"></p>
+<p><code>_MMVAD_LONG</code>:</p>
+<p><img alt="image-20200309165303141" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnrzoc1uzj30ne037jrn.jpg" data-index="58" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnrzoc1uzj30ne037jrn.jpg"></p>
+<p>and below:</p>
+<p><img alt="image-20200309165317383" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnrzx8k6ij30ny0aptav.jpg" data-index="59" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnrzx8k6ij30ny0aptav.jpg"></p>
+<p>a short node does not have a <code>Subsection</code>, thus it cannot possibly store a mapped file. </p>
+<p>On the other hand, shell code that gets injected into a process never needs to exist on disk. </p>
+<p>Thus, it won’t be backed by a file. As a result, <strong>if you’re hunting for code injection, you can probably ignore the regular and long nodes</strong>.</p>
+<h4 id="gt-gt-VAD-Tags"><a href="#gt-gt-VAD-Tags" class="headerlink" title="&gt;&gt; VAD Tags"></a>&gt;&gt; VAD Tags</h4><p>After reading the structures above, you may wonder how Volatility determines which of the three <code>_MMVAD*</code> structures is aliased by an <code>_MMADDRESS_NODE</code>.</p>
+<p>The answer is <code>Tag</code> member.(The offset of this member is -<code>0xc</code>)</p>
+<blockquote>
+<p>Indeed, this is a convenient hack allowed when defining structures with Volatility. Essentially what we’re doing is accessing the <code>PoolTag</code> member of the <code>_POOL_HEADER</code>, which exists in memory directly before the node.</p>
+</blockquote>
+<p>A mapping of VAD-Related Pool Tags to Strucrute type:</p>
+<p><img alt="image-20200309171826693" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcnsq3c6zzj30of06ft94.jpg" data-index="60" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcnsq3c6zzj30of06ft94.jpg"></p>
+<p><strong>Memory regions that contain injected shell code won’t be backed by a file. Thus, you would be looking for nodes with a VadS or VadF tag.</strong></p>
+<h4 id="gt-gt-VAD-Flags"><a href="#gt-gt-VAD-Flags" class="headerlink" title="&gt;&gt; VAD Flags"></a>&gt;&gt; VAD Flags</h4><p>Each node has one or more sets of flags that contain characteristics about the memory range.(These flags are located in embedded unions named u, u1, u2, u3, and so on).</p>
+<p>This name is based on <code>unnamed-tag</code> because unions don’t have associated types.</p>
+<p><img alt="image-20200309174815086" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcntl3y1nrj30li0bitb9.jpg" data-index="61" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcntl3y1nrj30li0bitb9.jpg"></p>
+<p>Bits 0 to 51 of the 8-byte value are for CommitCharge, and bits 56 to 61 are the Protection.</p>
+<h4 id="gt-gt-CommitCharge"><a href="#gt-gt-CommitCharge" class="headerlink" title="&gt;&gt; CommitCharge"></a>&gt;&gt; CommitCharge</h4><p><code>CommitCharge</code> specifies the number of pages committed in the region described by the VAD node.</p>
+<p>QUESTION:❓</p>
+<p>The reason we care about this field is because historically when code injecting malware sets up the target process’ address space to receive the malicious code, it commits all pages up front—it doesn’t reserve them and then go back and commit them later (although it very well could). Thus, you can use these additional characteristics to help identify injected memory regions.</p>
+<h4 id="gt-gt-Protection"><a href="#gt-gt-Protection" class="headerlink" title="&gt;&gt; Protection"></a>&gt;&gt; Protection</h4><p>This field indicates what type of access should be allowed to the memory region.</p>
+<ul>
+<li><p><code>PAGE_EXECUTE</code>: The memory can be executed, but not written. This protection cannot be used for mapped files.</p>
+</li>
+<li><p><code>PAGE_EXECUTE_READ</code>: The memory can be executed or read, but not written.</p>
+</li>
+<li><p><code>PAGE_EXECUTE_READWRITE</code>: The memory can be executed, read, or written. Injected code regions almost always have this protection.</p>
+</li>
+<li><p><code>PAGE_EXECUTE_WRITECOPY</code>: Enables execute, read-only, or copy-on-write access to a mapped view of a file. It cannot be set by calling <code>VirtualAlloc</code> or <code>VirtualAllocEx</code>. DLLs almost always have this protection.</p>
+</li>
+<li><p><code>PAGE_NOACCESS</code>: Disables all access to the memory. This protection cannot be used for mapped files. Applications can prevent accidental reads/writes to data by setting this protection.</p>
+</li>
+<li><p><code>PAGE_READONLY</code>: The memory can be read, but not executed or written. </p>
+</li>
+<li><code>PAGE_READWRITE</code>: The memory can be read or written, but not executed.</li>
+<li><code>PAGE_WRITECOPY</code>: Enables read-only or copy-on-write access to a mapped view of a file. It cannot be set by calling VirtualAlloc or VirtualAllocEx.</li>
+</ul>
+<p>Note:</p>
+<p>Protection field from the VAD <code>flags</code> is that it’s only the <strong>initial protection</strong> specified for all pages in the range when they were first reserved or committed. Thus, the current protection can be drastically different.</p>
+<h4 id="gt-gt-Private-Memory"><a href="#gt-gt-Private-Memory" class="headerlink" title="&gt;&gt; Private Memory"></a>&gt;&gt; Private Memory</h4><p>Private memory, in this context, refers to committed regions that <strong>cannot typically be shared with or inherited by other processes</strong>.</p>
+<ul>
+<li>Mapped files, named shared memory, and copy-onwrite DLLs can be shared with other processes (although they may not be). <strong>Thus, if the <code>PrivateMemory</code> bit is set for a memory region, it does not contain one of the aforementioned types of data</strong>. </li>
+<li>A process’ heaps, stacks, and ranges allocated with <code>VirtualAlloc</code> or <code>VirtualAllocEx</code> are usually marked as private.</li>
+</ul>
+<h4 id="gt-gt-Volatility-VAD-Plugins"><a href="#gt-gt-Volatility-VAD-Plugins" class="headerlink" title="&gt;&gt; Volatility VAD Plugins"></a>&gt;&gt; Volatility VAD Plugins</h4><ul>
+<li><code>vadinfo</code> : Displays the most verbose output, including the starting and ending addresses, the protection level, flags, and full paths to mapped files or DLLs. </li>
+</ul>
+<p><img alt="image-20200310011133726" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gco6eevfzsj30pb07a75c.jpg" data-index="62" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gco6eevfzsj30pb07a75c.jpg"></p>
+<ul>
+<li><p><code>vadtree</code>: In text mode, this plugin prints a tree-view of the nodes, so you can see the parent and child relationships on your console. </p>
+</li>
+<li><p><code>vaddump</code> : <strong>Extracts the range of process memory each VAD node describes to a separate file on disk</strong>. Unlike memmap (discussed earlier), the output from this plugin is padded with zeros if any pages in the range are swapped to disk to maintain spatial integrity (offsets).</p>
+</li>
+</ul>
+<h2 id="8-Hunting-Malware-in-Process-Memory"><a href="#8-Hunting-Malware-in-Process-Memory" class="headerlink" title="8 Hunting Malware in Process Memory"></a>8 Hunting Malware in Process Memory</h2><p>Now we will see some specific examples of how can detect malware that hides in process by unlinking dynamic linked ilbraries(DLL) or using one of four different methods of injecting code.</p>
+<h3 id="gt-Process-Environment-Block-PEB"><a href="#gt-Process-Environment-Block-PEB" class="headerlink" title="&gt; Process Environment Block(PEB)"></a>&gt; Process Environment Block(PEB)</h3><p>Every<code>_EPROCESS</code> structure contains a member called the Process Environment Block (PEB). </p>
+<p>The PEB contains the full path to the process’ executable, the full command line that starts the process, the current working directory, pointers to the process’ heaps, standard handles, and three doubly linked lists that contain the full path to DLLs loaded by the process.</p>
+<h4 id="gt-gt-Data-Structures-3"><a href="#gt-gt-Data-Structures-3" class="headerlink" title="&gt;&gt; Data Structures"></a>&gt;&gt; Data Structures</h4><p>The main PEB structure is appropriately named <code>_PEB</code>. </p>
+<blockquote>
+<p><code>_PEB</code> structure exists in process memory, so <strong>a process can easily modify its own values</strong> to falsely report information or thwart analysis.</p>
+</blockquote>
+<p><img alt="image-20200310174936970" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcoz8u5pulj30ny0bp0ut.jpg" data-index="63" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcoz8u5pulj30ny0bp0ut.jpg"></p>
+<p>Key Points:</p>
+<ul>
+<li><p><code>BeingDebugged</code>: Tells you whether the process is currently being debugged. In the past, we’ve seen malware that attaches to itself (by calling <code>DebugActiveProcess</code>).</p>
+<blockquote>
+<p>Because only one debugger at a time can attach to a target process, it served as anti-debugging protection. Thus, <strong>there is a red flag if this value is set to true, but there are no legitimate active debuggers running</strong>.</p>
+</blockquote>
+</li>
+<li><p><code>ImageBaseAddress</code> : <strong>The address in process memory where the main executable (.exe) is loaded</strong>. Before Volatility’s <code>procdump</code> plugin (described later in the chapter) carves an executable from memory, it reads this value so it knows where to look. </p>
+</li>
+<li><code>Ldr</code>: Points to a <code>_PEB_LDR_DATA</code> structure, which <strong>contains details about the DLLs loaded in a process</strong>.</li>
+<li><p><code>ProcessParameters</code>: Points to a <code>_RTL_PROCESS_PARAMETERS</code> structure (described soon).</p>
+</li>
+<li><p><code>ProcessHeap</code>: Primary heap for the process, which is created automatically when the process is initialized.</p>
+</li>
+<li><p><code>NumberOfHeaps</code>: Number of heaps in a process. By default, a process has only one heap, but it can create others by calling <code>HeapCreate</code>.</p>
+</li>
+<li><p><code>ProcessHeaps</code> : An array of pointers to process heaps. The first entry in this list always points to the same location as ProcessHeap because it is the primary.</p>
+</li>
+</ul>
+<p>Then we look into the <code>_RTL_USER_PROCESS_PARAMETERS</code> structure:</p>
+<p><img alt="image-20200310180558394" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcozpuoyqpj30nr04mgm8.jpg" data-index="64" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcozpuoyqpj30nr04mgm8.jpg"></p>
+<p>and below:</p>
+<p><img alt="image-20200310180640220" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcozqkx6gbj30nq04p3z2.jpg" data-index="65" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcozqkx6gbj30nq04p3z2.jpg"></p>
+<p>Key Points:</p>
+<ul>
+<li><code>StandardInput</code>: The process’ standard input handle. </li>
+<li><p><code>StandardOutput</code>: The process’ standard output handle.</p>
+</li>
+<li><p><code>StandardError</code>: The process’ standard error handle.</p>
+</li>
+<li><p><code>CurrentDirectory</code>: The current working directory for the application.</p>
+</li>
+<li><p><code>ImagePathName</code>: The Unicode full path on disk to the process executable (.exe).</p>
+<blockquote>
+<p>You often need to consult this value because the <code>_EPROCESS.ImageFileName</code> (printed by the pslist plugin) contains only the first 16 characters and it does not include Unicode.</p>
+</blockquote>
+</li>
+<li><p><code>CommandLine</code>: The full command line, including all arguments, used to invoke the process.</p>
+</li>
+<li><p><code>Environment</code>: A pointer to the process’ environment variables.</p>
+</li>
+</ul>
+<p>The <code>_PEB_LDR_DATA</code> structure:</p>
+<p><img alt="image-20200310181043016" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcozusn6ofj30n9053dgg.jpg" data-index="66" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcozusn6ofj30n9053dgg.jpg"></p>
+<p>Key Points:</p>
+<ul>
+<li><p><code>InLoadOrderModuleList</code>: A linked list that organizes modules <strong>in the order in which they are loaded into a process</strong>. </p>
+<blockquote>
+<p>Because the <strong>process executable is always first to load in the process address space</strong>, its entry is first in this list. </p>
+</blockquote>
+</li>
+<li><p><code>InMemoryOrderModuleList</code>: A linked list that organizes modules in the order in which they <strong>appear in the process’ virtual memory layout</strong>. </p>
+<blockquote>
+<p>For example, the last DLL to load may end up at a lower base address than the first (due to address space layout randomization [ASLR] and other factors). </p>
+</blockquote>
+</li>
+<li><p><code>InInitializationOrderModuleList</code>: A linked list that organizes modules <strong>in the order in which their <code>DllMain</code> function was executed</strong>.</p>
+<blockquote>
+<p>This is different from the load order list because a module’s DllMain isn’t always called immediately when it loads. Sometimes it’s never called, for example when you load a DLL as a data file or image resource (see the <code>dwFlags</code> parameter to <code>LoadLibraryEx</code>).</p>
+</blockquote>
+</li>
+</ul>
+<p>The <code>_LDR_DATA_TABLE_ENTRY</code> structure:</p>
+<p><img alt="image-20200310181813866" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcp02m453hj30np0980uc.jpg" data-index="67" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcp02m453hj30np0980uc.jpg"></p>
+<p>Key Points:</p>
+<ul>
+<li><p><code>DllBase</code> : This is the base address of the module in process memory.</p>
+</li>
+<li><p><code>EntryPoint</code>: The first instruction executed by the module. In most cases, it is taken from the PE file’s <code>AddressOfEntryPoint</code> value.</p>
+</li>
+<li><p><code>SizeOfImage</code>: The size of the module, in bytes.</p>
+</li>
+<li><p><code>FullDllName</code>: The full path to the module’s file on disk (for example, <code>C:\Windows\ System32\kernel32.dll</code>).</p>
+</li>
+<li><p><code>BaseDllName</code> : The base portion of the module’s filename (for example, <code>kernel32.dll</code>).</p>
+</li>
+<li><p><code>LoadCount</code>: <strong>The number of times</strong> <code>LoadLibrary</code> was called for the module. <strong>It is used as a reference count to know when it is safe to unload a DLL from process memory</strong>. You’ll see this value later in the chapter to determine how a DLL was loaded (via the import address table [IAT] or an explicit call to LoadLibrary).</p>
+</li>
+</ul>
+<h4 id="gt-gt-Process-Heap"><a href="#gt-gt-Process-Heap" class="headerlink" title="&gt;&gt; Process Heap"></a>&gt;&gt; Process Heap</h4><p>When you dump process memory via <code>memdump</code> or <code>vaddump</code>, you inevitably get the heap contents(at least the pages that are not swapped). However, you won’t necessarily know which offsets in your dump file or signature results correspond to heap regions.</p>
+<p>But in some cases you might want to analyze only heap memory.</p>
+<p><strong>Scenario:</strong></p>
+<p>Suppose we are investigating some suspects’ notepad that is recorded something for crime as below:</p>
+<p><img alt="image-20200310195417879" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcp2ukdyslj30og0ih11a.jpg" data-index="68" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcp2ukdyslj30og0ih11a.jpg"></p>
+<p>We may obtain the memory dump from the suspects’system. Though we could use <code>vadinfo</code> or <code>vadtree</code> on the notepad process, we’ll see 50+ VAD tress and its hard to analyze. The goal is to obtain the texts by pressing keyboard and we only need to analyze the heap.</p>
+<p>We can use <code>heaps</code> plugin to layout the heap:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f Win2K3SP1x86.vmem --profile=Win2003SP1x86 heaps -p 3988</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200310195057283" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcp2r38zxjj30o40jun0s.jpg" data-index="69" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcp2r38zxjj30o40jun0s.jpg"></p>
+<blockquote>
+<p>As shown, two chunks stood out because the “<code>extra</code>” flag is displayed. In other words, the <code>HEAP_ENTRY_EXTRA_PRESENT</code> flag was set in the <code>_HEAP_ENTRY.Flags</code> member for these two chunks.</p>
+</blockquote>
+<p>Regardless of the actual meaning of the <code>extra</code> flag, we got two chunks at <code>0xa8028</code> and <code>0xac7b0</code>.</p>
+<p>We could access the memory by <code>volshell</code> below.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f Win2K3SP1x86.vmem --profile=Win2003SP1x86 volshell -p 3988</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200310195925790" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcp2zwsgpoj30nr081q4j.jpg" data-index="70" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcp2zwsgpoj30nr081q4j.jpg"></p>
+<h4 id="gt-gt-Environment-Variables"><a href="#gt-gt-Environment-Variables" class="headerlink" title="&gt;&gt; Environment Variables"></a>&gt;&gt; Environment Variables</h4><p>A process’ environment variables are pointed to by <code>_PEB.ProcessParameters.Environment</code>. The variables are organized as multiple NULL-terminated strings, similar to a <code>REG_MULTI_SZ</code> value in the registry.</p>
+<blockquote>
+<p>If an attacker manipulates these variables, they can cause the target application to unexpectedly execute a malicious process. Additionally, some malware marks its presence by creating environment variables rather than mutexes.</p>
+</blockquote>
+<p>Here are some scopes of environment variables:</p>
+<p><img alt="image-20200310200449010" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcp35ifgnuj30oj063q3u.jpg" data-index="71" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcp35ifgnuj30oj063q3u.jpg"></p>
+<p>The System and User variables are both persistent in the registry. Thus, you can enumerate them by parsing registry hive files that were acquired from disk.</p>
+<blockquote>
+<p>When a process is created, it usually inherits the environment block from its parent. The parent process can override this default behavior by specifying the <code>lpEnvironment</code> parameter when it calls <code>CreateProcess</code>.</p>
+</blockquote>
+<p>You can find these types of data in environment variables:</p>
+<ul>
+<li>Paths to executable programs (PATH) </li>
+<li>Extensions assigned to executable programs (PATHEXT) </li>
+<li>Paths to temporary directories </li>
+<li>Paths to a user’s Documents, Internet History, and Application Data folders </li>
+<li>User names, computer names, and domain names </li>
+<li>The location of cmd.exe (ComSpec)</li>
+</ul>
+<h4 id="gt-gt-Attacks-on-Environment-variables"><a href="#gt-gt-Attacks-on-Environment-variables" class="headerlink" title="&gt;&gt; Attacks on Environment variables"></a>&gt;&gt; Attacks on Environment variables</h4><p>The two most common types of attacks on environment variables include changing the <code>PATH</code> and <code>PATHEXT</code> variables.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATH=C:\windows;C:\windows\system32 PATH=C:\Users\HR101\.tmp;C:\windows;C:\windows\system32</span><br></pre></td></tr></table></figure>
+<p>An attacker could plant a file named calc.zzz in one of the searched directories, and it would be executed first:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE</span><br><span class="line">PATHEXT=.ZZZ;.COM;.EXE;.BAT;.CMD;.VBS;.VBE</span><br></pre></td></tr></table></figure>
+<h4 id="gt-gt-Coreflood-Presence-Marking"><a href="#gt-gt-Coreflood-Presence-Marking" class="headerlink" title="&gt;&gt; Coreflood Presence Marking"></a>&gt;&gt; Coreflood Presence Marking</h4><p>Many malware samples mark their presence on a system by creating globally accessible mutexes. This helps prevent accidental re-infection. Mutexes also provide a strong forensic indicator. Coreflood used environment variables for a very similar purpose—to mark its presence within a process.</p>
+<p><strong>Example:</strong></p>
+<p>How many of the following processes are infected with Coreflood’s DLL?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f coreflood.img --profile=WinXPSP3x86 envars</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200310214200342" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcp5yo7ra2j30o80mojuz.jpg" data-index="72" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcp5yo7ra2j30o80mojuz.jpg"></p>
+<p>Answer : 2</p>
+<p>At first glance, it appears as if all four processes are infected, because they all contain suspicious variable names. </p>
+<p>However, we previously mentioned that <strong>child processes typically inherit their parent’s variables</strong>. We also said <strong>the variable name depends on the PID of the process</strong>. <strong>If all four processes were infected, you’d see four unique variable names</strong>; but you see only two (VFTPXXPYVTAMF and QBYXKDAGXM). </p>
+<p>The last three processes (IEXPLORE.EXE, notepad.exe, and firefox.exe) were spawned by PID 1144, which explains why they have a copy of the VFTPXXPYVTAMF variable.</p>
+<h4 id="gt-gt-Standard-Handles"><a href="#gt-gt-Standard-Handles" class="headerlink" title="&gt;&gt; Standard Handles"></a>&gt;&gt; Standard Handles</h4><p>By analyzing a process’ standard handles, you can determine where it gets input and where it sends output and error messages.</p>
+<p>This is especially useful when investigating potential breaches by <strong>remote attackers</strong>.</p>
+<blockquote>
+<p>A fairly common way to create a backdoor command shell on a system involves <strong>spawning an instance of <code>cmd.exe</code> and redirecting its standard handles over named pipes or network sockets</strong>. Thus, the attackers can use <code>telnet</code> or <code>netcat</code> to connect to the target machine (provided that no firewall is blocking access), and type commands as if they were sitting at the console.</p>
+</blockquote>
+<h4 id="gt-gt-Dynamic-Link-Libraries-DLLs"><a href="#gt-gt-Dynamic-Link-Libraries-DLLs" class="headerlink" title="&gt;&gt; Dynamic Link Libraries(DLLs)"></a>&gt;&gt; Dynamic Link Libraries(DLLs)</h4><p>DLLs contain code and resources that can be shared between multiple processes. They’re popular among malware and threat actors because DLLs are designed to run inside a host process, thus giving them access to all of the process’ resources: its threads, handles, and full range of process memory.</p>
+<p><strong><em>How DLLs Are Loaded</em></strong></p>
+<ul>
+<li><code>Dynamic linking</code>: As part of the process initialization routines, any DLL in the executable (.exe) file’s IAT(import address table) automatically loads in the process’ address space.</li>
+<li><p><code>Dependencies</code>: DLLs also have import tables, so when they’re loaded, all additional DLLs on which they rely load into the process’ address space. For more information, see Dependency Walker (<a href="http://www.dependencywalker.com/" target="_blank" rel="noopener">http://www.dependencywalker.com/</a>).</p>
+</li>
+<li><p><code>Run-time dynamic linking (RTDL)</code>: A thread can explicitly call <code>LoadLibrary</code> (or the native <code>LdrLoadDll</code>) with the name of the DLL to load. This has the same end result as dynamic linking (a DLL loaded in the process), except there’s no trace of the DLL in the process’ IAT.</p>
+</li>
+<li><p><code>Injections</code>: As you’ll learn later in the chapter, DLLs can also be forcefully injected into a target process.</p>
+</li>
+</ul>
+<p><strong><em>Hiding DLLs</em></strong></p>
+<p>all three lists exist in process memory, any thread running in the process can unlink a metadata structure ( <code>_LDR_DATA_TABLE_ENTRY</code>) to hide it from the running system (and potentially memory forensics as well). For example, once loaded, the xyz.dll module can overwrite its own Flink and Blink pointers so that its entry is skipped during enumeration.</p>
+<p><img alt="image-20200310224506418" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcp7samwu0j30p20gmdhb.jpg" data-index="73" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcp7samwu0j30p20gmdhb.jpg"></p>
+<p><strong><em>Listing DLLs in Memory</em></strong></p>
+<p>We design <code>dlllist</code> plugin: enumerating DLLs by <strong>walking the load order list.</strong>  Thus The unlinking approach depicted in diagram above also affects Volatility’s dlllist plugin.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py –f mem.dmp --profile=WinXPSP3x86 dlllist –p 3108</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200310225126658" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcp7yvtzq4j30ny0gigph.jpg" data-index="74" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcp7yvtzq4j30ny0gigph.jpg"></p>
+<blockquote>
+<p>The process executable (<code>notepad.exe</code>) is first to load in the process address space, thus it’s first in the load order list. Next, the <code>ntdll.dll</code> and <code>kernel32.dll</code> system libraries are loaded. The system then proceeds to load any DLLs in Notepad’s IAT and any dependency modules that those DLLs need.</p>
+</blockquote>
+<p>However, that the load count for the first batch of modules is 0xffff. Because this field is a short integer, <strong>0xffff is actually -1</strong>. A load <strong>count of -1 means the DLL loaded because it was specified in an IAT</strong>. (The others near the end, whose load counts are 0x3, 0x27, 0x4 and 0x1, were all loaded via explicit calls to <code>LoadLibrary</code>)</p>
+<p>Although there are plenty of legitimate reasons to call LoadLibrary, <strong>its usage is also consistent with the techniques shellcode uses to set up the target process’ address space</strong>. You may notice none of the explicitly loaded DLLs are suspicious per se—they’re all properly named and in the correct system32 path. </p>
+<p>However, when you consider their purpose (network related) and the host process context (notepad.exe), the situation begins to look quite abnormal. Most likely code needing access to networking DLLs has infected this process, and it loads them by calling <code>LoadLibrary</code>.</p>
+<p><strong><em>Detecting Unlinked DLLs</em></strong></p>
+<p>Two methods can help you detect DLLs that are unlinked from all three lists:</p>
+<ul>
+<li><p><code>PE file scanning</code>: You can leverage techniques described in Chapter 7 to perform a brute force scan through process memory, <strong>looking for all instances of PE files (based on their known MZ header signatures)</strong>. </p>
+<p>Remember, however, that the <strong>PE headers are also in process memory</strong>, so the same body of code that unlinks the DLL metadata structure can easily overwrite them.</p>
+</li>
+<li><p><code>VAD cross-referencing</code>: This is the technique implemented by Volatility’s <code>ldrmodules</code> plugin. If you recall from Chapter 7, <strong>VAD nodes contain full paths on disk to files mapped into the regions—including DLL files</strong>. </p>
+<p>The unique aspect of VADs is that <strong>they exist in kernel memory</strong> and attempts to manipulate the tree (i.e., unlink a VAD node) or overwrite their file pointers quickly result in system instability (blue screens).</p>
+</li>
+</ul>
+<p>We can use <code>ldrmodules</code> plugin</p>
+<ul>
+<li>First enumerates all VAD nodes that contain mapped executable images. Specifically, <strong>it looks for large nodes with <code>PAGE_EXECUTE_WRITECOPY</code> protections, a <code>VadImageMap</code> type, and the Image control flag set.</strong></li>
+<li>It then compares <strong>the starting addresses from the VAD nodes</strong> with the <strong><code>DllBase</code> value from the <code>_LDR_DATA_TABLE_ENTRY</code> structures found in process memory</strong>. </li>
+<li>Entries identified through the VAD that aren’t represented in the DLL lists are potentially hidden.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python vol.py -f memory.dmp --profile=Win7SP1x64 ldrmodules -p 616</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200310232557769" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcp8ysqshhj30o70djq6o.jpg" data-index="75" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcp8ysqshhj30o70djq6o.jpg"></p>
+<h3 id="gt-PE-Files-in-Memory"><a href="#gt-PE-Files-in-Memory" class="headerlink" title="&gt; PE Files in Memory"></a>&gt; PE Files in Memory</h3><ul>
+<li><p>Volatility can dump and rebuild PE files.</p>
+</li>
+<li><p><strong>Due to changes that occur during program execution, it’s hard for you to get an exact copy of the original binary or even one that runs on another machine.</strong></p>
+</li>
+</ul>
+<p>Dumping an executable and compare its MD5 or SHA1 hash to the file on disk is also not likely possible.</p>
+<p>Another reason why PE files dumped from memory often differ from the original file on disk is because of slack space:</p>
+<p><strong><em>PE File Slack Space</em></strong></p>
+<p>The smallest page size on a typical x86 or x64 Windows system is 4,096 bytes. Most PE files have sections that are not exact multiples of the smallest page size.</p>
+<p><img alt="image-20200311010829443" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcpbxhgloaj30h20ay3zi.jpg" data-index="76" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcpbxhgloaj30h20ay3zi.jpg"></p>
+<p>As the diagram above, the .text section, which is not an exact multiple of 4,096, must fully exist in memory marked as RX (read, execute), and the .data section must fully exist in memory marked as RW (read, write).</p>
+<blockquote>
+<p>Because <strong>protections are applied at the page level</strong> (in other words, if a page is marked as executable, all bytes in the page are executable)—-</p>
+<p>That the two sections must <strong>be separated after being loaded into memory</strong>. Otherwise, the beginning of the .data section ends up being RX instead of RW.</p>
+</blockquote>
+<h4 id="gt-gt-Parsing-PE-Headers-in-Memory"><a href="#gt-gt-Parsing-PE-Headers-in-Memory" class="headerlink" title="&gt;&gt; Parsing PE Headers in Memory"></a>&gt;&gt; Parsing PE Headers in Memory</h4><p>It can be described as following steps:</p>
+<ul>
+<li>using volatility to attach the certain process and launch volshell</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f memory.dmp --profile=Win7SP1x64 volshell -p 516</span><br></pre></td></tr></table></figure>
+<ul>
+<li>get the <code>process.peb</code> and <code>ImageBaseAddress</code></li>
+</ul>
+<p>Let’s take a review, <code>ImageBaseAddress</code> in PEB is <strong>the address in process memory where the main executable (.exe) is loaded</strong>. Take a look at <code>ImageBaseAddress</code> below:</p>
+<p><img alt="image-20200311095415129" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcpr4j5amgj30nx02fmxb.jpg" data-index="77" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcpr4j5amgj30nx02fmxb.jpg"></p>
+<p>We can see <code>MZ(4d5a)</code> signature appears first.</p>
+<ul>
+<li>get <code>NT</code> header</li>
+</ul>
+<p>We could create an <code>_IMAGE_DOS_HEADER</code> at the base address we first got and use the <code>get_nt_header</code> function.</p>
+<p><img alt="image-20200311100253259" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcprdirfx8j30o2083q46.jpg" data-index="78" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcprdirfx8j30o2083q46.jpg"></p>
+<ul>
+<li>then print sections in PE</li>
+</ul>
+<p><img alt="image-20200311100844130" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcprjm0fvvj30ny06jdgl.jpg" data-index="79" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcprjm0fvvj30ny06jdgl.jpg"></p>
+<h4 id="gt-gt-PE-Extraction-Plugins"><a href="#gt-gt-PE-Extraction-Plugins" class="headerlink" title="&gt;&gt; PE Extraction Plugins"></a>&gt;&gt; PE Extraction Plugins</h4><p>We have shown in previous the whole process of extracting PE file to memory. Then there are some plugins that can automate the process:</p>
+<ul>
+<li><p><code>procdump</code>: Dump a process executable. You can identify the process by PID (<code>--pid</code>) or the physical offset of its <code>_EPROCESS</code> (<code>--offset</code>). </p>
+<blockquote>
+<p>The latter option enables you to dump processes hidden from the active process list.</p>
+</blockquote>
+</li>
+<li><p><code>dlldump</code>: Dump a DLL. You can identify the host process by PID ( <code>--pid</code>) or the physical offset of its <code>_EPROCESS</code> (<code>--offset</code>). </p>
+<blockquote>
+<p>If the DLL(s) are in the load order list, you can identify them using a regular expression (<code>--regex/--ignore-case</code>) on their name. Otherwise, you can refer to them by their base address in process memory (<code>--base</code>). The latter option enables you to dump hidden or injected PE files. </p>
+</blockquote>
+</li>
+<li><p><code>moddump</code>: <strong>Dump a kernel module</strong>. </p>
+</li>
+</ul>
+<p>All the plugins require an output directory (<code>--dump-dir</code>) to write the extracted files.</p>
+<p>They also all accept an optional <code>--memory</code> parameter, which is how you request the slack space between sections to be included in the output file.</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>procdump</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python vol.py -f memory.dmp --profile=Win7SP1x64 procdump --dump-dir=OUTDIR/</span><br></pre></td></tr></table></figure>
+<p><img alt="image-20200311102633430" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcps251gtmj30nz07cmy9.jpg" data-index="80" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcps251gtmj30nz07cmy9.jpg"></p>
+<blockquote>
+<p>Notice the name of the output file is based on the PID of the process (<code>executable.PID.exe</code>).</p>
+</blockquote>
+<p>We can extract a process that’s not in the active process list based on the physical offset of its <code>_EPROCESS</code> <strong>(which you can get with psscan or psxview)</strong>:</p>
+<p><img alt="image-20200311104526554" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcpslsm7c6j30o606a0ti.jpg" data-index="81" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcpslsm7c6j30o606a0ti.jpg"></p>
+<ul>
+<li><code>dlldump</code></li>
+</ul>
+<p>extract any DLL from PID 1408 that has a name or path matching “crypt” string:</p>
+<p><img alt="image-20200311105130051" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcpss3ljovj30o408k75u.jpg" data-index="82" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcpss3ljovj30o408k75u.jpg"></p>
+<blockquote>
+<p>output files are named according to the PID and physical offset of the host process and the base virtual address of the DLL (module.PID. OFFSET.ADDRESS.dll)</p>
+</blockquote>
+<p>But to dump DLLs hidden or injected we should use <code>--base</code> the base address where the DOS header exists:</p>
+<p><img alt="image-20200311105642004" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcpsxijalsj30o706j3zd.jpg" data-index="83" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcpsxijalsj30o706j3zd.jpg"></p>
+<p><strong><em>Caveats</em></strong></p>
+<p>One thing to note about these plugins is that they’re susceptible to attacks that manipulate PE header values. For example, <strong>if the MZ or PE signature isn’t found, they cannot properly locate the sections</strong>. Furthermore, they also rely on the advertised section virtual addresses and sizes, which malicious code can easily overwrite.</p>
+<p>If you encounter issues dumping PE files from process memory, whether it’s the process executable or a DLL, you can always fall back to just dumping the containing VAD region.</p>
+<h3 id="gt-Code-Injection"><a href="#gt-Code-Injection" class="headerlink" title="&gt; Code Injection"></a>&gt; Code Injection</h3><p>The way to detect code injection depends on how the code was injected.</p>
+<ul>
+<li><p><strong>Remote DLL injection</strong>: A malicious process forces the target process to load a specified DLL from disk by calling LoadLibrary or the native LdrLoadDll. By definition, the DLL must exist on disk prior to being injected.</p>
+</li>
+<li><p><strong>Remote code injection</strong>: A malicious process writes code into the memory space of a target process and forces it to execute. The code can be a block of shellcode (i.e., not a PE file) or it can be a PE file whose import table is preemptively configured for the target process.</p>
+</li>
+<li><p><strong>Reflective DLL injection</strong>: A malicious process writes a DLL (as a sequence of bytes) into the memory space of a target process. The DLL handles its own initialization without the help of the Windows loader. The DLL does not need to exist on disk prior to being injected.</p>
+</li>
+<li><p><strong>Hollow process injection</strong>: A malicious process starts a new instance of a legitimate process (such as lsass.exe) in suspended mode. Before resuming it, the executable section(s) are freed and reallocated with malicious code.</p>
+</li>
+</ul>
+<p>In the following descriptions, <strong><em>Process A is the malicious process and Process B is the target.</em></strong></p>
+<h4 id="gt-gt-Remote-DLL-Injection"><a href="#gt-gt-Remote-DLL-Injection" class="headerlink" title="&gt;&gt; Remote DLL Injection"></a>&gt;&gt; <em>Remote DLL Injection</em></h4><ol>
+<li>ProcessA <strong>enables debug privilege</strong>(<code>SE_DEBUG_PRIVILEGE</code>) as if it were a debugger, so that it can read and write other process’ memory.</li>
+<li>ProcessA calls <code>OpenProcess</code> and <strong>opens a handle to ProcessB</strong> (also request <code>PROCESS_CREATE_THREAD</code>, <code>PROCESS_VM_OPERATION</code>, and <code>PROCESS_VM_WRITE</code>)</li>
+<li>ProcessA calls <code>VirtualAllocEx</code> to <strong>allocate memory in ProcessB</strong></li>
+<li>ProcessA <strong>transfers a string(identifies the full path on disk to the malicious DLL)</strong> to ProcessB’s memory by calling <code>WriteProcessMemory</code>.(writing at the address allocated in previous step)</li>
+<li>ProcessA calls <code>CreateRemoteThread</code> to <strong>start a new thread in ProcessB that executes the <code>LoadLibrary</code> function</strong>.</li>
+<li>Now the injection is complete and processB has loaded the DLL. ProcessA calls <code>VirtualFree</code> to free the memory containing the DLL’s path.</li>
+<li>ProcessA calls <code>CloseHandle</code> on ProcessB’s process to clean up.</li>
+</ol>
+<p><strong><em>Detection</em></strong></p>
+<p><code>LoadLibrary</code> was used to load the DLL, there is no good way to conclusively distinguish between the malicious DLL and other explicitly loaded DLLs in ProcessB.</p>
+<blockquote>
+<p>The VAD and PEB lists look nearly identical from a metadata perspective for all modules loaded with the same API. </p>
+<p><strong>In other words, the injected DLL isn’t necessarily hidden at this point</strong>; it is perfectly visible with <code>dlllist</code> or tools such as Process Explorer running on the live system. However, unless you know the specific name of the DLL, it can easily blend in with the legitimate modules.</p>
+</blockquote>
+<p>There are still two factors can make detection possible:</p>
+<ul>
+<li>If the injected DLL does attempt to hide from tools on the live system after it gets loaded (by unlinking its <code>_LDR_DATA_TABLE_ENTRY</code> from one or more of the ordered lists), you can use <code>ldrmodules</code> to detect it.</li>
+<li>If the injected DLL is packed, and the unpacking procedure copies the decompressed code to a new memory region. In this case, you’ll detect it with <code>malfind</code> (described next).</li>
+</ul>
+<h4 id="gt-gt-Remote-Code-Injection"><a href="#gt-gt-Remote-Code-Injection" class="headerlink" title="&gt;&gt; Remote Code Injection"></a>&gt;&gt; <em>Remote Code Injection</em></h4><p>It starts out with the same two steps as remote DLL injection above.</p>
+<ol>
+<li>ProcessA <strong>allocates memory in ProcessB with <code>PAGE_EXECUTE_READWRITE</code> protection</strong>.(It can alloc ProcessA to write and ProcessB to read and execute it).</li>
+<li>ProcessA <strong>transfer a block of code to ProcessB</strong> using <code>WriteProcessMemory</code>.</li>
+<li>ProcessA calls <code>CreateRemoteThread</code> and points the thread’s starting address to a function within the code.</li>
+</ol>
+<p><strong><em>Detection</em></strong></p>
+<p>We could use <code>malfind</code> plugin(it is designed to hunt down remote code injections).</p>
+<p>The concept is:</p>
+<ul>
+<li>There will be a readable, writeable, and executable private memory region (that is, no file mapping) with all pages committed (we use a few variations of these criteria for detection). </li>
+<li>The region will <strong>contain a PE header and/or valid CPU instructions</strong>.</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python vol.py –f stuxnet.mem --profile=WinXPSP3x86 malfind</span><br></pre></td></tr></table></figure>
+<p><em>case1 - obvious injected code with MZ signature</em></p>
+<p><img alt="image-20200311122718332" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcpvjs26njj30nx0dnwg5.jpg" data-index="84" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcpvjs26njj30nx0dnwg5.jpg"></p>
+<blockquote>
+<p>In some cases, you’ll leverage the hex dump to determine whether the region is malicious (for example, <strong>because you see an MZ signature</strong>); </p>
+</blockquote>
+<p>In other cases, you’ll need to rely on the disassembly(no <code>MZ</code> signature):</p>
+<p>case2 - unconspicuous injected code without MZ signature*</p>
+<p><img alt="image-20200311152041422" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcq0k6tf7sj30o40dtwh1.jpg" data-index="85" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcq0k6tf7sj30o40dtwh1.jpg"></p>
+<blockquote>
+<p>This region at 0x9d0000 is worth further investigation because the disassembly contains CPU instructions that make sense. For example, the <code>JMP</code> destinations are valid, and the combination of <code>MOV EDI, EDI</code> followed by <code>PUSH EBP</code> indicates the start of a function prologue.</p>
+</blockquote>
+<p><em>case3 - normal code similar to injected code</em></p>
+<p>The following region in <code>csrss.exe</code> was not injected by malware, it was picked up by the plugin due to its similarity to injection regions:</p>
+<p><img alt="image-20200311154500763" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcq19hzu1jj30o20bkabo.jpg" data-index="86" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcq19hzu1jj30o20bkabo.jpg"></p>
+<p>Keep in mind that programs may allocate executable private memory for legitimate reasons.</p>
+<blockquote>
+<p>For example, there’s an <code>ENTER</code> instruction, but no <code>LEAVE</code>. There’s conditional jump (<code>JNO</code>), but no condition. Furthermore, the destination of the jump leads to 0x7f6f0007, an address that does not contain an instruction according to the current alignment.</p>
+<p>It is just meaningless.</p>
+</blockquote>
+<p><em>case4 - hidden injected code with coreflood</em></p>
+<p><img alt="image-20200311155332478" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcq1idd58pj30o00csabu.jpg" data-index="87" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcq1idd58pj30o00csabu.jpg"></p>
+<p>Most analysts assume that this range at 0x7ff80000 is a false positive. The hex dump and disassembly both consist of only zeros. (<strong>In this case, Coreflood’s antidumping feature wiped out its PE header (which occupied the first page) by overwriting it with zeros)</strong>.</p>
+<p> However, remember that this is only a preview of the data. <strong>The CPU doesn’t necessarily start executing code at offset 0 in the injected region; it can easily point somewhere within the range.</strong></p>
+<p>Use <code>volshell</code> to disassemble code in the seconde page we could see the main function:</p>
+<p><img alt="image-20200311155607867" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcq1l279lfj30o70bjgnn.jpg" data-index="88" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcq1l279lfj30o70bjgnn.jpg"></p>
+<h4 id="gt-gt-Reflective-DLL-Injection"><a href="#gt-gt-Reflective-DLL-Injection" class="headerlink" title="&gt;&gt; Reflective DLL Injection"></a>&gt;&gt; <em>Reflective DLL Injection</em></h4><p>This method is a hybrid of the two approaches discussed previously. </p>
+<p>The content transferred from Process A to Process B is a DLL (as opposed to a block of shellcode), but after it exists in Process B, it initializes itself instead of calling <code>LoadLibrary</code>.</p>
+<p>It has several anti-forensics advantages:</p>
+<ul>
+<li><p><code>LoadLibrary</code> only loads libraries from disk. <strong>Because this method doesn’t rely on the API, the injected DLL never needs to be written to more permanent storage</strong>. It can be loaded into memory straight from the network (for example, when exploiting a remote buffer overflow).</p>
+</li>
+<li><p>Also as a result of avoiding <code>LoadLibrary</code>, <strong>the <code>_LDR_DATA_TABLE_ENTRY</code> metadata structures are not created</strong>. Thus the <strong>three lists in the PEB do not have a record of this DLL</strong> loading.</p>
+</li>
+</ul>
+<p><strong><em>Detection</em></strong></p>
+<p>First take a look at an example(a snippet of code) of Reflection DLL Injection project’s <code>LoadLibraryR.c</code> file:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// alloc memory (RWX) in the host process for the image... </span><br><span class="line">lpRemoteLibraryBuffer = VirtualAllocEx( hProcess, NULL, dwLength,</span><br><span class="line">                           MEM_RESERVE|MEM_COMMIT, PAGE_EXECUTE_READWRITE ); </span><br><span class="line">if(!lpRemoteLibraryBuffer) </span><br><span class="line">   break;</span><br></pre></td></tr></table></figure>
+<p>Due to the options chosen during allocation, the VAD in the host process that contains the DLL fits the criteria for <code>malfind</code>.</p>
+<p>So we can use <code>malfind</code>.</p>
+<h4 id="gt-gt-Hollow-Process-Injection"><a href="#gt-gt-Hollow-Process-Injection" class="headerlink" title="&gt;&gt; Hollow Process Injection"></a>&gt;&gt; <em>Hollow Process Injection</em></h4><p>The malware starts a new instance of a legitimate process, such as lsass.exe. Before the process’ first thread begins, the malware frees the memory containing the lsass.exe code (it hollows it out) and replaces it with the body of the malware.</p>
+<p><img alt="image-20200311161409689" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcq23twd95j30oj0d0wfr.jpg" data-index="89" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcq23twd95j30oj0d0wfr.jpg"></p>
+<blockquote>
+<p>PEB and various other data structures identify the path to the legitimate lsass.exe binary.(unchanged)</p>
+</blockquote>
+<p><strong><em>Hollow a process</em></strong></p>
+<ol>
+<li><p>Start a new instance of a legitimate process (for example, C:\windows\system32\lsass.exe), but with its first thread suspended. </p>
+<blockquote>
+<p>At this point, the <code>ImagePathName</code> in the PEB of the new process identifies the full path to the legitimate lsass.exe.</p>
+</blockquote>
+</li>
+<li><p><strong>Acquire the contents for the malicious replacement code</strong>. This content can come from a file on disk, an existing buffer in memory, or over the network.</p>
+</li>
+<li><p>Determine the base address (ImageBase) of the lsass.exe process, and then <strong>free or unmap the containing memory section</strong>. </p>
+<blockquote>
+<p>At this point, the process is just an empty container (the DLLs, heaps, stacks, and open handles are still intact, but no process executable exists).</p>
+</blockquote>
+</li>
+<li><p>Allocate a new memory segment in lsass.exe and make sure that the memory can be read, written, and executed. </p>
+<blockquote>
+<p>You can reuse the same <code>ImageBase</code> or a different one</p>
+</blockquote>
+</li>
+<li><p>Copy the PE header for the malicious process into the newly allocated memory in lsass.exe</p>
+</li>
+<li><p>Copy each PE section for the malicious process into the proper virtual address in lsass.exe</p>
+</li>
+<li><p>Set the start address for the first thread (the one that has been in a suspended state) to point at the malicious process’ AddressOfEntryPoint value.</p>
+</li>
+<li><p>Resume the thread.</p>
+<blockquote>
+<p>The malicious process begins executing within the container created for lsass.exe. The ImagePathName in the PEB still points to C:\windows\system32\lsass.exe.</p>
+</blockquote>
+</li>
+</ol>
+<p><strong><em>Detection</em></strong></p>
+<p>First we can list all processes using <code>pslist</code>:</p>
+<p><img alt="image-20200311165645526" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcq3c5jf4vj30oc05b758.jpg" data-index="90" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcq3c5jf4vj30oc05b758.jpg"></p>
+<blockquote>
+<p>There are three processes (PID 680, 868, and 1928), but only one is the “real” lsass.exe. Intuition may tell you that the one that <strong>started first based on creation time (PID 680) is the legitimate one</strong>, but we’ll show you how to confirm.</p>
+</blockquote>
+<p>Now we can see <code>ImageBase</code> by <code>dlllist</code> for the processes:</p>
+<p><img alt="image-20200311165841601" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcq3e5shgaj30o40a1myy.jpg" data-index="91" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcq3e5shgaj30o40a1myy.jpg"></p>
+<blockquote>
+<p>The advertised paths are all the same (despite two having an extra set of quotes around the path) because the data in the PEB, including the <code>ImageBase</code>, is initialized at process creation, and all processes started out the same.</p>
+</blockquote>
+<p>However, as a result of being hollowed, the VAD characteristics for the region that contains the ImageBase are drastically different:</p>
+<p><img alt="image-20200311165948460" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcq3fb9za5j30o00hi77u.jpg" data-index="92" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcq3fb9za5j30o00hi77u.jpg"></p>
+<p><img alt="image-20200311165956271" class="post-img b-lazy" data-img="https://tva1.sinaimg.cn/large/00831rSTly1gcq3fgk8bej30nz0b2dhu.jpg" data-index="93" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gcq3fgk8bej30nz0b2dhu.jpg"></p>
+<blockquote>
+<p>Only the legitimate one (PID 680) still has a copy of the lsass.exe file mapped into the region</p>
+</blockquote>
 
                 </article>
                 <ul class="tags-postTags">
@@ -689,6 +1208,10 @@
 
     
     <nav id="gobottom" class="pagination">
+        
+        <a class="prev-post" title="手把手带你MIT6.828 - Lab3" href="/2020/03/10/oslab3/">
+            ← 手把手带你MIT6.828 - Lab3
+        </a>
         
         <span class="prev-next-post">·</span>
         
@@ -719,7 +1242,7 @@
         </a>
     </div>
     <div class="toc-main">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Memory-Forensics"><span class="toc-text">Memory Forensics</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Basic-Knowledge"><span class="toc-text">Basic Knowledge</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Volatility"><span class="toc-text">Volatility</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#selecting-a-profile"><span class="toc-text">selecting a profile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shell"><span class="toc-text">shell</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Memory-Dump-Formats"><span class="toc-text">Memory Dump Formats</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Raw-Memory-Dump"><span class="toc-text">&gt; Raw Memory Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Crash-Dump"><span class="toc-text">&gt; Windows Crash Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Hibernation-File"><span class="toc-text">&gt; Windows Hibernation File</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Virtual-Machine-Memory"><span class="toc-text">&gt; Virtual Machine Memory</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Windows-Objects-and-Pool-Allocations"><span class="toc-text">5 Windows Objects and Pool Allocations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Executive-Objects"><span class="toc-text">&gt; Windows Executive Objects</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Object-Headers"><span class="toc-text">&gt;&gt; Object Headers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Optional-Headers"><span class="toc-text">&gt;&gt; Optional Headers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Object-Type-Objects"><span class="toc-text">&gt;&gt; Object Type Objects</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Kernel-Pool-Allocations"><span class="toc-text">&gt; Kernel Pool Allocations</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Allocation-APIs"><span class="toc-text">&gt;&gt; Allocation APIs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-De-allocation-and-Reuse"><span class="toc-text">&gt;&gt; De-allocation and Reuse</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Pool-Tag-Scanning"><span class="toc-text">&gt; Pool-Tag Scanning</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Tag-Sources"><span class="toc-text">&gt;&gt; Pool Tag Sources</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pooltag-file"><span class="toc-text">&gt;&gt; Pooltag file</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-PoolMon-Utility"><span class="toc-text">&gt;&gt; PoolMon Utility</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Tracker-Tables"><span class="toc-text">&gt;&gt; Pool Tracker Tables</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Scanner-Algorighm"><span class="toc-text">&gt;&gt; Pool Scanner Algorighm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Finding-Terminated-Processes"><span class="toc-text">&gt;&gt; Finding Terminated Processes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Limitations-of-Pool-Scanning"><span class="toc-text">&gt;&gt; Limitations of Pool Scanning</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Big-Page-Pool"><span class="toc-text">&gt; Big Page Pool</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Big-Page-Track-Tables"><span class="toc-text">&gt; Big Page Track Tables</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Exploring-Big-Page-Pools"><span class="toc-text">&gt;&gt; Exploring Big Page Pools</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Processes-Handles-and-Tokens"><span class="toc-text">6 Processes, Handles, and Tokens</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Processes"><span class="toc-text">&gt; Processes</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Data-Structures"><span class="toc-text">&gt;&gt; Data Structures</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Process-Organization"><span class="toc-text">&gt;&gt; Process Organization</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Critical-System-Processes"><span class="toc-text">&gt;&gt; Critical System Processes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Analyzing-Process-Activity"><span class="toc-text">&gt;&gt; Analyzing Process Activity*</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Process-Tree-Visualizations"><span class="toc-text">&gt;&gt; Process Tree Visualizations</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Detecting-DKOM-Attacks"><span class="toc-text">&gt;&gt; Detecting DKOM Attacks</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Process-Tokens"><span class="toc-text">&gt; Process Tokens</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Data-Structures-1"><span class="toc-text">&gt;&gt; Data Structures</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Accessing-Tokens"><span class="toc-text">&gt;&gt; Accessing Tokens</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Extracting-and-Translating-SIDs-in-Memory"><span class="toc-text">&gt;&gt; Extracting and Translating SIDs in Memory</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Detecting-Lateral-Movement"><span class="toc-text">&gt;&gt; Detecting Lateral Movement</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Privileges"><span class="toc-text">&gt; Privileges</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Analyzing-Explicit-Privileges"><span class="toc-text">&gt;&gt; Analyzing Explicit Privileges</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Process-Handles"><span class="toc-text">&gt; Process Handles</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Lifetime-of-a-Handle"><span class="toc-text">&gt;&gt; Lifetime of a Handle</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Reference-Counts-and-Kernel-Handles"><span class="toc-text">&gt;&gt; Reference Counts and Kernel Handles</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Handle-Table-Internals"><span class="toc-text">&gt;&gt; Handle Table Internals</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Data-Structures-2"><span class="toc-text">&gt;&gt; Data Structures</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Enumerating-Handles-in-Memory"><span class="toc-text">&gt; Enumerating Handles in Memory*</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Detecting-Registry-Persistence"><span class="toc-text">&gt;&gt; Detecting Registry Persistence</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Identifying-Remote-Mapped-Drives"><span class="toc-text">&gt;&gt; Identifying Remote Mapped Drives</span></a></li></ol></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Memory-Forensics"><span class="toc-text">Memory Forensics</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Basic-Knowledge"><span class="toc-text">Basic Knowledge</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Volatility"><span class="toc-text">Volatility</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#selecting-a-profile"><span class="toc-text">selecting a profile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shell"><span class="toc-text">shell</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Memory-Dump-Formats"><span class="toc-text">Memory Dump Formats</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Raw-Memory-Dump"><span class="toc-text">&gt; Raw Memory Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Crash-Dump"><span class="toc-text">&gt; Windows Crash Dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Hibernation-File"><span class="toc-text">&gt; Windows Hibernation File</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Virtual-Machine-Memory"><span class="toc-text">&gt; Virtual Machine Memory</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Windows-Objects-and-Pool-Allocations"><span class="toc-text">5 Windows Objects and Pool Allocations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Windows-Executive-Objects"><span class="toc-text">&gt; Windows Executive Objects</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Object-Headers"><span class="toc-text">&gt;&gt; Object Headers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Optional-Headers"><span class="toc-text">&gt;&gt; Optional Headers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Object-Type-Objects"><span class="toc-text">&gt;&gt; Object Type Objects</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Kernel-Pool-Allocations"><span class="toc-text">&gt; Kernel Pool Allocations</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Allocation-APIs"><span class="toc-text">&gt;&gt; Allocation APIs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-De-allocation-and-Reuse"><span class="toc-text">&gt;&gt; De-allocation and Reuse</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Pool-Tag-Scanning"><span class="toc-text">&gt; Pool-Tag Scanning</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Tag-Sources"><span class="toc-text">&gt;&gt; Pool Tag Sources</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pooltag-file"><span class="toc-text">&gt;&gt; Pooltag file</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-PoolMon-Utility"><span class="toc-text">&gt;&gt; PoolMon Utility</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Tracker-Tables"><span class="toc-text">&gt;&gt; Pool Tracker Tables</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Pool-Scanner-Algorighm"><span class="toc-text">&gt;&gt; Pool Scanner Algorighm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Finding-Terminated-Processes"><span class="toc-text">&gt;&gt; Finding Terminated Processes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Limitations-of-Pool-Scanning"><span class="toc-text">&gt;&gt; Limitations of Pool Scanning</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Big-Page-Pool"><span class="toc-text">&gt; Big Page Pool</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Big-Page-Track-Tables"><span class="toc-text">&gt; Big Page Track Tables</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Exploring-Big-Page-Pools"><span class="toc-text">&gt;&gt; Exploring Big Page Pools</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Processes-Handles-and-Tokens"><span class="toc-text">6 Processes, Handles, and Tokens</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Processes"><span class="toc-text">&gt; Processes</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Data-Structures"><span class="toc-text">&gt;&gt; Data Structures</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Process-Organization"><span class="toc-text">&gt;&gt; Process Organization</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Critical-System-Processes"><span class="toc-text">&gt;&gt; Critical System Processes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Analyzing-Process-Activity"><span class="toc-text">&gt;&gt; Analyzing Process Activity*</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Process-Tree-Visualizations"><span class="toc-text">&gt;&gt; Process Tree Visualizations</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Detecting-DKOM-Attacks"><span class="toc-text">&gt;&gt; Detecting DKOM Attacks</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Process-Tokens"><span class="toc-text">&gt; Process Tokens</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Data-Structures-1"><span class="toc-text">&gt;&gt; Data Structures</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Accessing-Tokens"><span class="toc-text">&gt;&gt; Accessing Tokens</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Extracting-and-Translating-SIDs-in-Memory"><span class="toc-text">&gt;&gt; Extracting and Translating SIDs in Memory</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Detecting-Lateral-Movement"><span class="toc-text">&gt;&gt; Detecting Lateral Movement</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Privileges"><span class="toc-text">&gt; Privileges</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Analyzing-Explicit-Privileges"><span class="toc-text">&gt;&gt; Analyzing Explicit Privileges</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Process-Handles"><span class="toc-text">&gt; Process Handles</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Lifetime-of-a-Handle"><span class="toc-text">&gt;&gt; Lifetime of a Handle</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Reference-Counts-and-Kernel-Handles"><span class="toc-text">&gt;&gt; Reference Counts and Kernel Handles</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Handle-Table-Internals"><span class="toc-text">&gt;&gt; Handle Table Internals</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Data-Structures-2"><span class="toc-text">&gt;&gt; Data Structures</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Enumerating-Handles-in-Memory"><span class="toc-text">&gt; Enumerating Handles in Memory*</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Detecting-Registry-Persistence"><span class="toc-text">&gt;&gt; Detecting Registry Persistence</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Identifying-Remote-Mapped-Drives"><span class="toc-text">&gt;&gt; Identifying Remote Mapped Drives</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-Process-Memory-Internals"><span class="toc-text">7 Process Memory Internals</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-What’s-in-Process-Memory"><span class="toc-text">&gt; What’s in Process Memory?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Memory-Allocation-APIs"><span class="toc-text">Memory Allocation APIs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Enumerating-Process-Memory"><span class="toc-text">&gt; Enumerating Process Memory</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Process-Page-Tables"><span class="toc-text">&gt;&gt; Process Page Tables</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Virtual-Address-Descriptors"><span class="toc-text">&gt; Virtual Address Descriptors</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-VAD-Structures"><span class="toc-text">&gt;&gt; VAD Structures</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-VAD-Tags"><span class="toc-text">&gt;&gt; VAD Tags</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-VAD-Flags"><span class="toc-text">&gt;&gt; VAD Flags</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-CommitCharge"><span class="toc-text">&gt;&gt; CommitCharge</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Protection"><span class="toc-text">&gt;&gt; Protection</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Private-Memory"><span class="toc-text">&gt;&gt; Private Memory</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Volatility-VAD-Plugins"><span class="toc-text">&gt;&gt; Volatility VAD Plugins</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-Hunting-Malware-in-Process-Memory"><span class="toc-text">8 Hunting Malware in Process Memory</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Process-Environment-Block-PEB"><span class="toc-text">&gt; Process Environment Block(PEB)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Data-Structures-3"><span class="toc-text">&gt;&gt; Data Structures</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Process-Heap"><span class="toc-text">&gt;&gt; Process Heap</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Environment-Variables"><span class="toc-text">&gt;&gt; Environment Variables</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Attacks-on-Environment-variables"><span class="toc-text">&gt;&gt; Attacks on Environment variables</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Coreflood-Presence-Marking"><span class="toc-text">&gt;&gt; Coreflood Presence Marking</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Standard-Handles"><span class="toc-text">&gt;&gt; Standard Handles</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Dynamic-Link-Libraries-DLLs"><span class="toc-text">&gt;&gt; Dynamic Link Libraries(DLLs)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-PE-Files-in-Memory"><span class="toc-text">&gt; PE Files in Memory</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Parsing-PE-Headers-in-Memory"><span class="toc-text">&gt;&gt; Parsing PE Headers in Memory</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-PE-Extraction-Plugins"><span class="toc-text">&gt;&gt; PE Extraction Plugins</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-Code-Injection"><span class="toc-text">&gt; Code Injection</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Remote-DLL-Injection"><span class="toc-text">&gt;&gt; Remote DLL Injection</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Remote-Code-Injection"><span class="toc-text">&gt;&gt; Remote Code Injection</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Reflective-DLL-Injection"><span class="toc-text">&gt;&gt; Reflective DLL Injection</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gt-gt-Hollow-Process-Injection"><span class="toc-text">&gt;&gt; Hollow Process Injection</span></a></li></ol></li></ol></li></ol></li></ol>
     </div>
 </div>
 
@@ -821,7 +1344,13 @@
       
       
       <li>
-        <a href="/2020/03/07/memfor/">Memory Forensics</a>
+        <a href="/2020/03/10/oslab3/">手把手带你MIT6.828 - Lab3</a>
+      </li>
+      
+      
+      
+      <li>
+        <a href="/2020/03/07/memfor/"></a>
       </li>
       
       
@@ -831,10 +1360,6 @@
       </li>
       
       
-      
-      <li>
-        <a href="/2020/03/02/os/">手把手带你MIT6.828 - Lab1</a>
-      </li>
       
       
       
@@ -881,7 +1406,7 @@
 		<h3 class="read-next-card-header-title">Tag Cloud</h3>
 	</header>
 	<div class="read-next-card-content-ext">
-		<a href="/tags/Fundamentals-of-Computer-Graphics/" style="font-size: 14px;">Fundamentals of Computer Graphics</a> <a href="/tags/iOS/" style="font-size: 14px;">iOS</a> <a href="/tags/iosre/" style="font-size: 14px;">iosre</a> <a href="/tags/lab/" style="font-size: 19px;">lab</a> <a href="/tags/memory-forensics/" style="font-size: 14px;">memory forensics</a> <a href="/tags/operating-system/" style="font-size: 19px;">operating system</a> <a href="/tags/工具/" style="font-size: 24px;">工具</a> <a href="/tags/随笔/" style="font-size: 14px;">随笔</a>
+		<a href="/tags/Fundamentals-of-Computer-Graphics/" style="font-size: 14px;">Fundamentals of Computer Graphics</a> <a href="/tags/iOS/" style="font-size: 14px;">iOS</a> <a href="/tags/iosre/" style="font-size: 14px;">iosre</a> <a href="/tags/lab/" style="font-size: 24px;">lab</a> <a href="/tags/memory-forensics/" style="font-size: 14px;">memory forensics</a> <a href="/tags/operating-system/" style="font-size: 24px;">operating system</a> <a href="/tags/工具/" style="font-size: 24px;">工具</a> <a href="/tags/随笔/" style="font-size: 14px;">随笔</a>
 	</div>
 </article>
 
@@ -914,7 +1439,7 @@
 			<a href="/" title="Icegrave">Icegrave &copy; 2020</a>
 			
 				
-			        <span hidden="true" id="/2020/03/07/memfor/" class="leancloud-visitors" data-flag-title="Memory Forensics">
+			        <span hidden="true" id="/2020/03/07/memfor/" class="leancloud-visitors" data-flag-title>
 			            <span>阅读量 </span>
 			            <span class="leancloud-visitors-count">0</span>
 			        </span>
