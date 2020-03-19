@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+
+
+
+
+
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="preconnect" href="//www.googletagmanager.com">
+	<link rel="preconnect" href="//zz.bdstatic.com">
+	<link rel="preconnect" href="//sp0.baidu.com">
+	<link rel="preconnect" href="//www.google-analytics.com">
+	<link rel="preconnect" href="//cdn1.lncld.net">
+	<link rel="preconnect" href="//unpkg.com">
+	<link rel="preconnect" href="//app-router.leancloud.cn">
+	<link rel="preconnect" href="//9qpuwspm.api.lncld.net">
+	<link rel="preconnect" href="//gravatar.loli.net">
+
+	<title>手把手带你MIT6.828 - Lab4 | Icegrave</title>
+
+	<meta name="HandheldFriendly" content="True">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+	<meta name="generator" content="hexo">
+	<meta name="author" content="Heart-Shaped Box">
+	<meta name="description" content>
+
+	
+	<meta name="keywords" content>
+	
+
+	
+	<link rel="shortcut icon" href="https://mubai.oss-cn-hangzhou.aliyuncs.com/icon.png">
+	<link rel="apple-touch-icon" href="https://mubai.oss-cn-hangzhou.aliyuncs.com/icon.png">
+	
+
+	
+	<meta name="theme-color" content="#3c484e">
+	<meta name="msapplication-TileColor" content="#3c484e">
+	
+
+	
+
+	
+
+	<meta property="og:site_name" content="Icegrave">
+	<meta property="og:type" content="article">
+	<meta property="og:title" content="手把手带你MIT6.828 - Lab4 | Icegrave">
+	<meta property="og:description" content>
+	<meta property="og:url" content="http://yoursite.com/2020/03/19/oslab4/">
+
+	
+	<meta property="article:published_time" content="2020-03-19T09:03:00+08:00"> 
+	<meta property="article:author" content="Heart-Shaped Box">
+	<meta property="article:published_first" content="Icegrave, /2020/03/19/oslab4/">
+	
+
+	
+	
+	<link rel="stylesheet" href="/css/allinonecss.min.css">
+
+	
+	
+	
+</head>
+<body class="post-template">
+	<div class="site-wrapper">
+		
+
+
+
+
+<header class="site-header post-site-header outer">
+    <div class="inner">
+        
+<nav class="site-nav"> 
+    <div class="site-nav-left">
+        <ul class="nav">
+            <li>
+                
+                <a href="/" title="Home">HOME</a>
+                
+            </li>
+            
+            
+            <li>
+                <a href="/about" title="ABOUT">ABOUT</a>
+            </li>
+            
+            <li>
+                <a href="/archives" title="ARCHIVES">ARCHIVES</a>
+            </li>
+            
+            
+        </ul> 
+    </div>
+    
+    <div class="search-button-area">
+        <a href="#search" class="search-button">Search ...</a>
+    </div>
+     
+    <div class="site-nav-right">
+        
+        <a href="#search" class="search-button">Search ...</a>
+         
+        
+<div class="social-links">
+    
+    <a class="social-link" title="weibo" href="https://weibo.com/" target="_blank" rel="noopener">
+        <svg viewbox="0 0 1141 1024" xmlns="http://www.w3.org/2000/svg"><path d="M916.48 518.144q27.648 21.504 38.912 51.712t9.216 62.976-14.336 65.536-31.744 59.392q-34.816 48.128-78.848 81.92t-91.136 56.32-94.72 35.328-89.6 18.944-75.264 7.68-51.712 1.536-49.152-2.56-68.096-10.24-78.336-21.504-79.872-36.352-74.24-55.296-59.904-78.848q-16.384-29.696-22.016-63.488t-5.632-86.016q0-22.528 7.68-51.2t27.136-63.488 53.248-75.776 86.016-90.112q51.2-48.128 105.984-85.504t117.248-57.856q28.672-10.24 63.488-11.264t57.344 11.264q10.24 11.264 19.456 23.04t12.288 29.184q3.072 14.336 0.512 27.648t-5.632 26.624-5.12 25.6 2.048 22.528q17.408 2.048 33.792-1.536t31.744-9.216 31.232-11.776 33.28-9.216q27.648-5.12 54.784-4.608t49.152 7.68 36.352 22.016 17.408 38.4q2.048 14.336-2.048 26.624t-8.704 23.04-7.168 22.016 1.536 23.552q3.072 7.168 14.848 13.312t27.136 12.288 32.256 13.312 29.184 16.384zM658.432 836.608q26.624-16.384 53.76-45.056t44.032-64 18.944-75.776-20.48-81.408q-19.456-33.792-47.616-57.344t-62.976-37.376-74.24-19.968-80.384-6.144q-78.848 0-139.776 16.384t-105.472 43.008-72.192 60.416-38.912 68.608q-11.264 33.792-6.656 67.072t20.992 62.976 42.496 53.248 57.856 37.888q58.368 25.6 119.296 32.256t116.224 0.512 100.864-21.504 74.24-33.792zM524.288 513.024q20.48 8.192 38.912 18.432t32.768 27.648q10.24 12.288 17.92 30.72t10.752 39.424 1.536 42.496-9.728 38.912q-8.192 18.432-19.968 37.376t-28.672 35.328-40.448 29.184-57.344 18.944q-61.44 11.264-117.76-11.264t-88.064-74.752q-12.288-39.936-13.312-70.656t16.384-66.56q13.312-27.648 40.448-51.712t62.464-38.912 75.264-17.408 78.848 12.8zM361.472 764.928q37.888 3.072 57.856-18.432t21.504-48.128-15.36-47.616-52.736-16.896q-27.648 3.072-43.008 23.552t-17.408 43.52 9.728 42.496 39.424 21.504zM780.288 6.144q74.752 0 139.776 19.968t113.664 57.856 76.288 92.16 27.648 122.88q0 33.792-16.384 50.688t-35.328 17.408-35.328-14.336-16.384-45.568q0-40.96-22.528-77.824t-59.392-64.512-84.48-43.52-96.768-15.872q-31.744 0-47.104-15.36t-14.336-34.304 18.944-34.304 51.712-15.36zM780.288 169.984q95.232 0 144.384 48.64t49.152 146.944q0 30.72-10.24 43.52t-22.528 11.264-22.528-14.848-10.24-35.84q0-60.416-34.816-96.256t-93.184-35.84q-19.456 0-28.672-10.752t-9.216-23.04 9.728-23.04 28.16-10.752z"/></svg>
+    </a>
+    
+    
+    <a class="social-link" title="github" href="https://github.com/Icegrave0391" target="_blank" rel="noopener">
+        <svg viewbox="0 0 1049 1024" xmlns="http://www.w3.org/2000/svg"><path d="M524.979332 0C234.676191 0 0 234.676191 0 524.979332c0 232.068678 150.366597 428.501342 358.967656 498.035028 26.075132 5.215026 35.636014-11.299224 35.636014-25.205961 0-12.168395-0.869171-53.888607-0.869171-97.347161-146.020741 31.290159-176.441729-62.580318-176.441729-62.580318-23.467619-60.841976-58.234462-76.487055-58.234463-76.487055-47.804409-32.15933 3.476684-32.15933 3.476685-32.15933 53.019436 3.476684 80.83291 53.888607 80.83291 53.888607 46.935238 79.963739 122.553122 57.365291 152.97411 43.458554 4.345855-33.897672 18.252593-57.365291 33.028501-70.402857-116.468925-12.168395-239.022047-57.365291-239.022047-259.012982 0-57.365291 20.860106-104.300529 53.888607-140.805715-5.215026-13.037566-23.467619-66.926173 5.215027-139.067372 0 0 44.327725-13.906737 144.282399 53.888607 41.720212-11.299224 86.917108-17.383422 131.244833-17.383422s89.524621 6.084198 131.244833 17.383422C756.178839 203.386032 800.506564 217.29277 800.506564 217.29277c28.682646 72.1412 10.430053 126.029806 5.215026 139.067372 33.897672 36.505185 53.888607 83.440424 53.888607 140.805715 0 201.64769-122.553122 245.975415-239.891218 259.012982 19.121764 16.514251 35.636014 47.804409 35.636015 97.347161 0 70.402857-0.869171 126.898978-0.869172 144.282399 0 13.906737 9.560882 30.420988 35.636015 25.205961 208.601059-69.533686 358.967656-265.96635 358.967655-498.035028C1049.958663 234.676191 814.413301 0 524.979332 0z"/></svg>
+    </a>
+    
+    
+    <a class="social-link" title="facebook" href="https://facebook" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+    </a>
+    
+    
+    <a class="social-link" title="twitter" href="https://twitter.com" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+    </a>
+    
+    
+    
+    
+</div>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<div id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+        <header class="post-full-header">
+            <div class="post-full-meta">
+                <time class="post-full-meta-date" datetime="2020-03-19T01:08:47.000Z">
+                    2020-03-19
+                </time>
+                
+                <span class="date-divider">/</span>
+                
+                <a href="/categories/operating-system/">operating system</a>&nbsp;&nbsp;
+                
+                
+            </div>
+            <h1 class="post-full-title">手把手带你MIT6.828 - Lab4</h1>
+        </header>
+        <div class="post-full ">
+            
+            <figure class="post-full-image" style="background-image: url(https://tva1.sinaimg.cn/large/00831rSTly1gcfwldfuklj31li0u0hdu.jpg)">
+            </figure>
+            
+            <div class="post-full-content">
+                <article id="photoswipe" class="markdown-body">
+                    <h1 id="Lab4-Preemptive-Multitasking"><a href="#Lab4-Preemptive-Multitasking" class="headerlink" title="Lab4 Preemptive Multitasking"></a>Lab4 Preemptive Multitasking</h1><p>官方文档: <a href="https://pdos.csail.mit.edu/6.828/2018/lec/" target="_blank" rel="noopener">lectures</a></p>
+<h3 id="gt-实验介绍"><a href="#gt-实验介绍" class="headerlink" title="&gt; 实验介绍"></a>&gt; 实验介绍</h3><p>本次实验分为三个部分，我们在多个同时激活的用户模式环境下实现一个抢占式（preemptive）的多任务管理系统。</p>
+<p>在Part A中，我们将会为jos添加多处理器支持，实现轮询调度（round-robin scheduling），同时添加基本的环境管理系统调用（负责创建和销毁环境的系统调用，以及内存分配和映射的调用）。</p>
+<p>在Part B中，我们会实现一个Unix-like的<code>fork()</code>函数，使得用户环境可以创建一份自己进程的拷贝（copy）。</p>
+<p>在Part C中，我们将会实现进程间通讯功能IPC（inter-process communication），允许不同的用户环境之间显式相互通信和同步（communicate and synchronize）。我们还需要实现对于硬件时钟中断和抢占的支持。</p>
+<h3 id="gt-实验准备"><a href="#gt-实验准备" class="headerlink" title="&gt; 实验准备"></a>&gt; 实验准备</h3><p>仍旧需要将lab4的分支merge到lab3下。实验四包含了以下新增的文件：</p>
+<ul>
+<li>kern/cpu.h 内核私有的关于多处理器的支持</li>
+<li>kern/mpconfig.c 读取多处理器配置的代码</li>
+<li>kern/lapic.c 内核驱动每个处理的的APIC（高级可编程中断控制器）的代码</li>
+<li>kern/mpentry.S 非引导CPU的汇编入口代码</li>
+<li>kern/spinlock.h 内核私有的自旋锁定义，包括大内核锁</li>
+<li>kern/spinlock.c 内核实现自旋锁的代码</li>
+<li>kern/sched.c 需要实现的调度器的代码框架</li>
+</ul>
+<h2 id="Part-A-Multiprocessor-Support-and-Cooperative-Multitasking"><a href="#Part-A-Multiprocessor-Support-and-Cooperative-Multitasking" class="headerlink" title="Part A: Multiprocessor Support and Cooperative Multitasking"></a>Part A: Multiprocessor Support and Cooperative Multitasking</h2><p>在实验的这部分中，我们首先拓展jos使其运行在多处理器系统上，然后实现jos内核一些系统功能调用以支持用户级环境去创建新环境。我们还需要实现协同式轮询调度（cooperative round-robin scheduling）算法，允许内核在旧的用户环境资源放弃CPU或者退出的时候切换到一个新的用户环境。</p>
+<h3 id="A-1-Multiprocess-Support"><a href="#A-1-Multiprocess-Support" class="headerlink" title="A.1 Multiprocess Support"></a>A.1 Multiprocess Support</h3><p>我们将要使jos支持<strong>对称式多处理SMP</strong>（symmetric multiprocessing）。在这种多处理器模型下，所有的CPU都有着对系统资源（内存、I/O总线）的平等使用权。虽然所有CPU在SMP中的功能都是相同的，但是在引导过程中它们可以被分为两种：</p>
+<ul>
+<li><p><strong>引导处理器BSP</strong>（bootstrap processor）负责初始化系统并且引导操作系统。</p>
+</li>
+<li><p><strong>应用处理器AP</strong>（application processor）在操作系统启动之后被BSP激活。</p>
+</li>
+</ul>
+<p>由哪个（些）处理器来担任BSP的功能是由BIOS和硬件决定的，迄今为止我们前三个实验到现在所有代码都是在BSP上实现的。</p>
+<p>在一个SMP系统中，每一个CPU都有一个伴随的<strong>本地APIC（LAPIC）单元</strong>。LAPIC单元负责整个系统的中断传递。LAPIC为其相连接的CPU提供了一个唯一的标识符。在这个实验中我们会使用LAPIC的一些基本功能（在<code>kern/lapic.c</code>中）：</p>
+<ul>
+<li>读取LAPIC标识符（APIC ID），告知我们的代码正运行在哪个CPU上（参考<code>cpunum()</code>）</li>
+<li>从BSP向AP发送<code>STARTUP</code><strong>处理器间中断信号IPI</strong>（interprocessor interrupt），唤醒其他CPU（参考<code>lapic_startup()</code>）</li>
+<li>在Part C中，我们编程LAPIC单元内置的定时器来触发时钟中断，实现抢占式多任务（参考<code>apic_init()</code>）</li>
+</ul>
+<p>处理器通过<strong>内存映射I/O也称为MMIO</strong>（memory-mapped I/O）来访问LAPIC单元。在MMIO中，一部分的物理内存被硬链接到某些I/O设备的寄存器。因此<code>load/store</code>访存指令也可以特别用于访问设备寄存器。</p>
+<p>在之前的实验中我们已经知道了在物理地址<code>0xA0000</code>处有一个I/O hole（这个hole用于写VGA显示缓存）。LAPIC单元同样也存在于第二个I/O hole上，物理地址<code>0xFE000000</code>（4064MB）。这个高地址无法用之前设置对KERNBASE的直接映射去访问。jos的虚拟内存映射在<code>MMMIOBASE</code>处留了4MB的空隙，所以我们可以在这里映射硬件去访问。之后的实验中还会引入更多的MMIO区域，我们需要实现一个分配这部分区域并且映射到设备内存的函数。</p>
+<p><strong>exercise 1</strong></p>
+<p>实现<code>kern/pmap.c</code>中的<code>mmio_map_region()</code>函数。我们可以看到它在<code>kern/lapic.c</code>中<code>lapic_init()</code>的开头被调用。</p>
+<p>(为了让这个函数的测试案例能够正常运行，我们还需要把下一个练习也做了。)</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Reserve size bytes in the MMIO region and map [pa,pa+size) at this</span></span><br><span class="line"><span class="comment">// location.  Return the base of the reserved region.  size does *not*</span></span><br><span class="line"><span class="comment">// have to be multiple of PGSIZE.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">void</span> *</span><br><span class="line">mmio_map_region(<span class="keyword">physaddr_t</span> pa, <span class="keyword">size_t</span> size)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// Where to start the next region.  Initially, this is the</span></span><br><span class="line">	<span class="comment">// beginning of the MMIO region.  Because this is static, its</span></span><br><span class="line">	<span class="comment">// value will be preserved between calls to mmio_map_region</span></span><br><span class="line">	<span class="comment">// (just like nextfree in boot_alloc).</span></span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">uintptr_t</span> base = MMIOBASE;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Reserve size bytes of virtual memory starting at base and</span></span><br><span class="line">	<span class="comment">// map physical pages [pa,pa+size) to virtual addresses</span></span><br><span class="line">	<span class="comment">// [base,base+size).  Since this is device memory and not</span></span><br><span class="line">	<span class="comment">// regular DRAM, you'll have to tell the CPU that it isn't</span></span><br><span class="line">	<span class="comment">// safe to cache access to this memory.  Luckily, the page</span></span><br><span class="line">	<span class="comment">// tables provide bits for this purpose; simply create the</span></span><br><span class="line">	<span class="comment">// mapping with PTE_PCD|PTE_PWT (cache-disable and</span></span><br><span class="line">	<span class="comment">// write-through) in addition to PTE_W.  (If you're interested</span></span><br><span class="line">	<span class="comment">// in more details on this, see section 10.5 of IA32 volume</span></span><br><span class="line">	<span class="comment">// 3A.)</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// Be sure to round size up to a multiple of PGSIZE and to</span></span><br><span class="line">	<span class="comment">// handle if this reservation would overflow MMIOLIM (it's</span></span><br><span class="line">	<span class="comment">// okay to simply panic if this happens).</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// Hint: The staff solution uses boot_map_region.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// Your code here:</span></span><br><span class="line">	size = ROUNDUP(size, PGSIZE);</span><br><span class="line">	<span class="keyword">if</span>(base + size &gt; MMIOLIM)&#123;</span><br><span class="line">		panic(<span class="string">"[mmio_map_region] allocation size overflow!\n"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	boot_map_region(kern_pgdir, base, size, pa, PTE_PCD | PTE_PWT | PTE_W);</span><br><span class="line">	<span class="keyword">uintptr_t</span> save_base = base;</span><br><span class="line">	base += size;</span><br><span class="line">	<span class="keyword">return</span> (<span class="keyword">void</span> *)save_base;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="A-2-Application-Processor-Bootstrap"><a href="#A-2-Application-Processor-Bootstrap" class="headerlink" title="A.2 Application Processor Bootstrap"></a>A.2 Application Processor Bootstrap</h3><p>在引导AP之前，BSP首先需要收集多处理器系统的信息，比如总CPU数，每个CPU对应的APIC ID以及LAPIC的内存映射地址等。<strong><code>kern/mpconfig.c</code>中的<code>mp_init()</code>函数通过读取BIOS内存中的MP配置表来获取相关信息。</strong></p>
+<p><code>kern/init.c</code>中的<strong><code>boot_aps()</code>函数驱动了AP的引导过程</strong>。AP从实模式开始启动（类似于bootloader），因此<code>boot_aps()</code>从<code>kern/mpentry.S</code>中拷贝了一份AP入口代码（entry code）<strong>到一个实方式下可以寻址的内存位置</strong>。与bootloader不同的是，我们对于AP入口代码存放的位置可以有一定控制权：在jos中使用<code>MPENTRY_PADDR</code>作为入口地址的存放位置，但是实际上<code>640KB</code>下任何未使用的页对齐的地址都是可以使用的。</p>
+<p>接下来，<code>boot_aps()</code>向对应AP的LAPIC单元发送<code>STARTUP</code>的IPI信号（处理器间中断），使用AP的entry code初始化其CS:IP地址（在这里我们就使用<code>MPENTRY_PADDR</code>）依次激活APs。</p>
+<p>在一些简单的设置之后，AP将启动分页并进入保护模式，然后调用在<code>kern/init.c</code>中的启动例程<code>mp_main</code>。<code>boot_aps()</code>在唤醒下一个AP之前会等待当前AP发出一个<code>CPU_STARTED</code>启动标记，这个标记位在<code>struct CpuInfo</code>中的<code>cpu_status</code>域。</p>
+<p><strong>exercise 2</strong></p>
+<p>阅读<code>kern/init.c</code>中的<code>boot_aps()</code>以及<code>mp_main()</code>和<code>kern/mpentry.S</code>汇编代码。我们需要确保理解AP的bootstrap过程中的控制流切换。然后修改我们之前在<code>kern/pmap.c</code>中<code>page_init()</code>的实现，避免将<code>MPENTRY_PADDR</code>的区域也添加到<code>page_free_list</code>中，这样我们才可以安全地在该物理地址处拷贝以及运行AP的引导代码。</p>
+<ul>
+<li>控制流</li>
+</ul>
+<p>在系统加载的过程中，<code>boot_aps()</code>被调用，然后按照前文所述使用<code>memmove()</code>函数从<code>mpentry.S</code>中拷贝文件中<code>.global mpentry_start</code>标签处开始的入口代码直到<code>.global mpentry_end</code>结束，代码被拷贝到<code>MPENTRY_PADDR</code>（此处是0x7000的I/O hole）对应的内核虚拟地址（别忘了必须拷贝到内核虚拟地址才可以被内核所操作）。然后<code>boot_aps()</code>根据每一个CPU的栈配置<code>percpu_kstacks[]</code>来为每一个AP设置栈地址<code>mpentry_stack</code>。再之后调用<code>lapic_startup()</code>函数来启动AP，并等待AP的状态变为<code>CPU_STARTED</code>以切换到下一个AP的配置。</p>
+<p>AP启动后，执行从<code>mpentry.S</code>中复制的入口代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;inc/mmu.h&gt;</span><br><span class="line">#include &lt;inc/memlayout.h&gt;</span><br><span class="line"></span><br><span class="line">###################################################################</span><br><span class="line"># entry point for APs</span><br><span class="line">###################################################################</span><br><span class="line"></span><br><span class="line"># Each non-boot CPU (&quot;AP&quot;) is started up in response to a STARTUP</span><br><span class="line"># IPI from the boot CPU.  Section B.4.2 of the Multi-Processor</span><br><span class="line"># Specification says that the AP will start in real mode with CS:IP</span><br><span class="line"># set to XY00:0000, where XY is an 8-bit value sent with the</span><br><span class="line"># STARTUP. Thus this code must start at a 4096-byte boundary.</span><br><span class="line">#</span><br><span class="line"># Because this code sets DS to zero, it must run from an address in</span><br><span class="line"># the low 2^16 bytes of physical memory.</span><br><span class="line">#</span><br><span class="line"># boot_aps() (in init.c) copies this code to MPENTRY_PADDR (which</span><br><span class="line"># satisfies the above restrictions).  Then, for each AP, it stores the</span><br><span class="line"># address of the pre-allocated per-core stack in mpentry_kstack, sends</span><br><span class="line"># the STARTUP IPI, and waits for this code to acknowledge that it has</span><br><span class="line"># started (which happens in mp_main in init.c).</span><br><span class="line">#</span><br><span class="line"># This code is similar to boot/boot.S except that</span><br><span class="line">#    - it does not need to enable A20</span><br><span class="line">#    - it uses MPBOOTPHYS to calculate absolute addresses of its</span><br><span class="line">#      symbols, rather than relying on the linker to fill them</span><br><span class="line"></span><br><span class="line">#define RELOC(x) ((x) - KERNBASE)</span><br><span class="line">#define MPBOOTPHYS(s) ((s) - mpentry_start + MPENTRY_PADDR)</span><br><span class="line"></span><br><span class="line">.set PROT_MODE_CSEG, 0x8	# kernel code segment selector</span><br><span class="line">.set PROT_MODE_DSEG, 0x10	# kernel data segment selector</span><br><span class="line"></span><br><span class="line">.code16           </span><br><span class="line">.globl mpentry_start</span><br><span class="line">mpentry_start:</span><br><span class="line">	cli            </span><br><span class="line"></span><br><span class="line">	xorw    %ax, %ax</span><br><span class="line">	movw    %ax, %ds</span><br><span class="line">	movw    %ax, %es</span><br><span class="line">	movw    %ax, %ss</span><br><span class="line"></span><br><span class="line">	lgdt    MPBOOTPHYS(gdtdesc)</span><br><span class="line">	movl    %cr0, %eax</span><br><span class="line">	orl     $CR0_PE, %eax</span><br><span class="line">	movl    %eax, %cr0</span><br><span class="line"></span><br><span class="line">	ljmpl   $(PROT_MODE_CSEG), $(MPBOOTPHYS(start32))</span><br><span class="line"></span><br><span class="line">.code32</span><br><span class="line">start32:</span><br><span class="line">	movw    $(PROT_MODE_DSEG), %ax</span><br><span class="line">	movw    %ax, %ds</span><br><span class="line">	movw    %ax, %es</span><br><span class="line">	movw    %ax, %ss</span><br><span class="line">	movw    $0, %ax</span><br><span class="line">	movw    %ax, %fs</span><br><span class="line">	movw    %ax, %gs</span><br><span class="line"></span><br><span class="line">	# Set up initial page table. We cannot use kern_pgdir yet because</span><br><span class="line">	# we are still running at a low EIP.</span><br><span class="line">	movl    $(RELOC(entry_pgdir)), %eax</span><br><span class="line">	movl    %eax, %cr3</span><br><span class="line">	# Turn on paging.</span><br><span class="line">	movl    %cr0, %eax</span><br><span class="line">	orl     $(CR0_PE|CR0_PG|CR0_WP), %eax</span><br><span class="line">	movl    %eax, %cr0</span><br><span class="line"></span><br><span class="line">	# Switch to the per-cpu stack allocated in boot_aps()</span><br><span class="line">	movl    mpentry_kstack, %esp</span><br><span class="line">	movl    $0x0, %ebp       # nuke frame pointer</span><br><span class="line"></span><br><span class="line">	# Call mp_main().  (Exercise for the reader: why the indirect call?)</span><br><span class="line">	movl    $mp_main, %eax</span><br><span class="line">	call    *%eax</span><br><span class="line"></span><br><span class="line">	# If mp_main returns (it shouldn&apos;t), loop.</span><br><span class="line">spin:</span><br><span class="line">	jmp     spin</span><br><span class="line"></span><br><span class="line"># Bootstrap GDT</span><br><span class="line">.p2align 2					# force 4 byte alignment</span><br><span class="line">gdt:</span><br><span class="line">	SEG_NULL				# null seg</span><br><span class="line">	SEG(STA_X|STA_R, 0x0, 0xffffffff)	# code seg</span><br><span class="line">	SEG(STA_W, 0x0, 0xffffffff)		# data seg</span><br><span class="line"></span><br><span class="line">gdtdesc:</span><br><span class="line">	.word   0x17				# sizeof(gdt) - 1</span><br><span class="line">	.long   MPBOOTPHYS(gdt)			# address gdt</span><br><span class="line"></span><br><span class="line">.globl mpentry_end</span><br><span class="line">mpentry_end:</span><br><span class="line">	nop</span><br></pre></td></tr></table></figure>
+<p>通过阅读代码的注释我们可以知道，AP启动后会开启分页机制和保护模式，切换运行栈，然后跳转到<code>mp_main()</code>函数。</p>
+<p>在<code>mp_main()</code>函数中，使用<code>lcr3</code>指令切换页目录到<code>kern_pgdir</code>，初始化LAPIC、用户环境和陷阱处理机制。最后设置<code>struct CpuInfo</code>中的<code>cpu_status</code>为<code>CPU_STARTED</code>来告知BPS已经启动成功。</p>
+<p>所以我们修改<code>page_init()</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Initialize page structure and memory free list.</span></span><br><span class="line"><span class="comment">// After this is done, NEVER use boot_alloc again.  ONLY use the page</span></span><br><span class="line"><span class="comment">// allocator functions below to allocate and deallocate physical</span></span><br><span class="line"><span class="comment">// memory via the page_free_list.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">void</span></span><br><span class="line">page_init(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// LAB 4:</span></span><br><span class="line">	<span class="comment">// Change your code to mark the physical page at MPENTRY_PADDR</span></span><br><span class="line">	<span class="comment">// as in use</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// The example code here marks all physical pages as free.</span></span><br><span class="line">	<span class="comment">// However this is not truly the case.  What memory is free?</span></span><br><span class="line">	<span class="comment">//  1) Mark physical page 0 as in use.</span></span><br><span class="line">	<span class="comment">//     This way we preserve the real-mode IDT and BIOS structures</span></span><br><span class="line">	<span class="comment">//     in case we ever need them.  (Currently we don't, but...)</span></span><br><span class="line">	<span class="comment">//  2) The rest of base memory, [PGSIZE, npages_basemem * PGSIZE)</span></span><br><span class="line">	<span class="comment">//     is free.</span></span><br><span class="line">	<span class="comment">//  3) Then comes the IO hole [IOPHYSMEM, EXTPHYSMEM), which must</span></span><br><span class="line">	<span class="comment">//     never be allocated.</span></span><br><span class="line">	<span class="comment">//  4) Then extended memory [EXTPHYSMEM, ...).</span></span><br><span class="line">	<span class="comment">//     Some of it is in use, some is free. Where is the kernel</span></span><br><span class="line">	<span class="comment">//     in physical memory?  Which pages are already in use for</span></span><br><span class="line">	<span class="comment">//     page tables and other data structures?</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// Change the code to reflect this.</span></span><br><span class="line">	<span class="comment">// NB: DO NOT actually touch the physical memory corresponding to</span></span><br><span class="line">	<span class="comment">// free pages!</span></span><br><span class="line">	<span class="keyword">size_t</span> i;</span><br><span class="line">	<span class="comment">// 跳过page[0]，分配npages_basemem数量</span></span><br><span class="line">	<span class="comment">// lab4: 跳过mpentry</span></span><br><span class="line">	<span class="keyword">int</span> mpentry_idx = ROUNDUP(MPENTRY_PADDR, PGSIZE) / PGSIZE;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt; npages_basemem; i++)&#123;</span><br><span class="line">		<span class="keyword">if</span>(i == mpentry_idx)&#123;</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		pages[i].pp_ref = <span class="number">0</span>;</span><br><span class="line">		pages[i].pp_link = page_free_list;</span><br><span class="line">		page_free_list = &amp;pages[i];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 无视I/O hole，这部分之前使用了npages_basemem所以不用操作</span></span><br><span class="line">	<span class="comment">// 从extended_memory的kernel使用之后的位置开始分配</span></span><br><span class="line">			<span class="comment">// 首先取出最后一块目录项的地址</span></span><br><span class="line">	<span class="keyword">physaddr_t</span> next_page = PADDR(boot_alloc(<span class="number">0</span>));</span><br><span class="line">			<span class="comment">// 得到索引</span></span><br><span class="line">	<span class="keyword">size_t</span> idx_free = next_page / PGSIZE;</span><br><span class="line">	<span class="keyword">for</span>(i = idx_free; i &lt; npages; i++)&#123;</span><br><span class="line">		pages[i].pp_ref = <span class="number">0</span>;</span><br><span class="line">		pages[i].pp_link =page_free_list;</span><br><span class="line">		page_free_list = &amp;pages[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>完成之后，我们应该可以通过<code>check_page_free_list()</code>但是无法通过当前的<code>check_kern_pgdir()</code>。</p>
+<p><strong>Question</strong></p>
+<p>Q：比较<code>kern/mpentry.S</code>和<code>boot/boot.S</code>，记住两个代码都是编译连接后加载到<code>KERNBASE</code>之上运行的，为什么<code>mpentry.S</code>需要一个多余的红<code>MPBOOTPHYS</code>？</p>
+<blockquote>
+<p>提示：回顾Lab1中的链接地址（link address）和加载地址（load address）</p>
+</blockquote>
+<p>A：lab1中我们使用objdump研究bootloader发现，其链接地址和加载地址是一样的。但是<code>mpentry.S</code>的链接地址是物理地址，因此需要这个宏转换为内核区的虚拟地址。</p>
+<h3 id="A-3-Per-CPU-State-and-Initalization"><a href="#A-3-Per-CPU-State-and-Initalization" class="headerlink" title="A.3 Per-CPU State and Initalization"></a>A.3 Per-CPU State and Initalization</h3><p>当编写多核操作系统的时候，区分每一个CPU的私有状态以及整个系统共享的全局状态是非常重要的。<code>kern/cpu.h</code>中定义了绝大部分CPU的状态，包括用于储存cpu变量的<code>struct CpuInfo</code>。</p>
+<p><code>cpunum()</code>总是返回调用它的CPU ID，能用来索引例如<code>cpus</code>的数组。宏<code>thiscpu</code>是当前CPU的<code>struct CpuInfo</code>的简写。</p>
+<p>下面列举一下需要注意的CPU状态（per-CPU state）：</p>
+<ul>
+<li><p><strong>每CPU内核栈</strong>（Per-CPU Kernel stack）</p>
+<p>多CPU可能同时陷入内核，我们需要为每个CPU设置独立的内核栈来避免相干扰。<code>percpu_kstacks[NCPU][KSTKSIZE]</code>为<code>NCPU</code>个内核栈预留了空间。</p>
+<ul>
+<li>实验二中<code>bootstack</code>指向的物理内存作为BSP的栈，映射在了<code>KSTACKTOP</code>下。相似地我们在本次实验中需要为每个CPU的内核栈映射到数组的对应区域。</li>
+<li>CPU 0的内核栈从<code>KSTACKTOP</code>开始向下增长，之后第n个CPU的内核栈从<code>KSTACKTOP - n*KSTKGAP</code>处开始向下增长。如<code>inc/memlayout.h</code>中所示。</li>
+</ul>
+</li>
+<li><p><strong>每CPU的TSS和TSS描述符</strong>（Per-CPU TSS and TSS descriptor）</p>
+<ul>
+<li><p>每个CPU的任务状态段<code>TSS</code>同样需要指明其对应的内核栈位置。每个CPU的TSS存放在<code>CpuInfo</code>中的<code>cpu_ts</code>域中，对应的描述符在GDT表项的<code>gdt[(GD_TSS0 &gt;&gt; 3)+i]</code>中。</p>
+</li>
+<li><p>这次实验中，定义在<code>kern/trap.c</code>中的全局<code>ts</code>变量不再有作用。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>每CPU的当前环境指针</strong>（Per-CPU current environment pointer）</p>
+<p>每个CPU都能同步地执行不同的用户环境。</p>
+<ul>
+<li>将<code>curenv</code>定义为指向当前CPU（当前代码正在执行的CPU）正在执行的环境的<code>cpus[cpunum()].cpu_env</code>（或是<code>thiscpu-&gt;cpu_env</code>）</li>
+</ul>
+</li>
+<li><p><strong>每CPU的系统寄存器</strong>（Per-CPU system registers）</p>
+<p>包括系统寄存器在内的所有寄存器都属于CPU私有。因此初始化这些寄存器的指令如<code>lcr3</code>, <code>ltr</code>, <code>lgdt</code>等，必须在每个CPU上都被执行。函数<code>env_init_percpu()</code>和<code>trap_init_percpu</code>的功能就在于此。</p>
+</li>
+</ul>
+<p>除此之外，如果之前lab中有设置其他的cpu私有初始化函数，在这个实验也要对所有cpu执行。</p>
+<p><strong>exercise 3</strong></p>
+<p>修改<code>kern/pmap.c</code>中的<code>mem_init_mp()</code>，使CPU内核栈映射到相应的虚拟内存。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Modify mappings in kern_pgdir to support SMP</span></span><br><span class="line"><span class="comment">//   - Map the per-CPU stacks in the region [KSTACKTOP-PTSIZE, KSTACKTOP)</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">mem_init_mp(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// Map per-CPU stacks starting at KSTACKTOP, for up to 'NCPU' CPUs.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// For CPU i, use the physical memory that 'percpu_kstacks[i]' refers</span></span><br><span class="line">	<span class="comment">// to as its kernel stack. CPU i's kernel stack grows down from virtual</span></span><br><span class="line">	<span class="comment">// address kstacktop_i = KSTACKTOP - i * (KSTKSIZE + KSTKGAP), and is</span></span><br><span class="line">	<span class="comment">// divided into two pieces, just like the single stack you set up in</span></span><br><span class="line">	<span class="comment">// mem_init:</span></span><br><span class="line">	<span class="comment">//     * [kstacktop_i - KSTKSIZE, kstacktop_i)</span></span><br><span class="line">	<span class="comment">//          -- backed by physical memory</span></span><br><span class="line">	<span class="comment">//     * [kstacktop_i - (KSTKSIZE + KSTKGAP), kstacktop_i - KSTKSIZE)</span></span><br><span class="line">	<span class="comment">//          -- not backed; so if the kernel overflows its stack,</span></span><br><span class="line">	<span class="comment">//             it will fault rather than overwrite another CPU's stack.</span></span><br><span class="line">	<span class="comment">//             Known as a "guard page".</span></span><br><span class="line">	<span class="comment">//     Permissions: kernel RW, user NONE</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// LAB 4: Your code here:</span></span><br><span class="line">	<span class="keyword">int</span> i;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; NCPU; i++)&#123;</span><br><span class="line">		boot_map_region(kern_pgdir,</span><br><span class="line">						KSTACKTOP - i*(KSTKSIZE+KSTKGAP) - KSTKSIZE,</span><br><span class="line">						KSTKSIZE,</span><br><span class="line">						PADDR(percpu_kstacks[i]),</span><br><span class="line">						PTE_W);		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>完成后我们就可以通过<code>check_kern_pgdir()</code>。</p>
+<p><strong>exercise 4</strong></p>
+<p><code>kern/trap.c</code>中的<code>trap_init_percpu()</code>初始化了BSP的TSS和TSS描述符（它可以在lab3中给正常工作，但是本实验运行在其他CPU时不能正常工作），我们需要修改代码以使其支持所有CPU。</p>
+<blockquote>
+<p>注意：全局变量<code>ts</code>应该废弃</p>
+</blockquote>
+<p>很简单，只需要仿照之前的代码，将对应的ts部分修改到每个CPU各自的ts。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Initialize and load the per-CPU TSS and IDT</span></span><br><span class="line"><span class="keyword">void</span></span><br><span class="line">trap_init_percpu(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// The example code here sets up the Task State Segment (TSS) and</span></span><br><span class="line">	<span class="comment">// the TSS descriptor for CPU 0. But it is incorrect if we are</span></span><br><span class="line">	<span class="comment">// running on other CPUs because each CPU has its own kernel stack.</span></span><br><span class="line">	<span class="comment">// Fix the code so that it works for all CPUs.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// Hints:</span></span><br><span class="line">	<span class="comment">//   - The macro "thiscpu" always refers to the current CPU's</span></span><br><span class="line">	<span class="comment">//     struct CpuInfo;</span></span><br><span class="line">	<span class="comment">//   - The ID of the current CPU is given by cpunum() or</span></span><br><span class="line">	<span class="comment">//     thiscpu-&gt;cpu_id;</span></span><br><span class="line">	<span class="comment">//   - Use "thiscpu-&gt;cpu_ts" as the TSS for the current CPU,</span></span><br><span class="line">	<span class="comment">//     rather than the global "ts" variable;</span></span><br><span class="line">	<span class="comment">//   - Use gdt[(GD_TSS0 &gt;&gt; 3) + i] for CPU i's TSS descriptor;</span></span><br><span class="line">	<span class="comment">//   - You mapped the per-CPU kernel stacks in mem_init_mp()</span></span><br><span class="line">	<span class="comment">//   - Initialize cpu_ts.ts_iomb to prevent unauthorized environments</span></span><br><span class="line">	<span class="comment">//     from doing IO (0 is not the correct value!)</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// ltr sets a 'busy' flag in the TSS selector, so if you</span></span><br><span class="line">	<span class="comment">// accidentally load the same TSS on more than one CPU, you'll</span></span><br><span class="line">	<span class="comment">// get a triple fault.  If you set up an individual CPU's TSS</span></span><br><span class="line">	<span class="comment">// wrong, you may not get a fault until you try to return from</span></span><br><span class="line">	<span class="comment">// user space on that CPU.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// LAB 4: Your code here:</span></span><br><span class="line">	<span class="comment">// Setup a TSS so that we get the right stack</span></span><br><span class="line">	<span class="comment">// when we trap to the kernel.</span></span><br><span class="line">	thiscpu -&gt; cpu_ts.ts_esp0 = (<span class="keyword">uintptr_t</span>)percpu_kstacks[cpunum()];</span><br><span class="line">	thiscpu -&gt; cpu_ts.ts_ss0 = GD_KD;</span><br><span class="line">	thiscpu -&gt; cpu_ts.ts_iomb = <span class="keyword">sizeof</span>(struct Taskstate);</span><br><span class="line">	<span class="comment">// Initialize the TSS slot of the gdt.</span></span><br><span class="line">	gdt[(GD_TSS0 &gt;&gt; <span class="number">3</span>) + cpunum()] = SEG16(STS_T32A, (<span class="keyword">uint32_t</span>)(&amp;(thiscpu-&gt;cpu_ts)), <span class="keyword">sizeof</span>(struct Taskstate) - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">	gdt[(GD_TSS0 &gt;&gt; <span class="number">3</span>) + cpunum()].sd_s = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">// Load the TSS selector (like other segment selectors, the</span></span><br><span class="line">	<span class="comment">// bottom three bicurts are special; we leave them 0)</span></span><br><span class="line">	ltr(GD_TSS0 + (cpunum() &lt;&lt; <span class="number">3</span>));</span><br><span class="line">	<span class="comment">// Load the IDT</span></span><br><span class="line">	lidt(&amp;idt_pd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>完成后运行<code>make qemu CPUS=4</code>，输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">check_page_free_list() succeeded!</span><br><span class="line">check_page_installed_pgdir() succeeded!</span><br><span class="line">SMP: CPU 0 found 4 CPU(s)</span><br><span class="line">enabled interrupts: 1 2</span><br><span class="line">SMP: CPU 1 starting</span><br><span class="line">SMP: CPU 2 starting</span><br><span class="line">SMP: CPU 3 starting</span><br></pre></td></tr></table></figure>
+<h3 id="A-4-Locking"><a href="#A-4-Locking" class="headerlink" title="A.4 Locking"></a>A.4 Locking</h3><p>当前我们的代码会在<code>mp_main()</code>初始化完成所有AP之后陷入自旋（spin）。在让这些AP做出下一步操作之前，我们需要解决多个CPU同时执行内核代码的竞争条件。</p>
+<p>最简单的方式就是使用一个大内核锁（big kernel lock）。这个大内核锁是一个单一的全局锁，当一个环境进入内核模式的时候就可以被获取，然后返回到用户态的时候被释放。在这种模型下，用户模式的环境可以在任意多个CPU下并发运行（concurrently），但是只有一个环境能处于内核态，其余环境进入内核态需要强制等待。</p>
+<p><code>kern/spinlock.h</code>中声明了这个大内核锁的实现函数<code>kernel_lock()</code>。同时它提供了<code>lock_kernel()</code>和<code>unlock_kernel()</code>两个函数用于上锁和解锁，我们需要在以下四个场景使用大内核锁：</p>
+<ul>
+<li><p><code>i386_init()</code>：BSP唤醒其它CPU之前进行上锁</p>
+</li>
+<li><p><code>mp_main()</code>：初始化AP之后进行上锁，然后调用<code>sched_yield()</code>在当前AP上运行环境</p>
+</li>
+<li><p><code>trap()</code>：从用户模式陷入内核之前获得大锁进行上锁</p>
+<blockquote>
+<p>这里注意，内核态异常不能上锁（会死锁），我们需要用<code>tf_cs</code>检查环境是否位于用户态</p>
+</blockquote>
+</li>
+<li><p><code>env_run()</code>：在切换回用户态之前进行解锁。时机不对会导致竞争或死锁</p>
+</li>
+</ul>
+<p><strong>exercise 5</strong></p>
+<p>按照以上所给出的场景和函数，实现大锁机制。</p>
+<ul>
+<li><code>i386_init()</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment">// Lab 4 multiprocessor initialization functions</span></span><br><span class="line">	mp_init();</span><br><span class="line">	lapic_init();</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Lab 4 multitasking initialization functions</span></span><br><span class="line">	pic_init();</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Acquire the big kernel lock before waking up APs</span></span><br><span class="line">	<span class="comment">// Your code here:</span></span><br><span class="line">	lock_kernel();</span><br><span class="line">	<span class="comment">// Starting non-boot CPUs</span></span><br><span class="line">	boot_aps();</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>mp_main()</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Setup code for APs</span></span><br><span class="line"><span class="keyword">void</span></span><br><span class="line">mp_main(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// We are in high EIP now, safe to switch to kern_pgdir</span></span><br><span class="line">	lcr3(PADDR(kern_pgdir));</span><br><span class="line">	cprintf(<span class="string">"SMP: CPU %d starting\n"</span>, cpunum());</span><br><span class="line"></span><br><span class="line">	lapic_init();</span><br><span class="line">	env_init_percpu();</span><br><span class="line">	trap_init_percpu();</span><br><span class="line">	xchg(&amp;thiscpu-&gt;cpu_status, CPU_STARTED); <span class="comment">// tell boot_aps() we're up</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Now that we have finished some basic setup, call sched_yield()</span></span><br><span class="line">	<span class="comment">// to start running processes on this CPU.  But make sure that</span></span><br><span class="line">	<span class="comment">// only one CPU can enter the scheduler at a time!</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// Your code here:</span></span><br><span class="line">	lock_kernel();</span><br><span class="line">	sched_yield();</span><br><span class="line">	<span class="comment">// Remove this after you finish Exercise 6</span></span><br><span class="line">	<span class="keyword">for</span> (;;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>trap()</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="keyword">if</span> ((tf-&gt;tf_cs &amp; <span class="number">3</span>) == <span class="number">3</span>) &#123;</span><br><span class="line">		<span class="comment">// Trapped from user mode.</span></span><br><span class="line">		<span class="comment">// Acquire the big kernel lock before doing any</span></span><br><span class="line">		<span class="comment">// serious kernel work.</span></span><br><span class="line">		<span class="comment">// LAB 4: Your code here.</span></span><br><span class="line">		assert(curenv);</span><br><span class="line">		lock_kernel();</span><br><span class="line">		<span class="comment">// Garbage collect if current enviroment is a zombie</span></span><br><span class="line">		<span class="keyword">if</span> (curenv-&gt;env_status == ENV_DYING) &#123;</span><br><span class="line">			env_free(curenv);</span><br><span class="line">			curenv = <span class="literal">NULL</span>;</span><br><span class="line">			sched_yield();</span><br><span class="line">		&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>env_run()</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span></span><br><span class="line">env_run(struct Env *e)</span><br><span class="line">&#123;</span><br><span class="line">...</span><br><span class="line">	lcr3(PADDR(e-&gt;env_pgdir));</span><br><span class="line">	cprintf(<span class="string">" env_tf :  %x\n "</span>, &amp;curenv -&gt; env_tf);</span><br><span class="line">	unlock_kernel();</span><br><span class="line">	env_pop_tf(&amp;curenv-&gt;env_tf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们还需要完成exercies 6才能检查是否正确。</p>
+<p><strong>Question</strong></p>
+<p>Q：看起来大内核锁机制保证了同时只能有一个CPU在内核态运行。那为什么我们还需要将每个CPU的内核栈分开？请描述一个场景，我们不分开内核栈而导致错误。</p>
+<p>A：假设CPU0因中断陷入内核并在内核栈中保留了相关的信息，此时若CPU1也发生中断而陷入内核，在同一个内核栈的情况下，CPU0中的信息将会被覆盖从而导致出现错误。</p>
+<h3 id="A-5-Round-Robin-Scheduling"><a href="#A-5-Round-Robin-Scheduling" class="headerlink" title="A.5 Round-Robin Scheduling"></a>A.5 Round-Robin Scheduling</h3><p>我们的下一个任务是改变jos内核，实现对用户环境的轮询调度：</p>
+<ul>
+<li><code>kern/sched.c</code>中的<code>sched_yield()</code>负责从用户环境中选择一个新环境执行。其按照顺序遍历<code>envs[]</code>数组，从上一次运行的环境开始，找到第一个<code>ENV_RUNNABLE</code>的环境然后调用<code>env_run()</code>。</li>
+<li><code>sched_yield()</code><strong>一定不能</strong>在两个CPU上同时运行相同的环境。它可以通过环境的状态是否为<code>ENV_RUNNING</code>来判断这个环境是否正运行在某个CPU上。</li>
+<li>一个新的系统调用<code>sys_yield()</code>，使得用户环境可以通过该系统调用唤醒<code>sched_yield()</code>，主动放弃CPU。</li>
+</ul>
+<p><strong>exercise 6</strong></p>
+<p>在<code>sched_yield()</code>中实现上述机制，注意我们要修改<code>syscall()</code>来支持对<code>sys_yield()</code>的调度。</p>
+<p>确保在<code>mp_main()</code>中调用<code>sched_yield()</code>。</p>
+<p>修改<code>kern/init.c</code>来创建三个或者更多的用户环境，使其同时运行<code>user/yield.c</code>程序。</p>
+<ul>
+<li><code>sched_yield()</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Choose a user environment to run and run it.</span></span><br><span class="line"><span class="keyword">void</span></span><br><span class="line">sched_yield(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">Env</span> *<span class="title">idle</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Implement simple round-robin scheduling.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// (1) Search through 'envs' for an ENV_RUNNABLE environment in</span></span><br><span class="line">	<span class="comment">// circular fashion starting just after the env this CPU was</span></span><br><span class="line">	<span class="comment">// last running.  Switch to the first such environment found.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// (2) If no envs are runnable, but the environment previously</span></span><br><span class="line">	<span class="comment">// running on this CPU is still ENV_RUNNING, it's okay to</span></span><br><span class="line">	<span class="comment">// choose that environment.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// Never choose an environment that's currently running on</span></span><br><span class="line">	<span class="comment">// another CPU (env_status == ENV_RUNNING). If there are</span></span><br><span class="line">	<span class="comment">// no runnable environments, simply drop through to the code</span></span><br><span class="line">	<span class="comment">// below to halt the cpu.</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// LAB 4: Your code here.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="keyword">size_t</span> cur_idx;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> cur_flag = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">int</span> start_loc = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">envid_t</span> i;</span><br><span class="line">	<span class="keyword">if</span>(thiscpu-&gt;cpu_env == <span class="literal">NULL</span>)&#123;</span><br><span class="line">		<span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; NENV; i++)&#123;</span><br><span class="line">			<span class="keyword">if</span>(envs[i].env_status == ENV_RUNNABLE)&#123;</span><br><span class="line">				env_run(&amp;envs[i]);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span>&#123;</span><br><span class="line">		<span class="comment">// (1)</span></span><br><span class="line">		cur_idx = ENVX(thiscpu-&gt;cpu_env -&gt; env_id);</span><br><span class="line">		i = (cur_idx == NENV - <span class="number">1</span>)? <span class="number">0</span> : cur_idx + <span class="number">1</span>;</span><br><span class="line">		<span class="keyword">for</span>(;i != cur_idx; i = ((i == NENV - <span class="number">1</span>)? <span class="number">0</span> : i+<span class="number">1</span>))&#123;</span><br><span class="line">			<span class="keyword">if</span>(envs[i].env_status == ENV_RUNNABLE)&#123;</span><br><span class="line">				env_run(&amp;envs[i]);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// (2)</span></span><br><span class="line">		<span class="keyword">if</span>(thiscpu-&gt;cpu_env-&gt;env_status == ENV_RUNNING)&#123;</span><br><span class="line">			env_run(&amp;envs[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// sched_halt never returns</span></span><br><span class="line">	sched_halt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>syscall()</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Dispatches to the correct kernel function, passing the arguments.</span></span><br><span class="line"><span class="keyword">int32_t</span></span><br><span class="line">syscall(<span class="keyword">uint32_t</span> syscallno, <span class="keyword">uint32_t</span> a1, <span class="keyword">uint32_t</span> a2, <span class="keyword">uint32_t</span> a3, <span class="keyword">uint32_t</span> a4, <span class="keyword">uint32_t</span> a5)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// Call the function corresponding to the 'syscallno' parameter.</span></span><br><span class="line">	<span class="comment">// Return any appropriate return value.</span></span><br><span class="line">	<span class="comment">// LAB 3: Your code here.</span></span><br><span class="line">	<span class="keyword">switch</span> (syscallno) &#123;</span><br><span class="line">	<span class="keyword">case</span> SYS_cputs:</span><br><span class="line">		<span class="comment">//check memory before dereference</span></span><br><span class="line">		user_mem_assert(curenv, (<span class="keyword">void</span> *)a1, (<span class="keyword">size_t</span>)a2, PTE_U);</span><br><span class="line">		sys_cputs((<span class="keyword">const</span> <span class="keyword">char</span> *)a1, a2);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">case</span> SYS_cgetc:</span><br><span class="line">		<span class="keyword">return</span> sys_cgetc();</span><br><span class="line">	<span class="keyword">case</span> SYS_getenvid:</span><br><span class="line">		<span class="keyword">return</span> sys_getenvid();</span><br><span class="line">	<span class="keyword">case</span> SYS_env_destroy:</span><br><span class="line">		<span class="keyword">return</span> sys_env_destroy((<span class="keyword">envid_t</span>)a1);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> SYS_yield:</span><br><span class="line">		sys_yield();</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		<span class="keyword">return</span> -E_INVAL;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>kern/init.c</code></li>
+</ul>
+<p>运行<code>user/yield.c</code>三次的方式并不难，我们连续三次创建环境即可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(TEST)</span></span><br><span class="line">	<span class="comment">// Don't touch -- used by grading script!</span></span><br><span class="line">	ENV_CREATE(TEST, ENV_TYPE_USER);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">	<span class="comment">// Touch all you want.</span></span><br><span class="line">	<span class="comment">//ENV_CREATE(user_primes, ENV_TYPE_USER);</span></span><br><span class="line">	ENV_CREATE(user_yield, ENV_TYPE_USER);</span><br><span class="line">	ENV_CREATE(user_yield, ENV_TYPE_USER);</span><br><span class="line">	ENV_CREATE(user_yield, ENV_TYPE_USER);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">// TEST*</span></span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Schedule and run the first user environment!</span></span><br><span class="line">	sched_yield();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                </article>
+                <ul class="tags-postTags">
+                    
+                    <li>
+                        <a href="/tags/operating-system/" rel="tag"># operating system</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/tags/lab/" rel="tag"># lab</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    
+    <nav id="gobottom" class="pagination">
+        
+        <span class="prev-next-post">·</span>
+        
+        <a class="next-post" title="Hunting Malware in Process Memory" href="/2020/03/10/memfor-8/">
+            Hunting Malware in Process Memory →
+        </a>
+        
+    </nav>
+
+    
+    <div class="inner">
+        <div id="comment"></div>
+    </div>
+    
+</div>
+
+<div class="toc-bar">
+    <div class="toc-btn-bar">
+        <a href="#site-main" class="toc-btn">
+            <svg viewbox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M793.024 710.272a32 32 0 1 0 45.952-44.544l-310.304-320a32 32 0 0 0-46.4 0.48l-297.696 320a32 32 0 0 0 46.848 43.584l274.752-295.328 286.848 295.808z"/></svg>
+        </a>
+        <div class="toc-btn toc-switch">
+            <svg class="toc-open" viewbox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M779.776 480h-387.2a32 32 0 0 0 0 64h387.2a32 32 0 0 0 0-64M779.776 672h-387.2a32 32 0 0 0 0 64h387.2a32 32 0 0 0 0-64M256 288a32 32 0 1 0 0 64 32 32 0 0 0 0-64M392.576 352h387.2a32 32 0 0 0 0-64h-387.2a32 32 0 0 0 0 64M256 480a32 32 0 1 0 0 64 32 32 0 0 0 0-64M256 672a32 32 0 1 0 0 64 32 32 0 0 0 0-64"/></svg>
+            <svg class="toc-close hide" viewbox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M512 960c-247.039484 0-448-200.960516-448-448S264.960516 64 512 64 960 264.960516 960 512 759.039484 960 512 960zM512 128.287273c-211.584464 0-383.712727 172.128262-383.712727 383.712727 0 211.551781 172.128262 383.712727 383.712727 383.712727 211.551781 0 383.712727-172.159226 383.712727-383.712727C895.712727 300.415536 723.551781 128.287273 512 128.287273z"/><path d="M557.05545 513.376159l138.367639-136.864185c12.576374-12.416396 12.672705-32.671738 0.25631-45.248112s-32.704421-12.672705-45.248112-0.25631l-138.560301 137.024163-136.447897-136.864185c-12.512727-12.512727-32.735385-12.576374-45.248112-0.063647-12.512727 12.480043-12.54369 32.735385-0.063647 45.248112l136.255235 136.671523-137.376804 135.904314c-12.576374 12.447359-12.672705 32.671738-0.25631 45.248112 6.271845 6.335493 14.496116 9.504099 22.751351 9.504099 8.12794 0 16.25588-3.103239 22.496761-9.247789l137.567746-136.064292 138.687596 139.136568c6.240882 6.271845 14.432469 9.407768 22.65674 9.407768 8.191587 0 16.352211-3.135923 22.591372-9.34412 12.512727-12.480043 12.54369-32.704421 0.063647-45.248112L557.05545 513.376159z"/></svg>
+        </div>
+        <a href="#gobottom" class="toc-btn">
+            <svg viewbox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M231.424 346.208a32 32 0 0 0-46.848 43.584l297.696 320a32 32 0 0 0 46.4 0.48l310.304-320a32 32 0 1 0-45.952-44.544l-286.848 295.808-274.752-295.36z"/></svg>
+        </a>
+    </div>
+    <div class="toc-main">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Lab4-Preemptive-Multitasking"><span class="toc-text">Lab4 Preemptive Multitasking</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-实验介绍"><span class="toc-text">&gt; 实验介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gt-实验准备"><span class="toc-text">&gt; 实验准备</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-A-Multiprocessor-Support-and-Cooperative-Multitasking"><span class="toc-text">Part A: Multiprocessor Support and Cooperative Multitasking</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-1-Multiprocess-Support"><span class="toc-text">A.1 Multiprocess Support</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#A-2-Application-Processor-Bootstrap"><span class="toc-text">A.2 Application Processor Bootstrap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#A-3-Per-CPU-State-and-Initalization"><span class="toc-text">A.3 Per-CPU State and Initalization</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#A-4-Locking"><span class="toc-text">A.4 Locking</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#A-5-Round-Robin-Scheduling"><span class="toc-text">A.5 Round-Robin Scheduling</span></a></li></ol></li></ol>
+    </div>
+</div>
+
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+	</div>
+	
+
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+            
+
+<article class="read-next-card" style="background-image: url(https://tva1.sinaimg.cn/large/00831rSTly1gcfvz62ikmj30u0140kjl.jpg)">
+  <header class="read-next-card-header">
+    <small class="read-next-card-header-sitetitle">&mdash; Icegrave &mdash;</small>
+    <h3 class="read-next-card-header-title">Recent Posts</h3>
+  </header>
+  <div class="read-next-divider">
+    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+      <path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/>
+    </svg>
+  </div>
+  <div class="read-next-card-content">
+    <ul>
+      
+      
+      
+      <li>
+        <a href="/2020/03/19/oslab4/">手把手带你MIT6.828 - Lab4</a>
+      </li>
+      
+      
+      
+      <li>
+        <a href="/2020/03/10/memfor-8/">Hunting Malware in Process Memory</a>
+      </li>
+      
+      
+      
+      <li>
+        <a href="/2020/03/10/oslab3/">手把手带你MIT6.828 - Lab3</a>
+      </li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    </ul>
+  </div>
+  <footer class="read-next-card-footer">
+    <a href="/archives">  MORE  → </a>
+  </footer>
+</article>
+
+            
+            
+            
+
+<article class="read-next-card" style="background-image: url(https://tva1.sinaimg.cn/large/00831rSTly1gcfvz62ikmj30u0140kjl.jpg)">
+    <header class="read-next-card-header tagcloud-card">
+        <h3 class="read-next-card-header-title">Categories</h3>
+    </header>
+    <div class="read-next-card-content">
+        <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/memory-forensics/">memory forensics</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/operating-system/">operating system</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/图形学基础/">图形学基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a></li></ul>
+    </div>
+</article>
+
+
+            
+            
+            
+
+<article class="read-next-card" style="background-image: url(https://tva1.sinaimg.cn/large/00831rSTly1gcfvz62ikmj30u0140kjl.jpg)">
+	<header class="read-next-card-header tagcloud-card">
+		<h3 class="read-next-card-header-title">Tag Cloud</h3>
+	</header>
+	<div class="read-next-card-content-ext">
+		<a href="/tags/Fundamentals-of-Computer-Graphics/" style="font-size: 14px;">Fundamentals of Computer Graphics</a> <a href="/tags/iOS/" style="font-size: 14px;">iOS</a> <a href="/tags/iosre/" style="font-size: 14px;">iosre</a> <a href="/tags/lab/" style="font-size: 24px;">lab</a> <a href="/tags/memory-forensics/" style="font-size: 24px;">memory forensics</a> <a href="/tags/notes/" style="font-size: 24px;">notes</a> <a href="/tags/operating-system/" style="font-size: 24px;">operating system</a> <a href="/tags/工具/" style="font-size: 19px;">工具</a> <a href="/tags/随笔/" style="font-size: 14px;">随笔</a>
+	</div>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+	
+
+
+
+
+<div id="search" class="search-overlay">
+    <div class="search-form">
+        
+        <div class="search-overlay-logo">
+        	<img src="https://mubai.oss-cn-hangzhou.aliyuncs.com/icon.png" alt="Icegrave">
+        </div>
+        
+        <input id="local-search-input" class="search-input" type="text" name="search" placeholder="Search ...">
+        <a class="search-overlay-close" href="#"></a>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+
+<footer class="site-footer outer">
+	<div class="site-footer-content inner">
+		<div class="copyright">
+			<a href="/" title="Icegrave">Icegrave &copy; 2020</a>
+			
+				
+			        <span hidden="true" id="/2020/03/19/oslab4/" class="leancloud-visitors" data-flag-title="手把手带你MIT6.828 - Lab4">
+			            <span>阅读量 </span>
+			            <span class="leancloud-visitors-count">0</span>
+			        </span>
+	    		
+    		
+		</div>
+		<nav class="site-footer-nav">
+			
+			<a href="https://hexo.io" title="Hexo" target="_blank" rel="noopener">Hexo</a>
+			<a href="https://github.com/xzhih/hexo-theme-casper" title="Casper" target="_blank" rel="noopener">Casper</a>
+		</nav>
+	</div>
+</footer>
+	
+
+
+<script>
+    if(window.navigator && navigator.serviceWorker) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) {
+                registration.unregister()
+            }
+        })
+    }
+</script>
+
+
+<script id="scriptLoad" src="/js/allinone.min.js" async></script>
+
+
+<script>
+    document.getElementById('scriptLoad').addEventListener('load', function () {
+        
+        
+            var bLazy = new Blazy();
+        
+
+        
+        
+
+        
+        
+        
+            searchFunc("/");
+        
+        
+    })
+</script>
+
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+
+
+<script id="valineScript" src="//unpkg.com/valine/dist/Valine.min.js" async></script>
+<script>
+    document.getElementById('valineScript').addEventListener("load", function() {
+        new Valine({
+            el: '#comment' ,
+            verify: false,
+            notify: false,
+            appId: 'PlliSVE5ISCj7XAYOowLuJDX-gzGzoHsz',
+            appKey: 'CoE3u0Y1coO3kv6nHDpSuj4L',
+            placeholder: 'nil',
+            pageSize: 10,
+            avatar: 'mm',
+            visitor: true
+        })
+    });
+</script>
+
+
+
+
+
+</body>
+</html>
