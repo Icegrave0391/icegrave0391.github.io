@@ -411,7 +411,7 @@
 <p>jos内核中我们使用<code>int $0x30</code>作为系统调用中断（中断向量48号），我们需要建立相关的种段描述符。注意到<code>0x30</code>中断向量是不可能通过硬件产生的，毫无疑问是由用户环境下的代码产生的。</p>
 <p>应用程序将会通过寄存器传递系统调用号以及相应的系统调用参数。这种方式下内核就不会访问用户环境栈或者指令流。系统调用号存放在<code>%eax</code>寄存器中，其余参数（最多五个）相应地存放在 <code>%edx</code>, <code>%ecx</code>, <code>%ebx</code>, <code>%edi</code>, <code>%esi</code>中。内核将返回值存放在寄存器<code>%eax</code>中。用于唤醒系统调用的汇编代码已经实现在<code>lib/syscall.c</code>中的<code>syscall()</code>。我们需要阅读这个函数以确保理解了如何唤醒系统调用。</p>
 <p><strong>exercise 7</strong></p>
-<p>为内核增加系统调用处理函数。我们需要修改<code>kern/trapentry.S</code>以及<code>kern.trap.c</code>中的<code>trap_init()</code>函数。我们还需要修改<code>trap_dispatch()</code>，使其能够以正确参数调用<code>syscall()</code>（这个是<code>kern/syscall.c</code>下的而非之前<code>lib</code>中的）并将返回结果存放在<code>%eax</code>中返回给用户（调用者）。</p>
+<p>为内核增加系统调用处理函数。我们需要修改<code>kern/trapentry.S</code>以及<code>kern/trap.c</code>中的<code>trap_init()</code>函数。我们还需要修改<code>trap_dispatch()</code>，使其能够以正确参数调用<code>syscall()</code>（这个是<code>kern/syscall.c</code>下的而非之前<code>lib</code>中的）并将返回结果存放在<code>%eax</code>中返回给用户（调用者）。</p>
 <p>我们还需要实现<code>kern/syscall.c</code>下的<code>syscall()</code>，使得调用号无效的时候返回<code>-E_INVAL</code>。通过系统调用函数处理<code>inc/syscall.h</code>中的所有系统调用。</p>
 <ul>
 <li><code>trap_dispatch()</code></li>
